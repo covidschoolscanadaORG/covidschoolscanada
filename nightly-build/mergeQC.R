@@ -1,7 +1,8 @@
 # merge canada-wide and quebec
+source("utils.R")
 
 args <- commandArgs(TRUE)
-dt <- args[1]
+dt <- "200911" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
@@ -56,25 +57,58 @@ if (all.equal(colnames(x),colnames(rest_of_canada))!=TRUE) {
 }
 final <- rbind(rest_of_canada,x)
 
+if (any(final$Type_of_school == "Henry Wise Wood High School")) {
+	final$Type_of_school[which(final$Type_of_school== "Henry Wise Wood High School")] <- "High School"
+}
+final$Type_of_school <- tools::toTitleCase(trimws(final$Type_of_school))
+
 message("")
-message("* Post-merge: Provincial breakdown")
-print(table(final$Province,useNA="always"))
-message(sprintf("Total cases = %i rows", nrow(final)))
+message("*** FINAL ***")
+message("")
+message(sprintf("# institutions = %i rows", nrow(final)))
+message(sprintf("# outbreaks = %i rows", sum(final$Total.outbreaks.to.date,
+		na.omit=TRUE)))
+message("")
+message("-------------------------------------")
+message("* Num institutions: PROVINCE")
+message("-------------------------------------")
+print(getTable_dec(final$Province))
+message("")
+
+message("-------------------------------------")
+message("* Num outbreaks: PROVINCE")
+message("-------------------------------------")
+tmp <- aggregate(final$Total.outbreaks.to.date, by=list(final$Province),FUN=sum)
+tmp2 <- tmp[,2]; names(tmp2) <- tmp[,1]; print(tmp2[order(tmp2,decreasing=TRUE)])
+
+message("-------------------------------------")
+message("* Type of schools: CANADA")
+message("-------------------------------------")
+final2 <- subset(final, Province != "Québec")
+print(getTable_dec(final$Type_of_school))
+message("")
+message("-------------------------------------")
+message("* Case type breakdown (except Quebec)")
+message("-------------------------------------")
+message("Total (confirmed reports)")
+print(summary(final2$Total.cases.to.date,useNA="always"))
+message("Students (confirmed reports)")
+print(summary(final2$Total.students.to.date,useNA="always"))
+message("Staff (confirmed reports)")
+print(summary(final2$Total.staff.to.date,useNA="always"))
+message("")
+
 
 message("* Writing file")
-
 write.table(final,file=outFile,sep=",",col=TRUE,row=F,quote=T)
 
 message("* Writing stats")
 if (file.exists(statFile)) unlink(statFile)
-ct <-table(final$Province)
-nm <- names(ct)
-ct <- as.numeric(ct); names(ct) <- nm
-ct <- ct[order(ct,decreasing=TRUE)]
-print(ct)
+
 
 cat("",file=statFile,append=TRUE)
 cat("Tally\n",file=statFile,append=TRUE)
+ct <- getTable_dec(final$Province)
 for (k in 1:length(ct)) {
 	cat(sprintf("%s\t%s\n",names(ct)[k],ct[k]),
 			file=statFile,append=TRUE)
