@@ -1,7 +1,7 @@
 require(XML)
 
 args <- commandArgs(TRUE)
-inFile <- "/home/shraddhapai/Canada_COVID_tracker/export-20200911/CanadaMap_clean3.kml"#args[1]
+inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-20200911/CanadaMap_clean3.kml"#args[1]
 print(inFile)
 
 dt <- format(Sys.Date(),"%y%m%d")

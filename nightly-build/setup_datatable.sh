@@ -23,7 +23,7 @@ perl -pe 's/<description>(.*)<\/description>//' ${outDir}/${outName}_clean.kml >
 perl -pe 's/&/&amp;/g' ${outDir}/${outName}_clean2.kml > ${outDir}/${outName}_clean3.kml
 
 # make table
-#Rscript kml_parse_extended.R ${outDir}/${outName}_clean3.kml
+Rscript kml_parse_extended.R ${outDir}/${outName}_clean3.kml
 
 #rm ${outDir}/${outName}_clean.kml
 #rm ${outDir}/${outName}_clean2.kml

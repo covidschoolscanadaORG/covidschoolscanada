@@ -7,10 +7,11 @@ canadaMidFile=1blA_H3Hv5S9Ii_vyudgDk-j6SfJQil9S
 # Quebec tracker
 QCMidFile=1S-b-tmhKP1RQeMaIZslrR_hqApM-KERq
 
-dt=`date +%Y%m%d`
+dt=`date +%y%m%d`
 outDir=${outRoot}/export-${dt}
 mkdir -p $outDir
 
 ./setup_datatable.sh $outDir $canadaMidFile CanadaMap
-#./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec
+./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec
+Rscript mergeQC.R $dt
 

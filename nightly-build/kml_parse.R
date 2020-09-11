@@ -1,7 +1,7 @@
 require(XML)
 
 args <- commandArgs(TRUE)
-inFile <- args[1]
+inFile <- args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-20200911/COVIDEcolesQuebec_clean.kml" #args[1]
 print(inFile)
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -26,11 +26,11 @@ for (k in coords){
 	cur <- gsub("\n","",k)
 	cur <- trimws(cur)
 	cur <- unlist(strsplit(cur,","))
-	latitude <- c(latitude,as.numeric(cur[1]))
-	longitude <- c(longitude,as.numeric(cur[2]))
+	latitude <- c(latitude,as.numeric(cur[2]))
+	longitude <- c(longitude,as.numeric(cur[1]))
 	third <- c(third,as.numeric(cur[3]))
 }
 
 df <- data.frame(institute.name=sname,latitude=latitude,longitude=longitude)
-write.table(df,file=outFile,sep="\t",col=T,row=F,quote=F)
+write.table(df,file=outFile,sep="\t",col=T,row=F,quote=TRUE)
 
