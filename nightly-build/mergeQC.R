@@ -2,7 +2,7 @@
 source("utils.R")
 
 args <- commandArgs(TRUE)
-dt <- "200911" #args[1]
+dt <- args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
