@@ -2,7 +2,7 @@
 source("utils.R")
 
 args <- commandArgs(TRUE)
-dt <- args[1]#"200914" #args[1]
+dt <- "200914" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
@@ -28,6 +28,8 @@ qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean.kml-%s.txt",
 	inDir,dt),sep="\t",h=T,as.is=T)
 colnames(qc)[2:3] <- c("Latitude","Longitude")
 qc$coord <- paste(qc$Latitude,qc$Longitude,sep="_")
+
+can <- rest_of_canada
 can$coord <- paste(can$Latitude,can$Longitude,sep="_")
 
 message("")

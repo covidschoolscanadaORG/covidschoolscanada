@@ -7,7 +7,7 @@ require(cowplot) # ggplot to gtable
 require(grid)	 # annotate page
 source("utils.R")
 
-dt <- "200914" #format(Sys.Date(),"%y%m%d")
+dt <- format(Sys.Date(),"%y%m%d")
 reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 
