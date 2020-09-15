@@ -2,7 +2,7 @@
 source("utils.R")
 
 args <- commandArgs(TRUE)
-dt <- args[1]
+dt <- args[1]#"200914" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
@@ -57,7 +57,7 @@ if (all.equal(colnames(x),colnames(rest_of_canada))!=TRUE) {
 }
 final <- rbind(rest_of_canada,x)
 
-if (any(final$Type_of_school == "Henry Wise Wood High School")) {
+if (length(grep("Henry Wise Wood High School", final$Type_of_school))>0) {
 	final$Type_of_school[which(final$Type_of_school== "Henry Wise Wood High School")] <- "High School"
 }
 final$Type_of_school <- tools::toTitleCase(trimws(final$Type_of_school))

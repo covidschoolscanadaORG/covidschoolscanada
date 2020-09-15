@@ -7,7 +7,7 @@ require(cowplot) # ggplot to gtable
 require(grid)	 # annotate page
 source("utils.R")
 
-dt <- format(Sys.Date(),"%y%m%d")
+dt <- "200914" #format(Sys.Date(),"%y%m%d")
 reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 
@@ -63,9 +63,8 @@ if(any(dat$Province %in% "Alberta")) {
 if(any(dat$Province %in% "Ontario")) {
 		dat$Province[which(dat$Province == "Ontario")] <- "ON"
 }
-if(any(dat$Province %in% "British Columbia")) {
-		dat$Province[which(dat$Province == "British Columbia")] <- "BC"
-}
+dat$Province[grep("British Columbia",dat$Province)] <- "BC"
+
 if(any(dat$Province %in% "Manitoba")) {
 		dat$Province[which(dat$Province == "Manitoba")] <- "MB"
 }
@@ -99,14 +98,14 @@ df2$Province <- factor(df2$Province)
 p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
 p <- p + geom_bar(stat="identity", fill="#FF6666")
 p <- p + geom_text(aes(label=df2$Count),position=position_dodge(width=0.9),
-		vjust=-0.25,size=16,col="#FF6666")
+		vjust=-0.25,size=24,col="#FF6666")
 p <- p + scale_x_discrete(drop=F)
 p <- p + xlab("") + ylab("")
 #p <- p + ylab("Number of schools")
-p <- p + ylim(0,max(df2$Count)*1.1)
+p <- p + ylim(0,max(df2$Count)*1.15)
 p <- p + school_th
 p <- p + theme(axis.ticks.x=element_blank(), 
-		axis.text.x=element_text(size=48,face="bold"),
+		axis.text.x=element_text(size=52,face="bold"),
 		axis.text.y=element_text(size=48))
 ttl <- "Schools with confirmed COVID-19 cases, by Province"
 g <- annotPage(p,"Province",plotTitle=ttl)
@@ -144,7 +143,7 @@ if (length(idx)>0) {
 }
 idx <- which(dat2$Type_of_school=="Secondary")
 if (any(idx)) {
-	dat2$Type_of_school[idx] <- "Middle School"
+	dat2$Type_of_school[idx] <- "High School"
 }
 
 message("* Type of school")
@@ -163,7 +162,7 @@ p2 <- p2 + guides(fill=guide_legend(title="Type of School"))
 ttl <- "Schools with confirmed COVID-19 cases, Type of school & Province"
 p2 <- p2 + school_th
 p2 <- p2 + theme(axis.text.x=element_text(size=30,face="bold"),
-				axis.text.y=element_text(size=30))
+				axis.text.y=element_text(size=50))
 p2 <- p2 + xlab("") + ylab("")
 g2 <- annotPage(p2,"Type of school",ttl)
 
@@ -172,9 +171,24 @@ message("* Staff/students")
 
 # trend with time
 mondays <- getAllMondays(2020)
+dat2 <- dat2[,c("Date","Province","Total.cases.to.date")]
+lv <- levels(dat2$Province)
+dat2$Province <- as.character(dat2$Province)
+idx <- grep(";", dat2$Total.cases.to.date)
+simple <- setdiff(1:nrow(dat2),idx)
+simple <- dat2[simple,]
+multi <- dat2[idx,]
+for (i in 1:length(multi)) {
+	x <- as.integer(trimws(unlist(strsplit(multi$Total.cases.to.date[i],";"))))
+	y <- trimws(unlist(strsplit(multi$Date[i],";")))
+	for (j in 1:length(x)) {
+		simple <- rbind(simple, c(y[j],multi$Province[i],x[j]))
+	}
+}
+dat2 <- simple
+dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$tstamp <- as.POSIXct(dat2$Date)
 dat2$Total.cases.to.date <- as.integer(dat2$Total.cases.to.date)
-colnames(cur) <- c("Province","Date","reports") 
 cur <- dat2 %>% group_by(Province) %>% arrange(tstamp) %>% mutate(cs = cumsum(Total.cases.to.date))
 cur <- as.data.frame(cur)
 cur$Province <- factor(cur$Province)
@@ -223,7 +237,7 @@ dev.off()
 
 message("\tplot 3")
 pdfFile <- sprintf("%s/school_type.pdf",inDir)
-pdf(pdfFile,width=16,height=8)
+pdf(pdfFile,width=24,height=8)
 tryCatch({
 	grid.newpage()
 	grid.draw(g2)
