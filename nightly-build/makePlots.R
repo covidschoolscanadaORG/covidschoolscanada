@@ -39,6 +39,8 @@ message(sprintf("Total cases = %i",nrow(dat)))
 message(sprintf("Total outbreaks = %i",
 	sum(dat$Total.outbreaks.to.date,na.rm=TRUE)))
 
+print(table(dat$Province,useNA="always"))
+
 if(any(dat$Province %in% "Newfoundland and Labrador")) {
 		dat$Province[which(dat$Province == "Newfoundland and Labrador")] <- "NL"
 }
@@ -83,6 +85,7 @@ dat$Province <- factor(dat$Province,
 
 # plot case by prov
 tbl <- table(dat$Province)
+print(tbl,useNA="always")
 ct <- as.numeric(tbl)
 nm <- names(tbl)
 df2 <- data.frame(Province=nm,Count=ct)
@@ -97,16 +100,17 @@ if (any(idx)) df2 <- df2[-idx,]
 df2$Province <- factor(df2$Province)
 p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
 p <- p + geom_bar(stat="identity", fill="#FF6666")
-p <- p + geom_text(aes(label=df2$Count),position=position_dodge(width=0.9),
-		vjust=-0.25,size=24,col="#FF6666")
+p <- p + geom_text(aes(label=df2$Count),
+		position=position_dodge(width=0.9),
+		vjust=-0.25,size=24,face="bold",col="#FF6666")
 p <- p + scale_x_discrete(drop=F)
 p <- p + xlab("") + ylab("")
 #p <- p + ylab("Number of schools")
 p <- p + ylim(0,max(df2$Count)*1.15)
 p <- p + school_th
 p <- p + theme(axis.ticks.x=element_blank(), 
-		axis.text.x=element_text(size=52,face="bold"),
-		axis.text.y=element_text(size=48))
+		axis.text.x=element_text(size=56,face="bold",colour="#550000"),
+		axis.text.y=element_text(size=56))
 ttl <- "Schools with confirmed COVID-19 cases, by Province"
 g <- annotPage(p,"Province",plotTitle=ttl)
 
@@ -161,7 +165,8 @@ p2 <- p2 + geom_bar(position="dodge")
 p2 <- p2 + guides(fill=guide_legend(title="Type of School"))
 ttl <- "Schools with confirmed COVID-19 cases, Type of school & Province"
 p2 <- p2 + school_th
-p2 <- p2 + theme(axis.text.x=element_text(size=30,face="bold"),
+p2 <- p2 + theme(axis.text.x=element_text(size=56,face="bold",
+		color="#550000"),
 				axis.text.y=element_text(size=50))
 p2 <- p2 + xlab("") + ylab("")
 g2 <- annotPage(p2,"Type of school",ttl)
@@ -188,6 +193,10 @@ for (i in 1:length(multi)) {
 dat2 <- simple
 dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$tstamp <- as.POSIXct(dat2$Date)
+# shared cases have NA dates
+if (any(is.na(dat2$Total.cases.to.date))) {
+	dat2$Total.cases.to.date[which(is.na(dat2$Total.cases.to.date))] <- 0
+}
 dat2$Total.cases.to.date <- as.integer(dat2$Total.cases.to.date)
 cur <- dat2 %>% group_by(Province) %>% arrange(tstamp) %>% mutate(cs = cumsum(Total.cases.to.date))
 cur <- as.data.frame(cur)
@@ -204,7 +213,7 @@ p3 <- p3 + ylab("")
 #		y=38,label="Mondays",colour="#ff6666")
 p3 <- p3 + school_th
 p3 <- p3 + theme(
-	axis.text.x = element_text(angle = 20,size=56,face="bold"),
+	axis.text.x = element_text(angle = 20,size=56,face="bold",color="#550000"),
 	axis.text.y = element_text(size=60),
 	legend.text=element_text(size=48,colour="#550000"),
 	legend.title=element_blank(),
@@ -231,7 +240,7 @@ dev.off()
 
 message("\tcumulative cases")
 pdfFile <- sprintf("%s/cumulative.pdf",inDir)
-pdf(pdfFile,width=40,height=8)
+pdf(pdfFile,width=48,height=8)
 	print(p3)
 dev.off()
 
