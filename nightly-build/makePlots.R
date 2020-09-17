@@ -1,5 +1,4 @@
 # tally graphs
-
 require(dplyr)
 require(ggplot2)
 require(gtable)  # annotate page
@@ -19,7 +18,8 @@ prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
 school_th <-  theme(
 	panel.background = element_blank(),
 	panel.grid.minor = element_blank(), 
-	panel.grid.major = element_line(color = "gray90", size = 2,linetype="dashed"),
+	panel.grid.major = element_line(color = "gray90", size = 2,
+		linetype="dashed"),
 	panel.grid.major.x = element_blank(),
 	axis.ticks = element_line(colour = 'gray50'),
 	axis.text.x = element_text(
@@ -30,6 +30,10 @@ school_th <-  theme(
 	panel.border = element_blank(),
 	plot.margin = unit(c(50,20,40,20),"pt")
 )
+
+yesterday <- format(Sys.Date()-1,"%y%m%d")
+yesterFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
+	inDir,yesterday)
 
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)

@@ -1,5 +1,11 @@
 # misc functions
 
+# num new values
+# 
+getDiff_Prov <- function(prov,val_today,val_yesterday) {
+
+}
+
 getTable_dec <- function(x) {
 	tb <- table(x)
 	nm <- names(tb)
