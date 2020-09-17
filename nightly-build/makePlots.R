@@ -19,7 +19,8 @@ prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
 school_th <-  theme(
 	panel.background = element_blank(),
 	panel.grid.minor = element_blank(), 
-	panel.grid.major = element_line(color = "gray90", size = 2,linetype="dashed"),
+	panel.grid.major = element_line(color = "gray90", 
+		size = 2,linetype="dashed"),
 	panel.grid.major.x = element_blank(),
 	axis.ticks = element_line(colour = 'gray50'),
 	axis.text.x = element_text(
@@ -108,7 +109,26 @@ p <- p + theme(axis.ticks.x=element_blank(),
 		axis.text.x=element_text(size=52,face="bold"),
 		axis.text.y=element_text(size=48))
 ttl <- "Schools with confirmed COVID-19 cases, by Province"
+plotList[["total_schools"]] <- p
 g <- annotPage(p,"Province",plotTitle=ttl)
+
+# total cases counts by Province
+browser()
+p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
+pcase <- pcase + geom_bar(stat="identity", fill="#FF6666")
+pcase <- pcase + geom_text(aes(label=df2$Count),position=position_dodge(width=0.9),
+		vjust=-0.25,size=24,col="#FF6666")
+pcase <- pcase + scale_x_discrete(drop=F)
+pcase <- pcase + xlab("") + ylab("")
+#pcase <- pcase + ylab("Number of schools")
+pcase <- pcase + ylim(0,max(df2$Count)*1.15)
+pcase <- pcase + school_th
+pcase <- pcase + theme(axis.ticks.x=element_blank(), 
+		axis.text.x=element_text(size=52,face="bold"),
+		axis.text.y=element_text(size=48))
+ttl <- "Schools with confirmed COVID-19 cases, by Province"
+g <- annotPage(p,"Province",plotTitle=ttl)
+
 
 # outbreaks by Province
 df2 <- aggregate(dat$Total.outbreaks.to.date,by=list(Province=dat$Province),
