@@ -12,7 +12,29 @@ dt=`date +%y%m%d`
 outDir=${outRoot}/export-${dt}
 mkdir -p $outDir
 
-./setup_datatable.sh $outDir $canadaMidFile CanadaMap
-./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec
-Rscript mergeQC.R $dt
+logfile=${outDir}/nightly-build.log
+touch $logfile
+
+echo "******************************************************"
+echo "Fetching Canada-wide map"
+echo "******************************************************"
+./setup_datatable.sh $outDir $canadaMidFile CanadaMap > $logfile
+
+echo "******************************************************"
+echo "Fetching Quebec map"
+echo "******************************************************"
+./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec >> $logfile
+
+echo "******************************************************"
+echo " Merging"
+echo "******************************************************"
+Rscript mergeQC.R $dt >> $logfile
+
+echo "******************************************************"
+echo " Making plots"
+echo "******************************************************"
+Rscript makePlots.R
+
+echo "Tasks completed."
+echo `date`
 

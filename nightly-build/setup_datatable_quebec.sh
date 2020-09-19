@@ -10,7 +10,7 @@ echo $mid
 echo $outName
 
 fetchUrl="https://www.google.com/maps/d/u/0/kml?mid=${mid}&forcekml=1"
-wget "$fetchUrl"
+wget -q "$fetchUrl"
 wait
 
 dummy="kml?mid=${mid}&forcekml=1"
