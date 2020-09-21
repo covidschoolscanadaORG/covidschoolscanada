@@ -5,61 +5,91 @@ args <- commandArgs(TRUE)
 dt <- args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
+# govt list excluded from CEQ but still on map as of
+# 200919
+CEQExcF <- "~/Canada_COVID_tracker/CEQ_excluded_list_200919.txt"
 inDir <- sprintf("%s-%s",rootDir,dt)
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
 statFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.stats.txt",
 	inDir,dt)
 
-message("* Reading Canada-wide")
 can <- read.delim(sprintf("%s/CanadaMap_clean3.kml-%s.txt",
 	inDir,dt),fileEncoding="UTF-8",sep="\t",h=T,as.is=T,
 	stringsAsFactors=FALSE)
 colnames(can) <- sub("^X.","",colnames(can))
 colnames(can) <- sub("\\.$","",colnames(can))
 rest_of_canada <- subset(can, Province != "Québec")
+can <- rest_of_canada
 
 message("* Provincial breakdown")
 print(table(can$Province,useNA="always"))
-can <- subset(can, Province=="Québec")
 
 message("* Reading Quebec")
 qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean.kml-%s.txt",
 	inDir,dt),sep="\t",h=T,as.is=T)
 colnames(qc)[2:3] <- c("Latitude","Longitude")
-qc$coord <- paste(qc$Latitude,qc$Longitude,sep="_")
-
-can <- rest_of_canada
-can$coord <- paste(can$Latitude,can$Longitude,sep="_")
+qc$Province <- "Québec"
+#excList <- read.delim(CEQExcF,sep="\t",h=FALSE,as.is=T)
+qc$institute.name <- gsub("Ecole","École",qc$institute.name)
+qc$institute.name <- sub("secondaire de la", "Secondaire",
+		qc$institute.name)
+###rmList <- c("École Brébeuf","1 Rue Saint Joseph","École des découvertes",
+###	"College Reine Marie","École Saint Nicephore"
+###)
+###idx <- which(qc$institute.name %in% rmList)
+###if (length(idx)>0) {
+###	qc <- qc[-idx,]
+###}
 
 message("")
 message("* Merging QC data")
-x <- merge(qc,can,by="coord",all.x=TRUE)
+
+new2 <- setdiff(colnames(can),colnames(qc))
+for (dont_have in new2) {
+	qc[,dont_have] <- NA
+}
+midx <- match(colnames(qc),colnames(can))
+if (all.equal(colnames(can)[midx],colnames(qc))!=TRUE) {
+	stop("MERGE TABLE FAIL - column name order")
+}
+can <- can[,midx]
+if (all.equal(colnames(can),colnames(qc))!=TRUE) {
+	stop("MERGE TABLE FAIL - column name order 2")
+}
+
+x <- rbind(can,qc)
 
 message("Table sizes")
-message(sprintf("\tCanada\t%i rows", nrow(can)))
-message(sprintf("\tCEQ\t%i rows", nrow(qc)))
-message(sprintf("\tMERGED\t%i rows",nrow(x)))
-message("-----")
-message("* Canada entries which didn't merge correctly")
-print(setdiff(can$institute.name, x$institute.name.y))
-message("-----")
+xqc <- subset(x,Province=="Québec")
+non <- subset(x,Province!="Québec")
+message(
+	sprintf("BEFORE:\t%i QC\t%i other",nrow(qc),nrow(can))
+	)
+message(
+	sprintf("MERGED:\t%i QC\t%i other",nrow(xqc),nrow(non))
+	)
 
-x <- x[,-which(colnames(x) %in% c("coord","Latitude.y","Longitude.y","institute.name.y"))]
-colnames(x) <- sub("\\.[xy]$","",colnames(x))
+if (nrow(x) != (nrow(can) + nrow(qc))) {
+	message("")
+	message("****************************************")
+	message("")
+	message("ERRORS WHILE MERGING QUEBEC DATA")
+	message("Resolve first")
+	message("")
+	message("****************************************")
+	stop("")
+}
+
 x$Lat2 <- x$Latitude
 x$Long2 <- x$Longitude
-x <- x[,-c(2:3)]
+x <- x[,-which(colnames(x)%in% c("Latitude","Longitude"))]
 colnames(x)[(ncol(x)-1):ncol(x)] <- c("Latitude","Longitude")
-x$Province <- "Québec"
+final <- x
+browser()
 
-if (all.equal(colnames(x),colnames(rest_of_canada))!=TRUE) {
-	print("when merging colnames not in right order")
-	browser()
-}
-final <- rbind(rest_of_canada,x)
-
-if (length(grep("Henry Wise Wood High School", final$Type_of_school))>0) {
+if (length(grep("Henry Wise Wood High School", 
+	final$Type_of_school))>0) {
 	final$Type_of_school[which(final$Type_of_school== "Henry Wise Wood High School")] <- "High School"
 }
 final$Type_of_school <- tools::toTitleCase(trimws(final$Type_of_school))
@@ -83,11 +113,11 @@ message("-------------------------------------")
 tmp <- aggregate(final$Total.outbreaks.to.date, by=list(final$Province),FUN=sum)
 tmp2 <- tmp[,2]; names(tmp2) <- tmp[,1]; print(tmp2[order(tmp2,decreasing=TRUE)])
 
-message("-------------------------------------")
-message("* Type of schools: CANADA")
-message("-------------------------------------")
+###message("-------------------------------------")
+###message("* Type of schools: CANADA")
+###message("-------------------------------------")
 final2 <- subset(final, Province != "Québec")
-print(getTable_dec(final$Type_of_school))
+###print(getTable_dec(final$Type_of_school))
 message("")
 message("-------------------------------------")
 message("* Case type breakdown (except Quebec)")
@@ -100,6 +130,13 @@ message("Staff (confirmed reports)")
 print(summary(final2$Total.staff.to.date,useNA="always"))
 message("")
 
+out <- final$Total.outbreaks.to.date
+out[which(out=="")] <- NA
+str2 <- rep("Outbreak status unknown",nrow(final))
+str2[which(out<1)] <- "Single/unlinked cases"
+str2[which(out>0.5)] <- "Declared outbreak"
+final$Outbreak.Status <- str2
+print(table(final$Outbreak.Status,useNA="always"))
 
 message("* Writing file")
 write.table(final,file=outFile,sep=",",col=TRUE,row=F,quote=T)

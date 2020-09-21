@@ -1,14 +1,18 @@
 # tally graphs
-require(dplyr)
-require(ggplot2)
-require(gtable)  # annotate page
-require(cowplot) # ggplot to gtable
-require(grid)	 # annotate page
+suppressMessages(require(dplyr))
+suppressMessages(require(ggplot2))
+suppressMessages(require(gtable))  # annotate page
+suppressMessages(require(cowplot)) # ggplot to gtable
+suppressMessages(require(grid))	 # annotate page
 source("utils.R")
 
 dt <- format(Sys.Date(),"%y%m%d")
 reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+
+logfile <- sprintf("%s/makePlotslog.txt",inDir)
+sink(logfile,split=TRUE)
+tryCatch({
 
 #prov <- c("Alberta","British Columbia","Manitoba","New Brunswick","Newfoundland and Labrador","Nova Scotia","Ontario","Prince Edward Island","Québec","Saskatchewan","Northwest Territories","Nunavut","Yukon")
 prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
@@ -31,13 +35,18 @@ school_th <-  theme(
 	plot.margin = unit(c(50,20,40,20),"pt")
 )
 
-yesterday <- format(Sys.Date()-1,"%y%m%d")
-yesterFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
-	inDir,yesterday)
+#yesterday <- format(Sys.Date()-1,"%y%m%d")
+#yesterFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
+#	inDir,yesterday)
 
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
+tryCatch({
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
+},error=function(ex){
+print(ex)
+},finally={
+})
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
 message(sprintf("Total outbreaks = %i",
@@ -106,36 +115,38 @@ p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
 p <- p + geom_bar(stat="identity", fill="#FF6666")
 p <- p + geom_text(aes(label=df2$Count),
 		position=position_dodge(width=0.9),
-		vjust=-0.25,size=24,face="bold",col="#FF6666")
+		vjust=-0.25,size=32,face="bold",col="#FF6666")
 p <- p + scale_x_discrete(drop=F)
 p <- p + xlab("") + ylab("")
 #p <- p + ylab("Number of schools")
-p <- p + ylim(0,max(df2$Count)*1.15)
+p <- p + ylim(0,max(df2$Count)*1.30)
 p <- p + school_th
 p <- p + theme(axis.ticks.x=element_blank(), 
 		axis.text.x=element_text(size=56,face="bold",colour="#550000"),
 		axis.text.y=element_text(size=56))
 ttl <- "Schools with confirmed COVID-19 cases, by Province"
-plotList[["total_schools"]] <- p
+
 g <- annotPage(p,"Province",plotTitle=ttl)
 
-# total cases counts by Province
-browser()
-p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
-pcase <- pcase + geom_bar(stat="identity", fill="#FF6666")
-pcase <- pcase + geom_text(aes(label=df2$Count),position=position_dodge(width=0.9),
-		vjust=-0.25,size=24,col="#FF6666")
-pcase <- pcase + scale_x_discrete(drop=F)
-pcase <- pcase + xlab("") + ylab("")
-#pcase <- pcase + ylab("Number of schools")
-pcase <- pcase + ylim(0,max(df2$Count)*1.15)
-pcase <- pcase + school_th
-pcase <- pcase + theme(axis.ticks.x=element_blank(), 
-		axis.text.x=element_text(size=52,face="bold"),
-		axis.text.y=element_text(size=48))
-ttl <- "Schools with confirmed COVID-19 cases, by Province"
-g <- annotPage(p,"Province",plotTitle=ttl)
-
+#### total case count by Province
+###dat$Total.cases.to.date <- as.integer(dat$Total.cases.to.date)
+###df2 <- aggregate(dat, 
+###	by=list(Province=dat$Province,Total.cases.to.date=dat$Total.cases.to.date),
+###	FUN=sum,na.rm=TRUE)
+###browser()
+###pcase <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
+###pcase <- pcase + geom_bar(stat="identity", fill="#FF6666")
+###pcase <- pcase + geom_text(aes(label=df2$Count),position=position_dodge(width=0.9),
+###    vjust=-0.25,size=24,col="#FF6666")
+###pcase <- pcase + scale_x_discrete(drop=F)
+###pcase <- pcase + xlab("") + ylab("")
+####pcase <- pcase + ylab("Number of schools")
+###pcase <- pcase + ylim(0,max(df2$Count)*1.15)
+###pcase <- pcase + school_th
+###pcase <- pcase + theme(axis.ticks.x=element_blank(),
+###    axis.text.x=element_text(size=52,face="bold"),
+###    axis.text.y=element_text(size=48))
+###ttl <- "Schools with confirmed COVID-19 cases, by Province"
 
 # outbreaks by Province
 df2 <- aggregate(dat$Total.outbreaks.to.date,by=list(Province=dat$Province),
@@ -160,6 +171,7 @@ g4 <- annotPage(p4,"Province",plotTitle=ttl)
 dat2 <- subset(dat, Province!="QC")
 idx <- which(dat2$Type_of_school=="")
 if (any(idx)) dat2$Type_of_school[idx] <- "?"
+dat2$Type_of_school <- trimws(dat2$Type_of_school)
 
 idx <- grep(";",dat2$Type_of_school)
 if (length(idx)>0) {
@@ -173,9 +185,21 @@ if (any(idx)) {
 	dat2$Type_of_school[idx] <- "High School"
 }
 
+
 message("* Type of school")
 dat2$Type_of_school[grep("&",dat2$Type_of_school)] <- "Mixed"
-dat2$Type_of_school <- factor(dat2$Type_of_school,levels=schoolLevels())
+
+# clean up manual data entry
+elem <- grep("Elementary",dat$Type_of_school)
+other <- c(grep("Middle",dat$Type_of_school),
+	grep("High",dat$Type_of_school),
+	grep("Secondary",dat$Type_of_school))
+idx <- setdiff(elem,other)
+print(table(dat2$Type_of_school[idx]))
+dat2$Type_of_school[idx] <- "Elementary"
+
+dat2$Type_of_school <- factor(dat2$Type_of_school,
+	levels=schoolLevels())
 if (any(is.na(dat2$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat2$Type_of_school))
@@ -185,12 +209,12 @@ if (any(is.na(dat2$Type_of_school))) {
 
 p2 <- ggplot(dat2, aes(Province,fill=Type_of_school))
 p2 <- p2 + geom_bar(position="dodge")
-p2 <- p2 + guides(fill=guide_legend(title="Type of School"))
+#p2 <- p2 + guides(fill=guide_legend(title="Type of School"))
 ttl <- "Schools with confirmed COVID-19 cases, Type of school & Province"
 p2 <- p2 + school_th
-p2 <- p2 + theme(axis.text.x=element_text(size=56,face="bold",
+p2 <- p2 + theme(axis.text.x=element_text(size=64,face="bold",
 		color="#550000"),
-				axis.text.y=element_text(size=50))
+				axis.text.y=element_text(size=56))
 p2 <- p2 + xlab("") + ylab("")
 g2 <- annotPage(p2,"Type of school",ttl)
 
@@ -215,7 +239,8 @@ for (i in 1:length(multi)) {
 }
 dat2 <- simple
 dat2$Province <- factor(dat2$Province, levels=lv)
-dat2$tstamp <- as.POSIXct(dat2$Date)
+blah <- trimws(dat2$Date)
+dat2$tstamp <- as.POSIXct(stringr::str_trim(dat2$Date))
 # shared cases have NA dates
 if (any(is.na(dat2$Total.cases.to.date))) {
 	dat2$Total.cases.to.date[which(is.na(dat2$Total.cases.to.date))] <- 0
@@ -225,6 +250,10 @@ cur <- dat2 %>% group_by(Province) %>% arrange(tstamp) %>% mutate(cs = cumsum(To
 cur <- as.data.frame(cur)
 cur$Province <- factor(cur$Province)
 cur <- aggregate(cur$cs,by=list(tstamp=cur$tstamp,Province=cur$Province),FUN=max)
+
+
+message("here?@")
+
 p3 <- ggplot(cur,aes(x=tstamp,y=x,colour=Province))
 p3 <- p3 + geom_line(lwd=5)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",linetype="dashed",
@@ -245,6 +274,8 @@ p3 <- p3 + theme(
 	legend.position = c(0.07,0.65)  # 0,0 -> bottom-left; 1,1 -> top,right
 )
 ttl <- "Schools with confirmed COVID-19 cases,cumulative"
+
+message("did i get here?")
 
 message("* Making pdf")
 message("\tplot 1")
@@ -279,4 +310,7 @@ tryCatch({
 	dev.off()
 })
 
-
+},error=function(ex){
+},finally={
+	sink(NULL)
+})
