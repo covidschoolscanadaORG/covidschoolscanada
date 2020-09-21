@@ -30,7 +30,7 @@ qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean.kml-%s.txt",
 	inDir,dt),sep="\t",h=T,as.is=T)
 colnames(qc)[2:3] <- c("Latitude","Longitude")
 qc$Province <- "Québec"
-excList <- read.delim(CEQExcF,sep="\t",h=FALSE,as.is=T)
+#excList <- read.delim(CEQExcF,sep="\t",h=FALSE,as.is=T)
 qc$institute.name <- gsub("Ecole","École",qc$institute.name)
 qc$institute.name <- sub("secondaire de la", "Secondaire",
 		qc$institute.name)

@@ -239,7 +239,8 @@ for (i in 1:length(multi)) {
 }
 dat2 <- simple
 dat2$Province <- factor(dat2$Province, levels=lv)
-dat2$tstamp <- as.POSIXct(dat2$Date)
+blah <- trimws(dat2$Date)
+dat2$tstamp <- as.POSIXct(stringr::str_trim(dat2$Date))
 # shared cases have NA dates
 if (any(is.na(dat2$Total.cases.to.date))) {
 	dat2$Total.cases.to.date[which(is.na(dat2$Total.cases.to.date))] <- 0
@@ -249,6 +250,10 @@ cur <- dat2 %>% group_by(Province) %>% arrange(tstamp) %>% mutate(cs = cumsum(To
 cur <- as.data.frame(cur)
 cur$Province <- factor(cur$Province)
 cur <- aggregate(cur$cs,by=list(tstamp=cur$tstamp,Province=cur$Province),FUN=max)
+
+
+message("here?@")
+
 p3 <- ggplot(cur,aes(x=tstamp,y=x,colour=Province))
 p3 <- p3 + geom_line(lwd=5)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",linetype="dashed",
@@ -269,6 +274,8 @@ p3 <- p3 + theme(
 	legend.position = c(0.07,0.65)  # 0,0 -> bottom-left; 1,1 -> top,right
 )
 ttl <- "Schools with confirmed COVID-19 cases,cumulative"
+
+message("did i get here?")
 
 message("* Making pdf")
 message("\tplot 1")
