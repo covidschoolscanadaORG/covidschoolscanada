@@ -30,11 +30,11 @@ echo " Merging"
 echo "******************************************************"
 Rscript mergeQC.R $dt >> $logfile
 
-echo "******************************************************"
-echo " Making plots"
-echo "******************************************************"
-Rscript makePlots.R
-
-echo "Tasks completed."
-echo `date`
-
+###echo "******************************************************"
+###echo " Making plots"
+###echo "******************************************************"
+###Rscript makePlots.R
+###
+###echo "Tasks completed."
+###echo `date`
+###
