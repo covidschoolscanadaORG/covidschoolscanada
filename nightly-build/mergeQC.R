@@ -2,7 +2,7 @@
 source("utils.R")
 
 args <- commandArgs(TRUE)
-dt <- args[1]
+dt <- args[1] #"200922" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 # govt list excluded from CEQ but still on map as of
@@ -86,18 +86,26 @@ x$Long2 <- x$Longitude
 x <- x[,-which(colnames(x)%in% c("Latitude","Longitude"))]
 colnames(x)[(ncol(x)-1):ncol(x)] <- c("Latitude","Longitude")
 final <- x
-browser()
+
+# clean text
+final$Total.cases.to.date <- stringr::str_trim(final$Total.cases.to.date)
+
+final$Total.outbreaks.to.date <- stringr::str_trim(final$Total.outbreaks.to.date)
+final$Total.outbreaks.to.date <- as.integer(final$Total.outbreaks.to.date)
+
 
 if (length(grep("Henry Wise Wood High School", 
 	final$Type_of_school))>0) {
 	final$Type_of_school[which(final$Type_of_school== "Henry Wise Wood High School")] <- "High School"
 }
+final$Type_of_school <- stringr::str_trim(final$Type_of_school)
 final$Type_of_school <- tools::toTitleCase(trimws(final$Type_of_school))
 
 message("")
 message("*** FINAL ***")
 message("")
 message(sprintf("# institutions = %i rows", nrow(final)))
+browser()
 message(sprintf("# outbreaks = %i rows", sum(final$Total.outbreaks.to.date,
 		na.omit=TRUE)))
 message("")
@@ -123,11 +131,11 @@ message("-------------------------------------")
 message("* Case type breakdown (except Quebec)")
 message("-------------------------------------")
 message("Total (confirmed reports)")
-print(summary(final2$Total.cases.to.date,useNA="always"))
+print(table(final2$Total.cases.to.date,useNA="always"))
 message("Students (confirmed reports)")
-print(summary(final2$Total.students.to.date,useNA="always"))
+print(table(final2$Total.students.to.date,useNA="always"))
 message("Staff (confirmed reports)")
-print(summary(final2$Total.staff.to.date,useNA="always"))
+print(table(final2$Total.staff.to.date,useNA="always"))
 message("")
 
 out <- final$Total.outbreaks.to.date
