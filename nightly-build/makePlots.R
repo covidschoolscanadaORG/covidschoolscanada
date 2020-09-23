@@ -17,7 +17,7 @@ sink(con,append=TRUE)
 sink(con,append=TRUE,type="message")
 tryCatch({
 
-#prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
+prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
 
 # ----------------------------
 # theme
@@ -40,7 +40,7 @@ school_th <-  theme(
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 tryCatch({
-dat <- read.delim(inFile,sep=",",h=T,as.is=T)
+	dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 },error=function(ex){
 print(ex)
 },finally={
@@ -59,6 +59,8 @@ ct <- as.numeric(tbl)
 nm <- names(tbl)
 df2 <- data.frame(Province=nm,Count=ct)
 df2 <- df2[order(df2$Count,decreasing=TRUE),]
+print(df2)
+
 
 message("*PLOT: Count by Province")
 idx <- which(df2$Count < 1)
@@ -109,6 +111,7 @@ g4 <- annotPage(p4,"Province",plotTitle=ttl)
 
 message("* PLOT: Type of school")
 dat2 <- subset(dat, Province!="QC")
+print(table(dat2$Type_of_school,useNA="always"))
 dat2$Type_of_school <- factor(dat2$Type_of_school,
 	levels=schoolLevels())
 if (any(is.na(dat2$Type_of_school))) {
@@ -130,10 +133,17 @@ g2 <- annotPage(p2,"Type of school",ttl)
 
 message("* PLOT: Cumulative cases")
 mondays <- getAllMondays(2020)
+
+idx1 <- grep(";",dat2$Date)
+idx2 <- grep(";",dat2$Total.cases.to.date)
+bad <- setdiff(idx1,idx2)
+if (length(bad)>0) browser()
+#dat2$Date[bad] <- sub("; 2020-09-21","",dat2$Date[bad])
 dat2 <- dat2[,c("Date","Province","Total.cases.to.date")]
 lv <- levels(dat2$Province)
 dat2$Province <- as.character(dat2$Province)
 dat2 <- flattenCases(dat2)
+dat2 <- na.omit(dat2)
 dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$tstamp <- as.POSIXct(dat2$Date)
 
@@ -173,6 +183,12 @@ p3 <- p3 + theme(
 ttl <- "Schools with confirmed COVID-19 cases,cumulative"
 
 message("* Making pdf")
+message("\tplot 1")
+pdfFile <- sprintf("%s/num-schools-by-prov.pdf",inDir)
+pdf(pdfFile,width=32,height=8)
+grid.newpage()
+grid.draw(g)
+dev.off()
 
 pdfFile <- sprintf("%s/numoutbreaks.pdf",inDir)
 pdf(pdfFile,width=8,height=8)
@@ -186,6 +202,7 @@ pdfFile <- sprintf("%s/cumulative.pdf",inDir)
 pdf(pdfFile,width=48,height=8)
 	print(p3)
 dev.off()
+
 
 message("\tplot 3")
 pdfFile <- sprintf("%s/school_type.pdf",inDir)
