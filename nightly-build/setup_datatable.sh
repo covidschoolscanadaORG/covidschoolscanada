@@ -13,7 +13,7 @@ mkdir -p ${outDir}/backup_old
 mv ${outDir}/*kml ${outDir}/backup_old/.
 
 fetchUrl="https://www.google.com/maps/d/u/0/kml?mid=${mid}&forcekml=1"
-wget -q "$fetchUrl"
+wget "$fetchUrl"
 wait
 
 dummy="kml?mid=${mid}&forcekml=1"
