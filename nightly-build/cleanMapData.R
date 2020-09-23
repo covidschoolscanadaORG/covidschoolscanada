@@ -90,7 +90,12 @@ message("------------------------------------")
 # missing
 idx <- union(which(is.na(dat$Type_of_school)),
 	which(dat$Type_of_school==""))
-if (any(idx)) dat$Type_of_school[idx] <- "?"
+if (any(idx)) dat$Type_of_school[idx] <- "TBA"
+idx <- which(dat$Type_of_school=="?")
+if (any(idx)) dat$Type_of_school[idx] <- "TBA"
+idx <- which(dat$Type_of_school=="HIgh School")
+if (any(idx)) dat$Type_of_school[idx] <- "High School"
+
 # mixed school
 idx <- grep(";",dat$Type_of_school)
 if (length(idx)>0) {
@@ -128,6 +133,7 @@ dat$School.board <- sub("Catholic SD", "CSD",dat$School.board)
 dat$School.board <- sub("Conseil scolaire", "CS",dat$School.board)
 dat$School.board <- sub("Board of Education", "BofEd",dat$School.board)
 dat$School.board <- sub(" PS$", " PSD",dat$School.board)
+dat$School.board <- sub(" PS$", " PSD",dat$School.board)
 dat$School.board <- sub(" PSB$", " PSD",dat$School.board)
 dat$School.board <- sub(" PSD$", " SD",dat$School.board)
 dat$School.board <- sub("CÉP de l'Est de l'Ontario", "CEPEO",
@@ -151,6 +157,8 @@ dat$School.board <- sub("Independent","Indep.",
 	dat$School.board)
 dat$School.board <- sub("Durham-Peel","Dufferin-Peel",
 	dat$School.board)
+dat$School.board <- sub("Grande Prairie SD", "Grand Prairie SD",dat$School.board)
+dat$School.board <- sub("TCDSB", "Toronto CDSB",dat$School.board)
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")
 if (any(idx)) dat$School.board[idx] <- "TBA"#"other/uncurated"
