@@ -19,7 +19,7 @@ can <- read.delim(sprintf("%s/CanadaMap_clean3.kml-%s.txt",
 	stringsAsFactors=FALSE)
 colnames(can) <- sub("^X.","",colnames(can))
 colnames(can) <- sub("\\.$","",colnames(can))
-rest_of_canada <- subset(can, Province != "Québec")
+rest_of_canada <- subset(can, Province != "QC")
 can <- rest_of_canada
 
 message("* Provincial breakdown")
@@ -31,9 +31,6 @@ qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean.kml-%s.txt",
 colnames(qc)[2:3] <- c("Latitude","Longitude")
 qc$Province <- "Québec"
 #excList <- read.delim(CEQExcF,sep="\t",h=FALSE,as.is=T)
-qc$institute.name <- gsub("Ecole","École",qc$institute.name)
-qc$institute.name <- sub("secondaire de la", "Secondaire",
-		qc$institute.name)
 ###rmList <- c("École Brébeuf","1 Rue Saint Joseph","École des découvertes",
 ###	"College Reine Marie","École Saint Nicephore"
 ###)
