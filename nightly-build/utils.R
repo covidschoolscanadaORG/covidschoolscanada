@@ -57,7 +57,7 @@ getAllMondays <- function(year) {
 schoolLevels <- function() {
 	return(c("Elementary","Middle School",
 		"Secondary","Mixed","Cegep",
-		"Field Office","?"))
+		"Field Office","TBA"))
 	}
 
 ### get background coordinates by plotting grob that serves as border of plot

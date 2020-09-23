@@ -32,9 +32,11 @@ school_th <-  theme(
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
-inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean_schoolboardadded.csv",
+inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
+
+dat$School.board <- sub(" Kootenay/Columbia"," Kootenay-Columbia",dat$School.board)
 
 dat$ct <- 1
 df2 <- aggregate(dat$ct, 

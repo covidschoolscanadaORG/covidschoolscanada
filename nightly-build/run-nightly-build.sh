@@ -18,12 +18,12 @@ touch $logfile
 echo "******************************************************"
 echo "Fetching Canada-wide map"
 echo "******************************************************"
-#./setup_datatable.sh $outDir $canadaMidFile CanadaMap > $logfile
+./setup_datatable.sh $outDir $canadaMidFile CanadaMap > $logfile
 
 echo "******************************************************"
 echo "Fetching Quebec map"
 echo "******************************************************"
-#./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec >> $logfile
+./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec >> $logfile
 
 echo "******************************************************" >> $logfile
 echo " Merging" >> $logfile
@@ -31,11 +31,11 @@ echo "******************************************************" >> $logfile
 Rscript mergeQC.R $dt >> $logfile
 Rscript cleanMapData.R >> $logfile
 
-###echo "******************************************************"
-###echo " Making plots"
-###echo "******************************************************"
-Rscript makePlots.R >> $logfile
-###
-###echo "Tasks completed."
-###echo `date`
-###
+######echo "******************************************************"
+######echo " Making plots"
+######echo "******************************************************"
+####Rscript makePlots.R >> $logfile
+######
+######echo "Tasks completed."
+######echo `date`
+######
