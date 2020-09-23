@@ -2,9 +2,6 @@
 
 # num new values
 # 
-getDiff_Prov <- function(prov,val_today,val_yesterday) {
-
-}
 
 getTable_dec <- function(x) {
 	tb <- table(x)
@@ -19,6 +16,37 @@ getProvTerr <- function() {
 	c("Alberta","British Columbia","Manitoba","New Brunswick","Newfoundland and Labrador","Nova Scotia","Ontario","Prince Edward Island","Québec","Saskatchewan","Northwest Territories","Nunavut","Yukon")
 }
 
+# convert each entry of 1;1; cases into one record per case
+flattenCases <- function(curd) {
+	message("Flattening cases...")
+	idx <- grep(";", curd$Total.cases.to.date)
+	simple <- setdiff(1:nrow(curd),idx)
+	simple 	<- curd[simple,]
+	multi 	<- curd[idx,]
+	multi$Total.cases.to.date <- stringr::str_trim(multi$Total.cases.to.date)
+	multi$Total.cases.to.date <- gsub(" ","",
+		multi$Total.cases.to.date)
+	
+	for (i in 1:length(multi)) {
+		x <- as.integer(unlist(
+			strsplit(multi$Total.cases.to.date[i],";")))
+		y <- trimws(unlist(strsplit(multi$Date[i],";")))
+		for (j in 1:length(x)) {
+			simple <- rbind(simple, 
+				c(y[j],multi$Province[i],x[j]))
+		}
+	}
+	curd$Date <- stringr::str_trim(curd$Date)
+
+	# shared cases have NA dates
+	if (any(is.na(curd$Total.cases.to.date))) {
+		curd$Total.cases.to.date[which(is.na(curd$Total.cases.to.date))] <- 0
+	}
+
+	curd <- simple
+	curd
+}
+
 
 getAllMondays <- function(year) {
     days <- as.POSIXlt(paste(year, 1:366, sep="-"), format="%Y-%j")
@@ -27,10 +55,9 @@ getAllMondays <- function(year) {
 }
 
 schoolLevels <- function() {
-	#return(c("Elementary","Middle School","High School", "Elementary & Middle",
-	#"Middle & High", "Elementary & Middle & High","Cegep","Field Office","?"))
-	return(c("Elementary","Middle School","High School","Mixed","Cegep",
-		"Field Office","?"))
+	return(c("Elementary","Middle School",
+		"Secondary","Mixed","Cegep",
+		"Field Office","TBA"))
 	}
 
 ### get background coordinates by plotting grob that serves as border of plot
@@ -47,6 +74,8 @@ getBG <- function(plotType) {
 		return(list(top=1,bottom=12,left=1,right=11))
 	} else if (plotType == "cumuCases") {
 		return(list(top=1,bottom=12,left=1,right=9))
+	} else if (plotType == "schoolboard") {
+		return(list(top=1,bottom=12,left=1,right=9))
 	}
 }
 
@@ -59,7 +88,7 @@ if (plotType=="Total_outbreaks") browser()
 	marg <- getBG(plotType)
 
 	# add fill border
-	rect <- grid::rectGrob(gp = grid::gpar(col = NA, fill = "grey90"))
+	rect <- grid::rectGrob(gp = grid::gpar(col = NA, fill = "red"))
 	# add to the left and right
 	for(i in c(1,marg$right)) 
 		g1 = gtable_add_grob(g1, rect, t = marg$top, b = marg$bottom, l=i)
@@ -74,13 +103,14 @@ if (plotType=="Total_outbreaks") browser()
 }
 
 addHeader <- function(g,plotType,plotTitle) {
-	left.title = textGrob(plotTitle, x = 0, y = 0.9, 
-		just = c("left", "top"), 
+	marg <- getBG(plotType)	
+	left.title = textGrob(plotTitle, x = 0.5, y = 0.65, 
+		just = c("center", "top"), 
 		gp = gpar(fontsize = 18, 
-		col =  "black"))
+		col =  "white"))
 	labs.title = gTree("LabsTitle", children = gList(left.title))
 
-	left.sub = textGrob("Canada COVID-19 School Tracker", x = 0, y = 0.9, 
+	left.sub = textGrob("", x = 0, y = 0.9, 
 		just = c("left", "top"), 
 		gp = gpar(fontsize = 14, col =  "black"))
 	labs.sub = gTree("LabsSub", children = gList(left.sub))
@@ -109,22 +139,23 @@ footerDate <- function() {
 addFooter <- function(g,plotType) {
 	marg <- getBG(plotType)
 	dt <- footerDate()
-	footerText <- sprintf("Source: COVID-19 School Tracker: %s \n@spaiglass ; masks4canada.org",dt)
+	footerText <- sprintf("@covidschoolscanada")
 	# left footer
 	left.foot = textGrob(footerText,
 		x = 0, y = 0.8, just = c("left", "top"), 
-		gp = gpar(fontsize = 11, col =  "black"))
+		gp = gpar(fontsize = 20, col =  "white"))
 	labs.foot = gTree("LabsFoot", children = gList(left.foot))
 
-	g <- gtable_add_grob(g, labs.foot, t=marg$bottom, l=2, r=marg$right)
+	g <- gtable_add_grob(g, labs.foot, 
+		t=marg$bottom, l=2, r=marg$right)
 
 	# right footer
 	right.foot = textGrob(format(Sys.Date(),"%y-%m-%d"),
-		x = 0, y = 0.8, just = c("right", "top"), 
-		gp = gpar(fontsize = 11, col =  "black"))
+		x = 0, y = 0.8, just = c("center", "top"), 
+		gp = gpar(fontsize = 24, col =  "white"))
 	labs.foot = gTree("LabsFoot", children = gList(right.foot))
-
-	g <- gtable_add_grob(g, labs.foot, t=marg$bottom, l=2, r=marg$right)
+	g <- gtable_add_grob(g, labs.foot, 
+		t=marg$bottom, l=2, r=marg$right)
 g
 }
 

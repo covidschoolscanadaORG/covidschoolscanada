@@ -25,16 +25,17 @@ echo "Fetching Quebec map"
 echo "******************************************************"
 ./setup_datatable_quebec.sh $outDir $QCMidFile COVIDEcolesQuebec >> $logfile
 
-echo "******************************************************"
-echo " Merging"
-echo "******************************************************"
+echo "******************************************************" >> $logfile
+echo " Merging" >> $logfile
+echo "******************************************************" >> $logfile
 Rscript mergeQC.R $dt >> $logfile
+Rscript cleanMapData.R >> $logfile
 
-###echo "******************************************************"
-###echo " Making plots"
-###echo "******************************************************"
-###Rscript makePlots.R
-###
-###echo "Tasks completed."
-###echo `date`
-###
+######echo "******************************************************"
+######echo " Making plots"
+######echo "******************************************************"
+####Rscript makePlots.R >> $logfile
+######
+######echo "Tasks completed."
+######echo `date`
+######
