@@ -4,7 +4,12 @@ suppressMessages(require(ggplot2))
 suppressMessages(require(gtable))  # annotate page
 suppressMessages(require(cowplot)) # ggplot to gtable
 suppressMessages(require(grid))	 # annotate page
+suppressMessages(require(showtext))
 source("utils.R")
+
+font_add_google(name = "Yantramanav", family = "yantramanav")
+font_add_google(name = "Source Sans Pro", family = "source-sans-pro")
+showtext_auto()
 
 provFull <- list(
 	BC="British Columbia",
@@ -15,19 +20,27 @@ provFull <- list(
 )
 
 school_th <-  theme(
-	panel.background = element_blank(),
+	panel.background = element_rect(fill="#ffefef"),
+	plot.background = element_rect(fill = "white"),
 	panel.grid.minor = element_blank(), 
-	panel.grid.major = element_line(color = "gray90", size = 1,
+	panel.grid.major = element_line(
+		color = "gray90", size = 0.5,
 		linetype="dashed"),
 	panel.grid.major.x = element_blank(),
-	axis.ticks = element_line(colour = 'gray50'),
+	axis.ticks = element_line(colour = "#68382c"),
+	axis.text = element_text(family="source-sans-pro",
+		colour="#68382C",size=14),
+	axis.title.y = element_text(family="source-sans-pro",
+		colour="#68382C",size=14),
 	axis.text.x = element_text(angle=90,
-		colour="#68382C",size=14,hjust=0.95,vjust=0.2),
-	axis.text.y = element_text(colour="#68382C", size = 18),
-	axis.title=element_text(size=20),
-	plot.title = element_text(hjust = 0.5,size=20),
-	panel.border = element_blank(),
-	plot.margin = unit(c(60,20,30,20),"pt")
+		hjust=1,vjust=0.2),
+	plot.title = element_text(family="yantramanav",
+		hjust = 0.5,size=20,colour="red",face="bold"),
+	plot.subtitle = element_text(family="yantramanav",hjust=0.5,
+		size=14,colour="red",face="bold"),
+	plot.caption = element_text(family="source-sans-pro",size=16,
+		face="bold",hjust=0,colour="red")
+	#plot.margin = unit(c(60,20,30,20),"pt"),
 )
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -56,16 +69,24 @@ for (prov in unique(df2$Province)) {
 	#p <- ggplot(data = df3, aes(x=reorder(Board,-ct),y=ct))
 	p <- ggplot(data = df3, aes(x=Board,y=ct))
 	p <- p + geom_bar(stat="identity",fill="#FF6666")
+	p <- p + labs(
+		title = sprintf("%s: CONFIRMED SCHOOLS, by SCHOOL BOARD",
+				prov),
+      	subtitle = "CANADA COVID-19 SCHOOL TRACKER",
+       	caption = sprintf("@covidschoolsCA | Updated %s ",
+					footerDate())
+	)
 	p <- p + school_th
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
-	p <- p + ylab("") + xlab("")
-	g <- annotPage(p,"schoolboard",
-		sprintf("%s: Schools with confirmed COVID-19, by school board",
-			provFull[[prov]]))
+	p <- p + ylab("Number of affected schools") + xlab("")
+	#g <- annotPage(p,"schoolboard",
+	#	sprintf("%s: Schools with confirmed COVID-19, by school board",
+	#		provFull[[prov]]))
 	pdf(sprintf("%s/%s_schoolboard.pdf",inDir,prov),
 		width=9,height=5.5)
-	grid.newpage()
-	grid.draw(g)
+	#grid.newpage()
+	#grid.draw(g)
+	print(p)
 	dev.off()
 }
 
