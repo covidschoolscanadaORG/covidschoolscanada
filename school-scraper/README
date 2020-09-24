@@ -1,0 +1,36 @@
+
+Background 
+------------------
+covidschoolscanadaORG/CovidSchoolScraper: downloads daily snapshots of school board tables.
+Target dir: covidschoolscanada Google drive / SchoolBoard_daily_snapshot
+
+Code and workflow
+------------------
+Code flow at present. Work very much in progress as of 2020-09-24:
+
+Master shell script: mergeMaster.sh
+Runs update collector for all school boards in turn. Currently hard-coded for debugging. 
+
+findNewRecords.R - compares current to last snapshot (1700 EDT daily) and
+collects records with differences.
+
+annotNewRecords.R - converts the new records into the csv format needed
+for the Google map. Uses Ontario school lat/long info to auto-populate
+those fields and adds entries for other fields found in Google map
+
+Note on args: Each school has two args associated with it:
+1) the folder name (no spaces) : e.g. "Toronto_DSB"
+2) name of school board: must match school board name in Ontario-wide
+list of lat/long
+
+Files required
+-----------------
+ONnew_sif_data_table_2018_2019prelim_en_august.tsv - list of Ontario schools,
+school boards, with lat/long info. ** Needs to be manually updated when
+there is a school name mismatch between it and the list from the DSB
+website. Process to do this is:
+1) open tsv in Google sheets
+2) make changes
+3) download as new tsv
+4) update link in annotNewRecords.R
+
