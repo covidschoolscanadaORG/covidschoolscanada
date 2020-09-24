@@ -24,8 +24,8 @@ prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
 school_th <-  theme(
 	panel.background = element_blank(),
 	panel.grid.minor = element_blank(), 
-	panel.grid.major = element_line(color = "gray90", size = 2,
-		linetype="dashed"),
+	panel.grid.major = element_line(color = "gray90", 
+		size = 2,linetype="dashed"),
 	panel.grid.major.x = element_blank(),
 	axis.ticks = element_line(colour = 'gray50'),
 	axis.text.x = element_text(
