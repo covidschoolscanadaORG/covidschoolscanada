@@ -159,6 +159,27 @@ dat$School.board <- sub("Durham-Peel","Dufferin-Peel",
 	dat$School.board)
 dat$School.board <- sub("Grande Prairie SD", "Grand Prairie SD",dat$School.board)
 dat$School.board <- sub("TCDSB", "Toronto CDSB",dat$School.board)
+dat$School.board <- sub(" Kootenay/Columbia"," Kootenay-Columbia",dat$School.board)
+dat$School.board <- sub("Ottawa-Carleton ", "OC", 
+	dat$School.board)
+dat$School.board <- sub("Ottawa CDSB", "OCSB", 
+	dat$School.board)
+dat$School.board <- sub("OCDSB", "Ottawa-Carleton DSB", 
+	dat$School.board)
+dat$School.board <- sub("OCSB", "Ottawa CDSB", 
+	dat$School.board)
+dat$School.board <- sub("WRDSB", "Waterloo Regional DSB", 
+	dat$School.board)
+dat$School.board <- sub("HCDSB", "Halton CDSB", 
+	dat$School.board)
+dat$School.board <- sub("RCCDSB", "Renfrew County CDSB",
+	dat$School.board)
+dat$School.board <- sub("SMCDSB", "Simcoe Muskoka CDSB",
+	dat$School.board)
+dat$School.board <- sub("DSB Niagara", "Niagara DSB",
+	dat$School.board)
+dat$School.board <- sub("YRDSB", "York Region DSB",
+	dat$School.board)
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")
 if (any(idx)) dat$School.board[idx] <- "TBA"#"other/uncurated"
