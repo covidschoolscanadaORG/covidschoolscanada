@@ -5,9 +5,6 @@ args <- commandArgs(TRUE)
 dt <- args[1] #"200922" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
-# govt list excluded from CEQ but still on map as of
-# 200919
-CEQExcF <- "~/Canada_COVID_tracker/CEQ_excluded_list_200919.txt"
 inDir <- sprintf("%s-%s",rootDir,dt)
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
@@ -22,22 +19,17 @@ colnames(can) <- sub("\\.$","",colnames(can))
 rest_of_canada <- subset(can, Province != "QC")
 can <- rest_of_canada
 
+
 message("* Provincial breakdown")
 print(table(can$Province,useNA="always"))
 
 message("* Reading Quebec")
-qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean.kml-%s.txt",
+qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean3.kml-%s.txt",
 	inDir,dt),sep="\t",h=T,as.is=T)
-colnames(qc)[2:3] <- c("Latitude","Longitude")
+colnames(qc)[4] <- "Outbreak.Status"
+qc$Total.outbreaks.to.date <- rep(0,nrow(qc))
+qc$Total.outbreaks.to.date[grep("outbreak",qc[,4])]<- 1
 qc$Province <- "Québec"
-#excList <- read.delim(CEQExcF,sep="\t",h=FALSE,as.is=T)
-###rmList <- c("École Brébeuf","1 Rue Saint Joseph","École des découvertes",
-###	"College Reine Marie","École Saint Nicephore"
-###)
-###idx <- which(qc$institute.name %in% rmList)
-###if (length(idx)>0) {
-###	qc <- qc[-idx,]
-###}
 
 message("")
 message("* Merging QC data")
@@ -102,7 +94,6 @@ message("")
 message("*** FINAL ***")
 message("")
 message(sprintf("# institutions = %i rows", nrow(final)))
-browser()
 message(sprintf("# outbreaks = %i rows", sum(final$Total.outbreaks.to.date,
 		na.omit=TRUE)))
 message("")

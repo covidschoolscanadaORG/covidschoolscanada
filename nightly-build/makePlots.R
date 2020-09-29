@@ -30,6 +30,7 @@ reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 
 logfile <- sprintf("%s/makePlotslog.txt",inDir)
+if (file.exists(logfile)) unlink(logfile)
 con <- file(logfile)
 #sink(con,append=TRUE)
 #sink(con,append=TRUE,type="message")
@@ -256,7 +257,7 @@ top <-  textGrob(
 	fontfamily="yantramanav",fill="white"
 	))
 rt <-  textGrob(
-	sprintf("%i", total_schools),
+	sprintf("%s", prettyNum(total_schools,big.mark=",")),
 	gp = gpar(fontsize = 80,col="#68382C",fontface=2,
 	fontfamily="yantramanav",fill="white"
 	))
@@ -266,7 +267,7 @@ rt3 <-  textGrob(
 	fontfamily="yantramanav",fill="white"
 	))
 rt2 <-  textGrob(
-	sprintf("%i", total_outbreaks),
+	sprintf("%s", prettyNum(total_outbreaks,big.mark=",")),
 	gp = gpar(fontsize = 80,col="red",fontface=2,
 	fontfamily="yantramanav",fill="white"
 	))
@@ -306,6 +307,6 @@ print("done")
 
 },error=function(ex){
 },finally={
-#	sink(NULL)
-#	sink(NULL)
+	sink(NULL)
+	sink(NULL)
 })

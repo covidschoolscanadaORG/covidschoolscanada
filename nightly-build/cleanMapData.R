@@ -126,6 +126,8 @@ print(table(dat$Type_of_school,useNA="always"))
 message("------------------------------------")
 message("* Cleaning School board")
 message("------------------------------------")
+dat$School.board <- sub("District School Board", 
+	"DSB",dat$School.board)
 dat$School.board <- sub("Catholic DSB", "CDSB",dat$School.board)
 dat$School.board <- sub("School Division", "SD",dat$School.board)
 dat$School.board <- sub("School District", "SD",dat$School.board)
@@ -177,6 +179,8 @@ dat$School.board <- sub("RCCDSB", "Renfrew County CDSB",
 dat$School.board <- sub("SMCDSB", "Simcoe Muskoka CDSB",
 	dat$School.board)
 dat$School.board <- sub("DSB Niagara", "Niagara DSB",
+	dat$School.board)
+dat$School.board <- sub("York Regional DSB", "York Region DSB",
 	dat$School.board)
 dat$School.board <- sub("YRDSB", "York Region DSB",
 	dat$School.board)
