@@ -179,6 +179,7 @@ cur$Province <- factor(cur$Province)
 cur <- aggregate(cur$cs,
 	by=list(tstamp=cur$tstamp,Province=cur$Province),
 	FUN=max)
+
 cur2 <- cur
 p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
 p3 <- p3 + geom_line(lwd=2)#geom_p#oint() + geom_line()

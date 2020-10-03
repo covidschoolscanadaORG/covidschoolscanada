@@ -116,8 +116,9 @@ dat$Type_of_school <- factor(dat$Type_of_school,
 if (any(is.na(dat$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat$Type_of_school))
-	browser()
 	print(dat[idx,])
+	stop("")
+	browser()
 }
 print(table(dat$Type_of_school,useNA="always"))
 
@@ -184,6 +185,20 @@ dat$School.board <- sub("York Regional DSB", "York Region DSB",
 	dat$School.board)
 dat$School.board <- sub("YRDSB", "York Region DSB",
 	dat$School.board)
+dat$School.board <- sub("HDSB", "Halton DSB",
+	dat$School.board)
+dat$School.board <- sub("DSB of Niagara", "Niagara DSB",
+	dat$School.board)
+dat$School.board <- sub("Division Scolaire Franco-Manitobaine", "Franco-Manitobaine SD",
+	dat$School.board)
+dat$School.board <- sub("Franco-manitobian SD", "Franco-Manitobaine SD",
+	dat$School.board)
+idx <- which(dat$School.board == "Thames Valley")
+if (any(idx)) 
+	dat$School.board[idx] <- "Thames Valley DSB"
+dat$School.board <- sub("Kawartha Pine DSB", "Kawartha Pine Ridge DSB",
+	dat$School.board)
+
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")
 if (any(idx)) dat$School.board[idx] <- "TBA"#"other/uncurated"
@@ -204,6 +219,15 @@ for (prov in unique(df2$Province)) {
 	print(df3)
 }
 dat <- dat[,-which(colnames(dat)=="ct")]
+
+finalorder <- c("institute.name","Total.cases.to.date",
+	"Total.students.to.date","Total.staff.to.date",
+	"Date","Article",
+	"Total.outbreaks.to.date","Outbreak.dates","Outbreak.Status",
+	"Type_of_school","School.board",
+	"City","Province",
+	"Latitude","Longitude")
+dat  <- dat[,finalorder]
 
 message("* Writing output file")
 write.table(dat,file=outFile,sep=",",
