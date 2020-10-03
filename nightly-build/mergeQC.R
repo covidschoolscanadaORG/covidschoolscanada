@@ -16,7 +16,8 @@ can <- read.delim(sprintf("%s/CanadaMap_clean3.kml-%s.txt",
 	stringsAsFactors=FALSE)
 colnames(can) <- sub("^X.","",colnames(can))
 colnames(can) <- sub("\\.$","",colnames(can))
-rest_of_canada <- subset(can, Province != "QC")
+
+rest_of_canada <- subset(can, !Province %in% c( "QC","Québec"))
 can <- rest_of_canada
 
 
@@ -29,7 +30,7 @@ qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean3.kml-%s.txt",
 colnames(qc)[4] <- "Outbreak.Status"
 qc$Total.outbreaks.to.date <- rep(0,nrow(qc))
 qc$Total.outbreaks.to.date[grep("outbreak",qc[,4])]<- 1
-qc$Province <- "Québec"
+qc$Province <- "QC"
 
 message("")
 message("* Merging QC data")
@@ -114,17 +115,17 @@ tmp2 <- tmp[,2]; names(tmp2) <- tmp[,1]; print(tmp2[order(tmp2,decreasing=TRUE)]
 ###message("-------------------------------------")
 final2 <- subset(final, Province != "Québec")
 ###print(getTable_dec(final$Type_of_school))
-message("")
-message("-------------------------------------")
-message("* Case type breakdown (except Quebec)")
-message("-------------------------------------")
-message("Total (confirmed reports)")
-print(table(final2$Total.cases.to.date,useNA="always"))
-message("Students (confirmed reports)")
-print(table(final2$Total.students.to.date,useNA="always"))
-message("Staff (confirmed reports)")
-print(table(final2$Total.staff.to.date,useNA="always"))
-message("")
+###message("")
+###message("-------------------------------------")
+###message("* Case type breakdown (except Quebec)")
+###message("-------------------------------------")
+###message("Total (confirmed reports)")
+###print(table(final2$Total.cases.to.date,useNA="always"))
+###message("Students (confirmed reports)")
+###print(table(final2$Total.students.to.date,useNA="always"))
+###message("Staff (confirmed reports)")
+###print(table(final2$Total.staff.to.date,useNA="always"))
+###message("")
 
 out <- final$Total.outbreaks.to.date
 out[which(out=="")] <- NA
