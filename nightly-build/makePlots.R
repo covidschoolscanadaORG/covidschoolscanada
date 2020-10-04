@@ -8,6 +8,7 @@ options(warn=2)
 source("utils.R")
 
 dt <- format(Sys.Date(),"%y%m%d")
+tweetRes[["date"]] <- Sys.Date()
 reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 
@@ -18,6 +19,9 @@ sink(con,append=TRUE,type="message")
 tryCatch({
 
 prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
+
+# results to be compiled into tweet
+tweetRes <- list()
 
 # ----------------------------
 # theme
@@ -47,10 +51,13 @@ print(ex)
 })
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
-message(sprintf("Total outbreaks = %i",
-	sum(dat$Total.outbreaks.to.date,na.rm=TRUE)))
+ob <- sum(dat$Total.outbreaks.to.date,na.rm=TRUE)
 dat$Province <- factor(dat$Province, 
 	level=prov) 
+message(sprintf("Total outbreaks = %i", ob))
+
+tweetRes[["total_school"]] <- nrow(dat)
+tweetRes[["total_outbreak"]] <- ob
 
 # plot case by prov
 tbl <- table(dat$Province)
@@ -60,6 +67,8 @@ nm <- names(tbl)
 df2 <- data.frame(Province=nm,Count=ct)
 df2 <- df2[order(df2$Count,decreasing=TRUE),]
 print(df2)
+
+tweetRes[["num_school"]] <- df2
 
 
 message("*PLOT: Count by Province")
@@ -89,6 +98,7 @@ df2 <- aggregate(dat$Total.outbreaks.to.date,
 	FUN=sum,na.rm=TRUE)
 df2 <- df2[order(df2$x,decreasing=TRUE),]
 colnames(df2)[2] <- "Outbreaks"
+tweetRes[["outbreaks"]] <- df2
 message("Total outbreaks, by Province")
 p4 <- ggplot(data=df2,aes(
 	x=reorder(Province,-Outbreaks),y=Outbreaks)
