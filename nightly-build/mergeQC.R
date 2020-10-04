@@ -5,9 +5,6 @@ args <- commandArgs(TRUE)
 dt <- args[1] #"200922" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
-# govt list excluded from CEQ but still on map as of
-# 200919
-CEQExcF <- "~/Canada_COVID_tracker/CEQ_excluded_list_200919.txt"
 inDir <- sprintf("%s-%s",rootDir,dt)
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
@@ -19,25 +16,21 @@ can <- read.delim(sprintf("%s/CanadaMap_clean3.kml-%s.txt",
 	stringsAsFactors=FALSE)
 colnames(can) <- sub("^X.","",colnames(can))
 colnames(can) <- sub("\\.$","",colnames(can))
-rest_of_canada <- subset(can, Province != "QC")
+
+rest_of_canada <- subset(can, !Province %in% c( "QC","Québec"))
 can <- rest_of_canada
+
 
 message("* Provincial breakdown")
 print(table(can$Province,useNA="always"))
 
 message("* Reading Quebec")
-qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean.kml-%s.txt",
+qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean3.kml-%s.txt",
 	inDir,dt),sep="\t",h=T,as.is=T)
-colnames(qc)[2:3] <- c("Latitude","Longitude")
-qc$Province <- "Québec"
-#excList <- read.delim(CEQExcF,sep="\t",h=FALSE,as.is=T)
-###rmList <- c("École Brébeuf","1 Rue Saint Joseph","École des découvertes",
-###	"College Reine Marie","École Saint Nicephore"
-###)
-###idx <- which(qc$institute.name %in% rmList)
-###if (length(idx)>0) {
-###	qc <- qc[-idx,]
-###}
+colnames(qc)[4] <- "Outbreak.Status"
+qc$Total.outbreaks.to.date <- rep(0,nrow(qc))
+qc$Total.outbreaks.to.date[grep("outbreak",qc[,4])]<- 1
+qc$Province <- "QC"
 
 message("")
 message("* Merging QC data")
@@ -102,7 +95,6 @@ message("")
 message("*** FINAL ***")
 message("")
 message(sprintf("# institutions = %i rows", nrow(final)))
-browser()
 message(sprintf("# outbreaks = %i rows", sum(final$Total.outbreaks.to.date,
 		na.omit=TRUE)))
 message("")
@@ -123,17 +115,17 @@ tmp2 <- tmp[,2]; names(tmp2) <- tmp[,1]; print(tmp2[order(tmp2,decreasing=TRUE)]
 ###message("-------------------------------------")
 final2 <- subset(final, Province != "Québec")
 ###print(getTable_dec(final$Type_of_school))
-message("")
-message("-------------------------------------")
-message("* Case type breakdown (except Quebec)")
-message("-------------------------------------")
-message("Total (confirmed reports)")
-print(table(final2$Total.cases.to.date,useNA="always"))
-message("Students (confirmed reports)")
-print(table(final2$Total.students.to.date,useNA="always"))
-message("Staff (confirmed reports)")
-print(table(final2$Total.staff.to.date,useNA="always"))
-message("")
+###message("")
+###message("-------------------------------------")
+###message("* Case type breakdown (except Quebec)")
+###message("-------------------------------------")
+###message("Total (confirmed reports)")
+###print(table(final2$Total.cases.to.date,useNA="always"))
+###message("Students (confirmed reports)")
+###print(table(final2$Total.students.to.date,useNA="always"))
+###message("Staff (confirmed reports)")
+###print(table(final2$Total.staff.to.date,useNA="always"))
+###message("")
 
 out <- final$Total.outbreaks.to.date
 out[which(out=="")] <- NA

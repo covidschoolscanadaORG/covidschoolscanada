@@ -116,8 +116,9 @@ dat$Type_of_school <- factor(dat$Type_of_school,
 if (any(is.na(dat$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat$Type_of_school))
-	browser()
 	print(dat[idx,])
+	stop("")
+	browser()
 }
 print(table(dat$Type_of_school,useNA="always"))
 
@@ -126,6 +127,8 @@ print(table(dat$Type_of_school,useNA="always"))
 message("------------------------------------")
 message("* Cleaning School board")
 message("------------------------------------")
+dat$School.board <- sub("District School Board", 
+	"DSB",dat$School.board)
 dat$School.board <- sub("Catholic DSB", "CDSB",dat$School.board)
 dat$School.board <- sub("School Division", "SD",dat$School.board)
 dat$School.board <- sub("School District", "SD",dat$School.board)
@@ -159,6 +162,43 @@ dat$School.board <- sub("Durham-Peel","Dufferin-Peel",
 	dat$School.board)
 dat$School.board <- sub("Grande Prairie SD", "Grand Prairie SD",dat$School.board)
 dat$School.board <- sub("TCDSB", "Toronto CDSB",dat$School.board)
+dat$School.board <- sub(" Kootenay/Columbia"," Kootenay-Columbia",dat$School.board)
+dat$School.board <- sub("Ottawa-Carleton ", "OC", 
+	dat$School.board)
+dat$School.board <- sub("Ottawa CDSB", "OCSB", 
+	dat$School.board)
+dat$School.board <- sub("OCDSB", "Ottawa-Carleton DSB", 
+	dat$School.board)
+dat$School.board <- sub("OCSB", "Ottawa CDSB", 
+	dat$School.board)
+dat$School.board <- sub("WRDSB", "Waterloo Regional DSB", 
+	dat$School.board)
+dat$School.board <- sub("HCDSB", "Halton CDSB", 
+	dat$School.board)
+dat$School.board <- sub("RCCDSB", "Renfrew County CDSB",
+	dat$School.board)
+dat$School.board <- sub("SMCDSB", "Simcoe Muskoka CDSB",
+	dat$School.board)
+dat$School.board <- sub("DSB Niagara", "Niagara DSB",
+	dat$School.board)
+dat$School.board <- sub("York Regional DSB", "York Region DSB",
+	dat$School.board)
+dat$School.board <- sub("YRDSB", "York Region DSB",
+	dat$School.board)
+dat$School.board <- sub("HDSB", "Halton DSB",
+	dat$School.board)
+dat$School.board <- sub("DSB of Niagara", "Niagara DSB",
+	dat$School.board)
+dat$School.board <- sub("Division Scolaire Franco-Manitobaine", "Franco-Manitobaine SD",
+	dat$School.board)
+dat$School.board <- sub("Franco-manitobian SD", "Franco-Manitobaine SD",
+	dat$School.board)
+idx <- which(dat$School.board == "Thames Valley")
+if (any(idx)) 
+	dat$School.board[idx] <- "Thames Valley DSB"
+dat$School.board <- sub("Kawartha Pine DSB", "Kawartha Pine Ridge DSB",
+	dat$School.board)
+
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")
 if (any(idx)) dat$School.board[idx] <- "TBA"#"other/uncurated"
@@ -179,6 +219,15 @@ for (prov in unique(df2$Province)) {
 	print(df3)
 }
 dat <- dat[,-which(colnames(dat)=="ct")]
+
+finalorder <- c("institute.name","Total.cases.to.date",
+	"Total.students.to.date","Total.staff.to.date",
+	"Date","Article",
+	"Total.outbreaks.to.date","Outbreak.dates","Outbreak.Status",
+	"Type_of_school","School.board",
+	"City","Province",
+	"Latitude","Longitude")
+dat  <- dat[,finalorder]
 
 message("* Writing output file")
 write.table(dat,file=outFile,sep=",",

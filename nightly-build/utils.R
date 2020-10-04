@@ -132,7 +132,7 @@ footerDate <- function() {
 	t2 <- substr(t2,1,regexpr(":",t2)-1)
 	t3 <- format(Sys.time(), "%X")
 	t3 <- substr(t3,nchar(t3)-1,nchar(t3))
-	t4 <- sprintf("%s,%s %s",t1,t2,t3)
+	t4 <- sprintf("%s %s:00 %s EDT",t1,t2,t3)
 	t4
 }
 
