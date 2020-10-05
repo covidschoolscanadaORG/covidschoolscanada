@@ -2,7 +2,7 @@
 source("utils.R")
 
 args <- commandArgs(TRUE)
-dt <- args[1] #"200922" #args[1]
+dt <- args[1] #"201004" #"200922" #args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
@@ -23,6 +23,7 @@ can <- rest_of_canada
 
 message("* Provincial breakdown")
 print(table(can$Province,useNA="always"))
+can$Province <- sub("Ontario","ON",can$Province)
 
 message("* Reading Quebec")
 qc <- read.delim(sprintf("%s/COVIDEcolesQuebec_clean3.kml-%s.txt",
@@ -51,8 +52,8 @@ if (all.equal(colnames(can),colnames(qc))!=TRUE) {
 x <- rbind(can,qc)
 
 message("Table sizes")
-xqc <- subset(x,Province=="Québec")
-non <- subset(x,Province!="Québec")
+xqc <- subset(x,Province=="QC")
+non <- subset(x,Province!="QC")
 message(
 	sprintf("BEFORE:\t%i QC\t%i other",nrow(qc),nrow(can))
 	)

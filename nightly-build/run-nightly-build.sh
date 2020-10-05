@@ -30,7 +30,7 @@ echo " Merging" >> $logfile
 echo "******************************************************" >> $logfile
 Rscript mergeQC.R $dt >> $logfile
 Rscript cleanMapData.R >> $logfile
-###
+
 #########echo "******************************************************"
 #########echo " Making plots"
 #########echo "******************************************************"

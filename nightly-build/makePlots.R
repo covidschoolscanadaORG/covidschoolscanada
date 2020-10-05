@@ -10,6 +10,7 @@ suppressMessages(require(gridExtra))	 # annotate page
 suppressMessages(require(showtext))
 options(warn=2)
 source("utils.R")
+source("genTweets.R")
 
 # add Google fonts
 font_add_google(name = "Yantramanav", family = "yantramanav")
@@ -26,6 +27,10 @@ provFull <- list(
 )
 
 dt <- format(Sys.Date(),"%y%m%d")
+
+# results to be compiled into tweet
+tweetRes <- list()
+
 tweetRes[["date"]] <- Sys.Date()
 reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
@@ -39,8 +44,6 @@ tryCatch({
 
 prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
 
-# results to be compiled into tweet
-tweetRes <- list()
 
 # ----------------------------
 # theme
@@ -307,6 +310,9 @@ grid.arrange(
     	x = 0.05 
   )
 )
+message("Making tweets")
+genTweet(inDir,tweetRes)
+
 print("done")
 },error=function(ex){
 	print(ex)

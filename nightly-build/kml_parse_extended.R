@@ -1,7 +1,7 @@
 require(XML)
 
 args <- commandArgs(TRUE)
-inFile <- args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
+inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-201004/CanadaMap_clean3.kml"# args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
 print(inFile)
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -48,7 +48,7 @@ message("* Adding other fields")
 field_names <- c()
 for (k in 1:length(schools)) {
 #print(k)
-#if (k==9) browser()
+#if (k==617) browser()
 	other[[k]] <- t(as.matrix(parseRec(schools[[k]])))
 	
 }

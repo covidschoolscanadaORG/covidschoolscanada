@@ -1,4 +1,3 @@
-rm(list=ls())
 
 require(emo)
 
@@ -7,7 +6,7 @@ t1 <- toupper(format(Sys.time(), "%d %b %Y"))
 t2 <- format(Sys.time(), "%X")
 t2 <- substr(t2,1,regexpr(":",t2)-1)
 t3 <- format(Sys.time(), "%X")
-t3 <- substr(t3,nchar(t3)-1,nchar(t3))
+t3 <- substr(t3,nchar(t3)-7,nchar(t3)-6)
 t4 <- toupper(format(Sys.time(),"%p"))
 t5 <- sprintf("%s, %s:%s %s",t1,t2,t3,t4)
 t5
@@ -56,6 +55,7 @@ tot$PRIVATE[which(is.na(tot$PRIVATE))] <- 0
 tot$TOTAL <- tot$PUBLIC + tot$PRIVATE
 
 # combine with daily school count
+df$Province <- as.character(df$Province)
 x <- merge(x=df,y=tot,by="Province")
 x$PUBLIC_PCT <- (x$Count/x$PUBLIC)*100
 x$TOTAL_PCT <- (x$Count/x$TOTAL)*100
@@ -108,6 +108,7 @@ testIt <- function() {
 #' @param res (list) data with num schools, outbreaks etc
 genTweet <- function(outDir,res) {
 	dt <- format(res$date,"%y%m%d")
+	pr <- function(i) prettyNum(i,big.mark=",")
 	provFull <- list(
 		BC="British Columbia",
 		ON="Ontario",
@@ -131,11 +132,11 @@ genTweet <- function(outDir,res) {
 			file=twf)
 
 		cat(sprintf("%s\n",tweetDate()),file=twf)
-		cat(sprintf("%s %i schools\n",emo::ji("school"),
-			res$total_school),
+		cat(sprintf("%s %s schools\n",emo::ji("school"),
+			pr(res$total_school)),
 			file=twf)
-		cat(sprintf("%s %i outbreaks\n",emo::ji("rotating_light"),
-			res$total_outbreak),
+		cat(sprintf("%s %s outbreaks\n",emo::ji("rotating_light"),
+			pr(res$total_outbreak)),
 			file=twf)
 		cat("\n",file=twf)
 
@@ -153,7 +154,6 @@ genTweet <- function(outDir,res) {
 		# -------------------------
 		# TWEET: % Schools
 		# -------------------------
-		pr <- function(i) prettyNum(i,big.mark=",")
 	
 		sch <- getSchoolTotals(res$num_school)
 		cat(sprintf("%s SCHOOLS, by %% %s\n",
@@ -207,7 +207,7 @@ genTweet <- function(outDir,res) {
 		# TWEET: MAP INFO
 		# -------------------------
 		cat("Points show COVID-19 cases and outbreaks. Reports first confirmed, then added - never any personal info.\n",file=twf)
-		cat(sprintf("%s Google Map: %s", 
+		cat(sprintf("%s Google Map: %s\n", 
 			emo::ji("round_pushpin"), mapLink()),file=twf)
 		cat("Yellow:   1+ unlinked case\n",file=twf)
 		cat("Orange: Declared outbreak (PHU; 2+ cases <14 days, linked)\n",
@@ -224,7 +224,7 @@ genTweet <- function(outDir,res) {
 			file=twf)
 		cat("We don't mention your email address in the posted case (anonymous tip), and we do NOT sell your email address.\n\n",
 			file=twf)
-		cat("We just want 100%% transparency in our schools.\n",
+		cat("We just want 100% transparency in our schools.\n",
 			file=twf)
 
 		cat(sprintf("\n/%i\n", tweet_ct),file=twf)
