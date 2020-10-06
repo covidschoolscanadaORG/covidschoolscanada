@@ -12,6 +12,8 @@ inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 
+if (file.exists(outFile)) unlink(outFile)
+
 tryCatch({
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 },error=function(ex){
@@ -76,6 +78,12 @@ if(any(dat$Province %in% "Nunavut")) {
 }
 if(any(dat$Province %in% "Yukon")) {
 		dat$Province[which(dat$Province == "Nova Scotia")] <- "YT"
+}
+
+if (any(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB",
+	"NS","NL")) || any(is.na(dat$Province))) {
+	print(table(dat$Province,useNA="always"))
+	stop("Strange Province. Take a look")
 }
 
 dat$Province <- factor(dat$Province, 
@@ -197,6 +205,9 @@ idx <- which(dat$School.board == "Thames Valley")
 if (any(idx)) 
 	dat$School.board[idx] <- "Thames Valley DSB"
 dat$School.board <- sub("Kawartha Pine DSB", "Kawartha Pine Ridge DSB",
+	dat$School.board)
+dat$School.board <- sub("SD 59 Peace River South", 
+	"SD59 Peace River South",
 	dat$School.board)
 
 dat$School.board <- stringr::str_trim(dat$School.board)
