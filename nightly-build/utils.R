@@ -23,6 +23,7 @@ flattenCases <- function(curd) {
 	simple <- setdiff(1:nrow(curd),idx)
 	simple 	<- curd[simple,]
 	multi 	<- curd[idx,]
+tryCatch({
 	multi$Total.cases.to.date <- stringr::str_trim(multi$Total.cases.to.date)
 	multi$Total.cases.to.date <- gsub(" ","",
 		multi$Total.cases.to.date)
@@ -42,9 +43,16 @@ flattenCases <- function(curd) {
 	if (any(is.na(curd$Total.cases.to.date))) {
 		curd$Total.cases.to.date[which(is.na(curd$Total.cases.to.date))] <- 0
 	}
+},error=function(ex){
+	print(ex)
+	browser()
+},finally={
+	
+})
 
 	curd <- simple
 	curd
+
 }
 
 
