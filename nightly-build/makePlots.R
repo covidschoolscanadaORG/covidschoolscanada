@@ -26,7 +26,7 @@ provFull <- list(
 	QC="Quebec"
 )
 
-dt <- format(Sys.Date(),"%y%m%d")
+dt <-"201006"# format(Sys.Date(),"%y%m%d")
 
 # results to be compiled into tweet
 tweetRes <- list()
@@ -170,10 +170,18 @@ dat2 <- dat2[,c("Date","Province","Total.cases.to.date")]
 lv <- levels(dat2$Province)
 dat2$Province <- as.character(dat2$Province)
 dat2 <- flattenCases(dat2)
+message("...done flattening")
 #dat2 <- na.omit(dat2)
 dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$Date <- stringr::str_trim(dat2$Date)
-dat2$tstamp <- as.POSIXct(dat2$Date)
+tryCatch({
+	dat2$tstamp <- as.POSIXct(dat2$Date)
+},error=function(ex){
+	message("posix conversion of date failed")
+	print(ex)
+	browser()
+},finally={
+})
 
 dat2$Total.cases.to.date <- stringr::str_trim(
 		dat2$Total.cases.to.date)
