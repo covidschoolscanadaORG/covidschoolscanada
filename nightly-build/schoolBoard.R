@@ -52,6 +52,8 @@ dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 dat$School.board <- sub("Franco-Manitobaine SD SD",
 	"Franco-Manitobaine SD",
 	dat$School.board)
+dat$School.board <- sub("Indep. ","Indep ",
+	dat$School.board)
 
 
 dat$ct <- 1
@@ -85,8 +87,12 @@ for (prov in unique(df2$Province)) {
 	#g <- annotPage(p,"schoolboard",
 	#	sprintf("%s: Schools with confirmed COVID-19, by school board",
 	#		provFull[[prov]]))
+	#ggsave(sprintf("%s/%s_schoolboard.png",inDir,prov),
+	#	width=9,height=5.5,units="in",
+	#	dpi=1600,device='png')
 	pdf(sprintf("%s/%s_schoolboard.pdf",inDir,prov),
 		width=9,height=5.5)
+	
 	#grid.newpage()
 	#grid.draw(g)
 	print(p)
