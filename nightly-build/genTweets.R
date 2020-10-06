@@ -32,7 +32,8 @@ public_sch <- list(
 private_sch <- list(
 	ON=1943,
 	AB=402,
-	BC=365
+	BC=365,
+	MB=95
 )
 
 total_sch <- list(
@@ -194,9 +195,12 @@ genTweet <- function(outDir,res) {
 				emo::ji("school"),pr(sch$Count[k]),sch$TOTAL_PCT[k],
 				emo::ji("rotating_light"),pr(sch$Outbreaks[k])),
 				file=twf)
-			cat(sprintf("%s Google Map: %s%s",
+			cat(sprintf("%s Google Map: %s%s\n",
 				emo::ji("round_pushpin"),mapLink(),coords[[sch$Province[k]]]),
 				file=twf)
+			if (sch$Province[k]=="QC") {
+				cat("Source: @CovidEcoles\n",file=twf)
+			}
 
 			cat(sprintf("\n/%i\n", tweet_ct),file=twf)
 			tweet_ct <- tweet_ct+1
