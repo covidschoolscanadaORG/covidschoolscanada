@@ -1,5 +1,6 @@
 # merge canada-wide and quebec
 source("utils.R")
+options(warn=2)
 
 args <- commandArgs(TRUE)
 dt <- args[1] #"201004" #"200922" #args[1]
@@ -10,6 +11,9 @@ outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
 statFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.stats.txt",
 	inDir,dt)
+
+if (file.exists(outFile)) unlink(outFile)
+if (file.exists(statFile)) unlink(statFile)
 
 can <- read.delim(sprintf("%s/CanadaMap_clean3.kml-%s.txt",
 	inDir,dt),fileEncoding="UTF-8",sep="\t",h=T,as.is=T,
@@ -82,7 +86,15 @@ final <- x
 final$Total.cases.to.date <- stringr::str_trim(final$Total.cases.to.date)
 
 final$Total.outbreaks.to.date <- stringr::str_trim(final$Total.outbreaks.to.date)
-final$Total.outbreaks.to.date <- as.integer(final$Total.outbreaks.to.date)
+tryCatch({
+	final$Total.outbreaks.to.date <- as.integer(
+			final$Total.outbreaks.to.date)
+}, error=function(ex){
+	message("Converting outbreaks to integer failed")
+	browser()
+	stop("")
+},finally={
+})
 
 
 if (length(grep("Henry Wise Wood High School", 
