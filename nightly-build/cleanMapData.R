@@ -1,5 +1,6 @@
 # first-pass map clean before running plots
 source("utils.R")
+options(warn=2)
 
 message("-------------------------------------")
 message("Cleaning map data")
@@ -17,7 +18,7 @@ if (file.exists(outFile)) unlink(outFile)
 tryCatch({
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 },error=function(ex){
-print(ex)
+	print(ex)
 },finally={
 })
 
@@ -83,6 +84,7 @@ if(any(dat$Province %in% "Yukon")) {
 if (any(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB",
 	"NS","NL")) || any(is.na(dat$Province))) {
 	print(table(dat$Province,useNA="always"))
+	browser()
 	stop("Strange Province. Take a look")
 }
 
@@ -104,6 +106,9 @@ if (any(idx)) dat$Type_of_school[idx] <- "TBA"
 idx <- which(dat$Type_of_school=="HIgh School")
 if (any(idx)) dat$Type_of_school[idx] <- "High School"
 
+idx <- which(dat$Type_of_school=="Middle")
+if (any(idx)) dat$Type_of_school[idx] <- "Middle School"
+
 # mixed school
 idx <- grep(";",dat$Type_of_school)
 if (length(idx)>0) {
@@ -118,8 +123,15 @@ idx <- grep("Elementary school", dat$Type_of_school,
 		ignore.case=TRUE)
 if (any(idx)) dat$Type_of_school[idx] <- "Elementary"
 
-dat$Type_of_school <- factor(dat$Type_of_school,
-	levels=schoolLevels())
+
+tryCatch({
+	dat$Type_of_school <- factor(dat$Type_of_school,
+		levels=schoolLevels_full())
+},error=function(ex){
+	stop("error while converting type of school")
+	print(ex)
+},finally={
+})
 
 if (any(is.na(dat$Type_of_school))) {
 	message("converting school to factor gave NA")
@@ -209,6 +221,12 @@ dat$School.board <- sub("Kawartha Pine DSB", "Kawartha Pine Ridge DSB",
 dat$School.board <- sub("SD 59 Peace River South", 
 	"SD59 Peace River South",
 	dat$School.board)
+dat$School.board <- sub("Kawartha Pine Region",
+	"Kawartha Pine Ridge",
+	dat$School.board)
+dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
+dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
+
 
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")
@@ -230,6 +248,23 @@ for (prov in unique(df2$Province)) {
 	print(df3)
 }
 dat <- dat[,-which(colnames(dat)=="ct")]
+
+# ----------------------------------------
+# BC - Label clusters
+# ----------------------------------------
+sumCases <- function(x) {
+}
+idx <- intersect(which(dat$Province %in% "BC"), 
+	grep(";", dat$Total.cases.to.date))
+csum <- c() 
+totcase <- dat$Total.cases.to.date[idx]
+for (k in 1:length(idx)) {
+	cur <- unlist(strsplit(dat$Total.cases.to.date[idx[k]],";"))
+	cur <- as.integer(stringr::str_trim(cur))
+	totcase[k] <- sum(cur)
+}
+dat$Outbreak.Status[idx[which(totcase > 1)]] <- "Cluster (BC)"
+
 
 finalorder <- c("institute.name","Total.cases.to.date",
 	"Total.students.to.date","Total.staff.to.date",

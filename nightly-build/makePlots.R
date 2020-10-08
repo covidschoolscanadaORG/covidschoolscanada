@@ -8,6 +8,7 @@ suppressMessages(require(cowplot)) # ggplot to gtable
 suppressMessages(require(grid))	 # annotate page
 suppressMessages(require(gridExtra))	 # annotate page
 suppressMessages(require(showtext))
+suppressMessages(require(scales)) # date axis for cumulative
 options(warn=2)
 source("utils.R")
 source("genTweets.R")
@@ -26,7 +27,7 @@ provFull <- list(
 	QC="Quebec"
 )
 
-dt <-"201006"# format(Sys.Date(),"%y%m%d")
+dt <- format(Sys.Date(),"%y%m%d")
 
 # results to be compiled into tweet
 tweetRes <- list()
@@ -34,6 +35,8 @@ tweetRes <- list()
 tweetRes[["date"]] <- Sys.Date()
 reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+pdfFile <- sprintf("%s/arranged.pdf",inDir)
+if (file.exists(pdfFile)) unlink(pdfFile)
 
 logfile <- sprintf("%s/makePlotslog.txt",inDir)
 if (file.exists(logfile)) unlink(logfile)
@@ -44,6 +47,46 @@ tryCatch({
 
 prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
 
+
+# ----------------------------
+# Get school plot
+#' @param dat (data.frame) input table
+#' @param th (theme)
+#' @param addLabels (logical)
+getSchoolPlot <- function(dat, th, addLabels=FALSE) {
+p2 <- ggplot(dat, aes(group=Province,
+	x=Type_of_school))
+p2 <- p2 + geom_bar(
+	aes(y = ..prop.., fill = factor(..x..)), stat="count")
+p2 <- p2 + scale_fill_brewer(palette="Set1",
+		labels=levels(dat2$Type_of_school))
+
+if (addLabels) { 
+ p2 <- p2 +  geom_text(aes( 
+		label = scales::percent(..prop.., accuracy=1),
+        y= ..prop.. ), stat= "count", vjust = -.5,
+		size=11,colour="#550000") 
+}
+p2 <- p2 + facet_grid(~Province)
+p2 <- p2 + th
+p2 <- p2 + theme(
+		axis.text.x=element_blank(),
+		strip.background=element_rect(fill="#ffffff"),
+		strip.text=element_text(size=36,colour="#550000",
+			face="bold"),
+		legend.text=element_text(size=24,colour="#550000",
+				family="source-sans-pro"),
+		legend.key.size=unit(0.8,"cm"),
+		legend.title=element_blank())
+p2 <-p2 + ylim(0,0.75)
+p2 <- p2 + scale_y_continuous(
+	labels=scales::percent_format(accuracy=1L))
+p2 <- p2 + guides(fill=guide_legend())
+p2 <- p2 + xlab("") + ylab("")
+p2 <- p2 + ggtitle("Affected Schools, by Type (%)")
+
+p2
+}
 
 # ----------------------------
 # theme
@@ -62,7 +105,7 @@ school_th <-  theme(
 	plot.title = element_text(family="source-sans-pro",
 		hjust = 0.5,size=48,colour="#68382C",face="bold"),
 	panel.border = element_blank(),
-	plot.margin = unit(c(20,0,0,5),"pt")
+	plot.margin = unit(c(10,0,0,5),"pt")
 )
 
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
@@ -106,8 +149,9 @@ p <- p + geom_text(aes(label=df2$Count),
 		vjust=-0.25,size=20,col="#FF6666")
 p <- p + scale_x_discrete(drop=F)
 p <- p + xlab("") + ylab("")
-p <- p + ylim(0,max(df2$Count)*1.50)
 p <- p + school_th
+p <- p + scale_y_continuous(labels=scales::number_format(big.mark=","))
+p <- p + ylim(0,max(df2$Count)*1.50)
 p <- p + theme(axis.ticks.x=element_blank(), 
 		axis.text.x=element_text(size=40,
 		face="bold",colour="#550000"),
@@ -121,8 +165,15 @@ message("*PLOT: Outbreaks by Province")
 df3 <- aggregate(dat$Total.outbreaks.to.date,
 	by=list(Province=dat$Province),
 	FUN=sum,na.rm=TRUE)
-df3 <- df3[order(df3$x,decreasing=TRUE),]
+df3 <- df3[-which(df3$Province == "BC"),]
 colnames(df3)[2] <- "Outbreaks"
+# For BC put in number of clusters
+numc <- length(intersect(which(dat$Province=="BC"),
+	grep("Cluster",dat$Outbreak.Status)))
+tmp <- data.frame(Province="BC",Outbreaks=numc)
+df3 <- rbind(df3,tmp)
+df3 <- df3[order(df3$Outbreaks,decreasing=TRUE),]
+
 tweetRes[["outbreaks"]] <- df3
 message("Total outbreaks, by Province")
 outbreaks <- df3
@@ -130,9 +181,14 @@ total_outbreaks <- sum(df3$Outbreaks)
 
 message("* PLOT: Type of school")
 dat2 <- subset(dat, Province!="QC")
+dat2$Type_of_school[which(dat2$Type_of_school=="Field Office")] <- "Office"
+dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
 print(table(dat2$Type_of_school,useNA="always"))
+print(table(dat2$Type_of_school,useNA="always"))
+
 dat2$Type_of_school <- factor(dat2$Type_of_school,
 	levels=schoolLevels())
+dat2$Schoolstr <- as.character(dat2$Type_of_school)
 if (any(is.na(dat2$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat2$Type_of_school))
@@ -140,21 +196,37 @@ if (any(is.na(dat2$Type_of_school))) {
 	print(dat2[idx,])
 }
 
-p2 <- ggplot(dat2, aes(Province,fill=Type_of_school))
-p2 <- p2 + geom_bar(position="dodge")
-p2 <- p2 + school_th
-p2 <- p2 + theme(axis.text.x=element_text(
-					size=42,face="bold",
-					color="#550000"),
-		axis.text.y=element_text(size=48),
-		legend.text=element_text(size=24,colour="#550000",
-				family="source-sans-pro"),
-		legend.key.size=unit(0.8,"cm"),
-		legend.title=element_blank(),
-		legend.position = c(0.85,0.7)) # 0,0 -> bottom-left; 1,1 -> top,right
-p2 <- p2 + guides(fill=guide_legend(ncol=2))
-p2 <- p2 + xlab("") + ylab("")
-p2 <- p2 + ggtitle("Type of School")
+p2 <- getSchoolPlot(dat2,school_th,FALSE)
+pschlb <- getSchoolPlot(dat2,school_th,TRUE)
+pschlb <- pschlb + labs(caption =sprintf("@covidschoolsCA | Updated %s ",
+	footerDate()))
+pschlb <- pschlb + theme(
+		plot.caption = element_text(family="source-sans-pro",size=30,
+		face="bold",hjust=0,colour="red")
+	)
+
+###p2 <- ggplot(dat2, aes(group=Province,
+###	x=Type_of_school))
+###p2 <- p2 + geom_bar(
+###	aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+###   geom_text(aes( 
+###		label = scales::percent(..prop.., accuracy=1),
+###        y= ..prop.. ), stat= "count", vjust = -.5,
+###		size=12,colour="#550000") 
+###p2 <- p2 + facet_grid(~Province)
+###p2 <- p2 + school_th
+###p2 <- p2 + theme(
+###		axis.text.x=element_blank(),
+###		strip.text=element_text(size=42),
+###		legend.text=element_text(size=24,colour="#550000",
+###				family="source-sans-pro"),
+###		legend.key.size=unit(0.8,"cm"),
+###		legend.title=element_blank())
+###p2 <- p2 + scale_y_continuous(
+###	labels=scales::percent_format(accuracy=1L))
+###p2 <- p2 + guides(fill=guide_legend(ncol=2))
+###p2 <- p2 + xlab("") + ylab("")
+###p2 <- p2 + ggtitle("Type of School")
 
 message("* PLOT: Cumulative cases")
 mondays <- getAllMondays(2020)
@@ -163,7 +235,7 @@ idx2 <- grep(";",dat2$Total.cases.to.date)
 bad <- setdiff(idx1,idx2)
 if (length(bad)>0) {
 	print("bad rows")
-browser()
+	browser()
 }
 #dat2$Date[bad] <- sub("; 2020-09-21","",dat2$Date[bad])
 dat2 <- dat2[,c("Date","Province","Total.cases.to.date")]
@@ -200,6 +272,7 @@ cur <- aggregate(cur$cs,
 	FUN=max)
 
 cur2 <- cur
+cur2$tstamp <- as.Date(cur2$tstamp)
 p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
 p3 <- p3 + geom_line(lwd=2)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
@@ -207,10 +280,12 @@ p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
 p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
+p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
 # annotate
 p3 <- p3 + school_th
 p3 <- p3 + theme(
-	axis.text.x = element_text(angle = 20,size=40,vjust=0.5),
+	axis.text.x = element_text(angle = 20,
+		size=40,vjust=0.5),
 	axis.text.y = element_text(size=48),
 	legend.text=element_text(size=36,colour="#550000"),
 	legend.title=element_blank(),
@@ -219,20 +294,18 @@ p3 <- p3 + theme(
 	legend.position = c(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
 )
 
+message("* putting together grobs")
 # image of map + outbreak table
 tt3 <- ttheme_minimal(
-  core=list(bg_params = list(fill = "#A50000"),
-            fg_params=list(fontface=2,fontsize=36,col="white",
+  core=list(bg_params = list(fill = "#ff0000"),
+            fg_params=list(fontface=2,fontsize=36,
+				col="white",
 				fontfamily="yantramanav",hjust=1,x=0.95),
 			padding=unit(c(1.5, 1), "cm")
 	)
 )
-outbreaks[,1] <- as.character(outbreaks[,1])
-outbreaks <- outbreaks[which(outbreaks[,2]>0),]
-for (k in 1:nrow(outbreaks)) {
-	full <- provFull[[outbreaks[k,1]]]
-	outbreaks[k,1] <- full
-}
+
+message("* template for outbreak grob")
 ttlout <-  grobTree(
 	rectGrob(gp=gpar(fill="#A50000",col="#A50000",lwd=5,
 			width=unit(1,"npc"),height=unit(1,"npc"))),
@@ -249,17 +322,24 @@ anno2 <-  grobTree(
 		hjust=-5
 	))
 )
-
+message("* outbreak grob")
+outbreaks[,1] <- as.character(outbreaks[,1])
+outbreaks <- outbreaks[which(outbreaks[,2]>0),]
+for (k in 1:nrow(outbreaks)) {
+	full <- provFull[[outbreaks[k,1]]]
+	outbreaks[k,1] <- full
+}
 tgrob <- tableGrob(outbreaks,rows=NULL,cols=NULL,theme=tt3)
 ttlGrob <- grobTree(ttlout, tgrob)
+message("* map grob")
 mapImage 	<- rasterGrob(png::readPNG("../images/map.png"),
 	width=unit(1,"npc"), height=unit(1,"npc"))
-obImage		<- rasterGrob(png::readPNG("../images/outbreak.png"))
+obImage	<- rasterGrob(png::readPNG("../images/outbreak.png"))
 mapPlot <- ggplot() + geom_blank() + 
     annotation_custom(mapImage, 
 		xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) + 
 	annotation_custom(tgrob,
-		xmin = 0.68, xmax=0.9, ymin=0.6,ymax=0.95) + 
+		xmin = 0.68, xmax=0.9, ymin=0.4,ymax=0.8) + 
 #	annotation_custom(ttlout,
 #		xmin = 0.68, xmax=0.9, ymin=0.9,ymax=0.95) +
 	annotation_custom(anno2,
@@ -270,34 +350,35 @@ mapPlot <- mapPlot + theme(
 	plot.margin = unit(c(0,0,0,0),"pt")
 )
 
+message("* title grob")
 # title at top
 top <-  textGrob(
 	"CANADA COVID-19 SCHOOL TRACKER",
-	gp = gpar(fontsize = 70,col="red",fontface=2,hjust = -1,
-	fontfamily="yantramanav",fill="white"
+	gp = gpar(fontsize = 80,col="red",
+		fontface=2,hjust = -1,
+		fontfamily="yantramanav",fill="white"
 	))
 rt <-  textGrob(
 	sprintf("%s", prettyNum(total_schools,big.mark=",")),
-	gp = gpar(fontsize = 80,col="#68382C",fontface=2,
+	gp = gpar(fontsize = 72,col="#68382C",fontface=2,
 	fontfamily="yantramanav",fill="white"
 	))
 rt3 <-  textGrob(
 	"SCHOOLS",
-	gp = gpar(fontsize = 36,col="#68382C",fontface=2,
+	gp = gpar(fontsize = 30,col="#68382C",fontface=2,
 	fontfamily="yantramanav",fill="white"
 	))
 rt2 <-  textGrob(
 	sprintf("%s", prettyNum(total_outbreaks,big.mark=",")),
-	gp = gpar(fontsize = 80,col="red",fontface=2,
+	gp = gpar(fontsize = 72,col="red",fontface=2,
 	fontfamily="yantramanav",fill="white"
 	))
 rt4 <-  textGrob(
-	"OUTBREAKS",
-	gp = gpar(fontsize = 36,col="red",fontface=2,
+	"OUTBREAKS/CLUSTERS",
+	gp = gpar(fontsize = 30,col="red",fontface=2,
 	fontfamily="yantramanav",fill="white"
 	))
 
-pdfFile <- sprintf("%s/arranged.pdf",inDir)
 pdf(pdfFile,width=28,height=16)
 tryCatch({
 grid.arrange(
@@ -320,6 +401,10 @@ grid.arrange(
 )
 message("Making tweets")
 genTweet(inDir,tweetRes)
+
+pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
+print(pschlb)
+dev.off()
 
 print("done")
 },error=function(ex){

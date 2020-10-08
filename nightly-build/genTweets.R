@@ -136,7 +136,8 @@ genTweet <- function(outDir,res) {
 		cat(sprintf("%s %s schools\n",emo::ji("school"),
 			pr(res$total_school)),
 			file=twf)
-		cat(sprintf("%s %s outbreaks\n",emo::ji("rotating_light"),
+		cat(sprintf("%s %s clusters & outbreaks\n",
+			emo::ji("rotating_light"),
 			pr(res$total_outbreak)),
 			file=twf)
 		cat("\n",file=twf)
@@ -151,6 +152,8 @@ genTweet <- function(outDir,res) {
 
 		cat("\n/1\n",file=twf)
 		cat("\n------------\n",file=twf) # separator
+
+		tweet_ct <-3 
 
 		# -------------------------
 		# TWEET: % Schools
@@ -172,10 +175,44 @@ genTweet <- function(outDir,res) {
 			}
 			cat("\n",file=twf)
 		}
-		cat("\n/2\n",file=twf)
+		cat(sprintf("\n/%i\n",tweet_ct),file=twf)
 		cat("\n------------\n",file=twf) # separator
+		tweet_ct <- tweet_ct+1
 
-		tweet_ct <- 3
+		# -------------------------
+		# TWEET: School type %
+		# -------------------------
+		dat2 <- subset(dat, Province != "QC")
+		dat2$Type_of_school[which(dat$Type_of_school=="Middle School")] <- "Elementary"
+		tbl <- table(dat2$Type_of_school)
+		tbl <- data.frame(Type=names(tbl),Count=as.integer(tbl))
+		tbl$Pct <- (tbl$Count/sum(tbl$Count))*100
+tbl$Type <- as.character(tbl$Type)
+		
+		fun <- function(emostr,x) {
+			p <-tbl$Pct[which(tbl$Type==x)]
+			if (p < 1) p <- "< 1%" else p  <- sprintf("%1.0f %%",p)
+			cat(sprintf("%s %s %s (%s)\n",
+				emo::ji(emostr),
+				pr(tbl$Count[which(tbl$Type==x)]),x,p),
+				file=twf)
+		}
+		cat(sprintf("%s AFFECTED SCHOOL TYPE %s\n",
+			emo::ji("green_apple"),
+			emo::ji("green_apple")),file=twf)
+		cat("Num (% of all affected)\n",file=twf)
+		fun("apple","Elementary")
+		fun("books","Secondary")
+		fun("children_crossing","Mixed")
+		fun("office","Field Office")
+		fun("question","TBA")
+		cat(sprintf("\n%s By Province (QC under curation)\n",
+				emo::ji("down_arrow")),file=twf)
+		cat(sprintf("/%i\n\n",tweet_ct),file=twf)
+			cat("\n------------\n",file=twf) # separator
+		
+		tweet_ct <- tweet_ct+1
+
 		# -------------------------
 		# TWEET: PROVINCE-LEVEL
 		# -------------------------
@@ -191,9 +228,15 @@ genTweet <- function(outDir,res) {
 			cat(sprintf("%s %s %s\n", emo::ji("star"), 
 				toupper(provFull[[sch$Province[k]]]),emo::ji("star")),
 				file=twf)
-			cat(sprintf("%s %s SCHOOLS (%1.1f%% of all)\n%s %s OUTBREAKS\n",
+			str <- "OUTBREAKS"
+			if (sch$Province[k]=="BC") {
+				str <- "CLUSTERS (2+ cases)"
+			} else  if (sch$Province[k]=="QC") {
+				str <- "OUTBREAKS (5+ cases)"
+			}
+			cat(sprintf("%s %s SCHOOLS (%1.1f%% of all)\n%s %s %s\n",
 				emo::ji("school"),pr(sch$Count[k]),sch$TOTAL_PCT[k],
-				emo::ji("rotating_light"),pr(sch$Outbreaks[k])),
+				emo::ji("rotating_light"),pr(sch$Outbreaks[k]),str),
 				file=twf)
 			cat(sprintf("%s Google Map: %s%s\n",
 				emo::ji("round_pushpin"),mapLink(),coords[[sch$Province[k]]]),

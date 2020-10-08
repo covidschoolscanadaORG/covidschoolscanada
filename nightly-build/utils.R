@@ -49,10 +49,8 @@ tryCatch({
 },finally={
 	
 })
-
 	curd <- simple
 	curd
-
 }
 
 
@@ -63,8 +61,14 @@ getAllMondays <- function(year) {
 }
 
 schoolLevels <- function() {
-	return(c("Elementary","Middle School",
-		"Secondary","Mixed","Cegep",
+	return(c("Elementary",
+		"Secondary","Mixed",
+		"Office","TBA"))
+	}
+
+schoolLevels_full <- function() {
+	return(c("Elementary",
+		"Secondary","Middle School","Mixed",
 		"Field Office","TBA"))
 	}
 
