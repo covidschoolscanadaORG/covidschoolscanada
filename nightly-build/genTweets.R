@@ -153,7 +153,7 @@ genTweet <- function(outDir,res) {
 		cat("\n/1\n",file=twf)
 		cat("\n------------\n",file=twf) # separator
 
-		tweet_ct <-3 
+		tweet_ct <-2 
 
 		# -------------------------
 		# TWEET: % Schools
