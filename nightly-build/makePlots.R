@@ -1,4 +1,5 @@
-# tally graphs
+# creates daily am report graphs
+
 rm(list=ls())
 suppressMessages(require(png))
 suppressMessages(require(dplyr))
@@ -44,9 +45,7 @@ con <- file(logfile)
 #sink(con,append=TRUE)
 #sink(con,append=TRUE,type="message")
 tryCatch({
-
 prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
-
 
 # ----------------------------
 # Get school plot
@@ -108,14 +107,19 @@ school_th <-  theme(
 	plot.margin = unit(c(10,0,0,5),"pt")
 )
 
+
+# ----------------------------
+# Start processing
+
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 tryCatch({
 	dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 },error=function(ex){
-print(ex)
+	print(ex)
 },finally={
 })
+
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
 ob <- sum(dat$Total.outbreaks.to.date,na.rm=TRUE)
@@ -205,29 +209,6 @@ pschlb <- pschlb + theme(
 		face="bold",hjust=0,colour="red")
 	)
 
-###p2 <- ggplot(dat2, aes(group=Province,
-###	x=Type_of_school))
-###p2 <- p2 + geom_bar(
-###	aes(y = ..prop.., fill = factor(..x..)), stat="count") +
-###   geom_text(aes( 
-###		label = scales::percent(..prop.., accuracy=1),
-###        y= ..prop.. ), stat= "count", vjust = -.5,
-###		size=12,colour="#550000") 
-###p2 <- p2 + facet_grid(~Province)
-###p2 <- p2 + school_th
-###p2 <- p2 + theme(
-###		axis.text.x=element_blank(),
-###		strip.text=element_text(size=42),
-###		legend.text=element_text(size=24,colour="#550000",
-###				family="source-sans-pro"),
-###		legend.key.size=unit(0.8,"cm"),
-###		legend.title=element_blank())
-###p2 <- p2 + scale_y_continuous(
-###	labels=scales::percent_format(accuracy=1L))
-###p2 <- p2 + guides(fill=guide_legend(ncol=2))
-###p2 <- p2 + xlab("") + ylab("")
-###p2 <- p2 + ggtitle("Type of School")
-
 message("* PLOT: Cumulative cases")
 mondays <- getAllMondays(2020)
 idx1 <- grep(";",dat2$Date)
@@ -281,6 +262,7 @@ p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
+
 # annotate
 p3 <- p3 + school_th
 p3 <- p3 + theme(
@@ -379,34 +361,41 @@ rt4 <-  textGrob(
 	fontfamily="yantramanav",fill="white"
 	))
 
-pdf(pdfFile,width=28,height=16)
-tryCatch({
-grid.arrange(
-  p1,p2,p3,mapPlot,top,rt,rt2,rt3,rt4,
-  widths = c(0.07,1, 1, 1, 1, 1, 1, 1,0.07),
-  heights = c(0.05,0.5,0.3,2,2,3),
-  layout_matrix = rbind(rep(NA,9),
-						c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
-						c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
-						c(NA, 4, 4, 4, 1, 1, 1, 1,NA),
-						c(NA, 4, 4, 4, 2, 2, 2, 2,NA),
-                        c(NA, 3, 3, 3, 3, 3, 3, 3,NA)),
-  	bottom = textGrob(
-    	sprintf("@covidschoolsCA | Updated %s",footerDate()),
-    	gp = gpar(fontface = 2, fontsize = 40,
-			fontfamily="source-sans-pro",col="red"),
-    	hjust = 0,vjust=0,
-    	x = 0.05 
-  )
-)
+# -----------------------------------------
+# Make PDFs
+# -----------------------------------------
+# Create Twitter thread
 message("Making tweets")
 genTweet(inDir,tweetRes)
 
-pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
-print(pschlb)
-dev.off()
+pdf(pdfFile,width=28,height=16)
+tryCatch({
+	grid.arrange(
+	  p1,p2,p3,mapPlot,top,rt,rt2,rt3,rt4,
+	  widths = c(0.07,1, 1, 1, 1, 1, 1, 1,0.07),
+	  heights = c(0.05,0.5,0.3,2,2,3),
+	  layout_matrix = rbind(rep(NA,9),
+							c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
+							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
+							c(NA, 4, 4, 4, 1, 1, 1, 1,NA),
+							c(NA, 4, 4, 4, 2, 2, 2, 2,NA),
+	                        c(NA, 3, 3, 3, 3, 3, 3, 3,NA)),
+	  	bottom = textGrob(
+	    	sprintf("@covidschoolsCA | Updated %s",footerDate()),
+	    	gp = gpar(fontface = 2, fontsize = 40,
+				fontfamily="source-sans-pro",col="red"),
+	    	hjust = 0,vjust=0,
+	    	x = 0.05 
+	  )
+	)
+	
+	# % schools by type	
+	pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
+	print(pschlb)
+	dev.off()
 
-print("done")
+	message("* Finished successfully.")
+	
 },error=function(ex){
 	print(ex)
 },finally={
@@ -415,6 +404,7 @@ print("done")
 
 },error=function(ex){
 },finally={
-	sink(NULL)
-	sink(NULL)
+	message("* Done making plots")
+	#sink(NULL)
+	#sink(NULL)
 })
