@@ -137,8 +137,8 @@ if (any(is.na(dat$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat$Type_of_school))
 	print(dat[idx,])
-	stop("")
 	browser()
+	stop("")
 }
 print(table(dat$Type_of_school,useNA="always"))
 
@@ -264,6 +264,13 @@ for (k in 1:length(idx)) {
 	totcase[k] <- sum(cur)
 }
 dat$Outbreak.Status[idx[which(totcase > 1)]] <- "Cluster (BC)"
+
+message("------------------------------------")
+message("* Dates cleanup")
+message("------------------------------------")
+dat$Date <- gsub(":",";",dat$Date)
+dat$Date <- gsub("--","-",dat$Date)
+dat$Date <- gsub("^20-","2020-",dat$Date)
 
 
 finalorder <- c("institute.name","Total.cases.to.date",
