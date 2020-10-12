@@ -3,7 +3,8 @@ Processing map data from the Masks4Canada [Canada COVID-19 school tracker](https
 
 Visit the tracker: 
 
-* Website: https://tinyurl.com/covidschoolsCA-map 
+* Map: https://tinyurl.com/covidschoolsCA-map 
+* [Website](https://masks4canada.org/canada-covid-19-school-case-tracker/)
 * Twitter: [@covidschoolsCA](https://twitter.com/covidschoolsCA)
 * Facebook: [@covidschoolsCA](https://www.facebook.com/covidschoolsCA)
 
