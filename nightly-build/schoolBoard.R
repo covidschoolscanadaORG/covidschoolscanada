@@ -1,3 +1,4 @@
+# generates graphs showing case breakdown by school board
 
 suppressMessages(require(dplyr))
 suppressMessages(require(ggplot2))
@@ -43,6 +44,9 @@ school_th <-  theme(
 	#plot.margin = unit(c(60,20,30,20),"pt"),
 )
 
+# --------------------------------------
+# Start processing
+
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
@@ -71,7 +75,6 @@ for (prov in unique(df2$Province)) {
 	message("")
 	df3 <- subset(df2,Province==prov)
 	message("")
-	#p <- ggplot(data = df3, aes(x=reorder(Board,-ct),y=ct))
 	p <- ggplot(data = df3, aes(x=Board,y=ct))
 	p <- p + geom_bar(stat="identity",fill="#FF6666")
 	p <- p + labs(
@@ -84,25 +87,10 @@ for (prov in unique(df2$Province)) {
 	p <- p + school_th
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
 	p <- p + ylab("Number of affected schools") + xlab("")
-	#g <- annotPage(p,"schoolboard",
-	#	sprintf("%s: Schools with confirmed COVID-19, by school board",
-	#		provFull[[prov]]))
-	#ggsave(sprintf("%s/%s_schoolboard.png",inDir,prov),
-	#	width=9,height=5.5,units="in",
-	#	dpi=1600,device='png')
 	pdf(sprintf("%s/%s_schoolboard.pdf",inDir,prov),
 		width=9,height=5.5)
 	
-	#grid.newpage()
-	#grid.draw(g)
 	print(p)
 	dev.off()
 }
 
-###outFile <- sprintf("%s/schoolboard.pdf",inDir)
-###pdf(outFile,width=11,height=5)
-###for (g in pList) {
-###	grid.newpage()
-###	grid.draw(g)
-###}
-###dev.off()
