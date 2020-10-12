@@ -4,8 +4,8 @@ Processing map data from the Masks4Canada [Canada COVID-19 school tracker](https
 Visit the tracker: 
 
 * Website: https://tinyurl.com/covidschoolsCA-map 
-* Twitter: @covidschoolsCA
-* Facebook: @covidschoolsCA
+* Twitter: [@covidschoolsCA](https://twitter.com/covidschoolsCA)
+* Facebook: [@covidschoolsCA](https://www.facebook.com/covidschoolsCA)
 
 ## Workflow
 School data is entered on a Google map. This code runs the nightly processing of the map, and generation of analysis + social media output. 
@@ -20,6 +20,8 @@ In `nightly-build/`:
 3. `schoolBoard.R`: Generates graphs of case breakdown by school board.
 
 # Credits
-@covidschoolsCA is a volunteer-based team project run by advocacy group [Masks4Canada](masks4canada.org). This code is authored by Shraddha Pai (@spaiglass).
+@covidschoolsCA is a volunteer-based team project run by advocacy group [Masks4Canada](masks4canada.org). 
+
+Code author & maintainer: [Shraddha Pai](shraddhapai.com)[@spaiglass](https://twitter.com/spaiglass).
 
 
