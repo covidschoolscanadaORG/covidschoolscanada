@@ -23,6 +23,6 @@ In `nightly-build/`:
 # Credits
 @covidschoolsCA is a volunteer-based team project run by advocacy group [Masks4Canada](masks4canada.org). 
 
-Code author & maintainer: [Shraddha Pai](shraddhapai.com)([@spaiglass](https://twitter.com/spaiglass)).
+Code author & maintainer: [Shraddha Pai](shraddhapai.com) ([@spaiglass](https://twitter.com/spaiglass)).
 
 
