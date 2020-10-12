@@ -1,5 +1,5 @@
-# Canada COVID-19 school tracker
-Processing map data from the Masks4Canada [Canada COVID-19 school tracker](https://tinyurl.com/covidschoolsCA-map)
+# Code for Canada COVID-19 school tracker
+This is the code processing map data from the Canada COVID-19 school tracker.
 
 Visit the tracker: 
 
