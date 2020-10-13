@@ -52,7 +52,12 @@ inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
+dat <- subset(dat, Province!="QC")
 
+qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
+	inDir,dt)
+qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
+dat <- rbind(dat,qcStats)
 dat$School.board <- sub("Franco-Manitobaine SD SD",
 	"Franco-Manitobaine SD",
 	dat$School.board)
@@ -77,14 +82,23 @@ for (prov in unique(df2$Province)) {
 	message("")
 	p <- ggplot(data = df3, aes(x=Board,y=ct))
 	p <- p + geom_bar(stat="identity",fill="#FF6666")
+	if (prov=="QC") {
+		ttl <- sprintf("%s: CONFIRMED SCHOOLS, by REGION",
+				prov)
+	} else {
+		ttl <- sprintf("%s: CONFIRMED SCHOOLS, by SCHOOL BOARD",
+				prov)
+	}
 	p <- p + labs(
-		title = sprintf("%s: CONFIRMED SCHOOLS, by SCHOOL BOARD",
-				prov),
+		title = ttl,
       	subtitle = "CANADA COVID-19 SCHOOL TRACKER",
        	caption = sprintf("@covidschoolsCA | Updated %s ",
 					footerDate())
 	)
 	p <- p + school_th
+	if (prov=="QC") {
+		p <- p + theme(axis.text.x=element_text(size=10))
+	}
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
 	p <- p + ylab("Number of affected schools") + xlab("")
 	pdf(sprintf("%s/%s_schoolboard.pdf",inDir,prov),
