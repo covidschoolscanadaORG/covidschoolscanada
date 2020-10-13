@@ -63,7 +63,7 @@ getAllMondays <- function(year) {
 schoolLevels <- function() {
 	return(c("Elementary",
 		"Secondary","Mixed",
-		"Office","TBA"))
+		"Office","PostSec","TBA"))
 	}
 
 schoolLevels_full <- function() {
