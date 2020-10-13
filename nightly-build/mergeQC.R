@@ -3,7 +3,7 @@ source("utils.R")
 options(warn=2)
 
 args <- commandArgs(TRUE)
-dt <- args[1] #"201004" #"200922" #args[1]
+dt <- args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
@@ -23,6 +23,7 @@ colnames(can) <- sub("\\.$","",colnames(can))
 
 rest_of_canada <- subset(can, !Province %in% c( "QC","Québec"))
 can <- rest_of_canada
+
 
 
 message("* Provincial breakdown")
