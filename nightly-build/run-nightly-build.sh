@@ -33,5 +33,12 @@ echo "******************************************************" >> $logfile
 Rscript mergeQC.R $dt >> $logfile
 Rscript cleanMapData.R >> $logfile
 
+echo "******************************************************" >> $logfile
+echo " Fetching CEQ annotation sheet" >> $logfile
+echo "******************************************************" >> $logfile
+Rscript fetchQCstats.R
+echo "Cleaning" >> $logfile
+Rscript qcStats.R
+
 # Call makePlots.R and schoolBoard.R after this.
 
