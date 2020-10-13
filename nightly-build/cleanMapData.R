@@ -213,6 +213,8 @@ dat$School.board <- sub("Division Scolaire Franco-Manitobaine", "Franco-Manitoba
 	dat$School.board)
 dat$School.board <- sub("Franco-manitobian SD", "Franco-Manitobaine SD",
 	dat$School.board)
+dat$School.board <- sub("Franco-Manitoban SD", "Franco-Manitobaine SD",
+	dat$School.board)
 idx <- which(dat$School.board == "Thames Valley")
 if (any(idx)) 
 	dat$School.board[idx] <- "Thames Valley DSB"
@@ -226,6 +228,9 @@ dat$School.board <- sub("Kawartha Pine Region",
 	dat$School.board)
 dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
 dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
+dat$School.board[grep("SD36",dat$School.board)] <- "SD36 Surrey"
+dat$School.board[grep("SD39",dat$School.board)] <- "SD39 Vancouver" 
+dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby" 
 
 
 dat$School.board <- stringr::str_trim(dat$School.board)
