@@ -66,12 +66,13 @@ if (addLabels) {
         y= ..prop.. ), stat= "count", vjust = -.5,
 		size=11,colour="#550000") 
 }
-p2 <- p2 + facet_grid(~Province)
+p2 <- p2 + facet_grid(~Province,switch="x")
 p2 <- p2 + th
 p2 <- p2 + theme(
 		axis.text.x=element_blank(),
+		axis.ticks.x = element_blank(),
 		strip.background=element_rect(fill="#ffffff"),
-		strip.text=element_text(size=36,colour="#550000",
+		strip.text=element_text(size=28,colour="#550000",
 			face="bold"),
 		legend.text=element_text(size=24,colour="#550000",
 				family="source-sans-pro"),
@@ -97,12 +98,12 @@ school_th <-  theme(
 	panel.grid.major.x = element_blank(),
 	axis.ticks = element_line(colour = 'gray50'),
 	axis.text = element_text(family="source-sans-pro",
-		colour="#68382C",size=36),
+		colour="#68382C",size=30),
 	axis.title.y = element_text(family="source-sans-pro",
 		colour="#68382C",size=36),
 	axis.title=element_text(size=20),
 	plot.title = element_text(family="source-sans-pro",
-		hjust = 0.5,size=48,colour="#68382C",face="bold"),
+		hjust = 0.5,size=40,colour="#68382C",face="bold"),
 	panel.border = element_blank(),
 	plot.margin = unit(c(10,0,0,5),"pt")
 )
@@ -119,6 +120,9 @@ tryCatch({
 	print(ex)
 },finally={
 })
+
+qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt)
+qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
 
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
@@ -150,11 +154,12 @@ p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
 p <- p + geom_bar(stat="identity", fill="#FF6666")
 p <- p + geom_text(aes(label=df2$Count),
 		position=position_dodge(width=0.9),
-		vjust=-0.25,size=20,col="#FF6666")
+		vjust=-0.25,size=16,col="#FF6666")
 p <- p + scale_x_discrete(drop=F)
 p <- p + xlab("") + ylab("")
 p <- p + school_th
-p <- p + scale_y_continuous(labels=scales::number_format(big.mark=","))
+p <- p + scale_y_continuous(
+	labels=scales::number_format(big.mark=","))
 p <- p + ylim(0,max(df2$Count)*1.50)
 p <- p + theme(axis.ticks.x=element_blank(), 
 		axis.text.x=element_text(size=40,
@@ -185,9 +190,13 @@ total_outbreaks <- sum(df3$Outbreaks)
 
 message("* PLOT: Type of school")
 dat2 <- subset(dat, Province!="QC")
+if (!is.null(qcStats)) {
+	message("\tAdding annotated QC data")
+	dat2 <- rbind(dat2,qcStats)
+}
 dat2$Type_of_school[which(dat2$Type_of_school=="Field Office")] <- "Office"
 dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
-print(table(dat2$Type_of_school,useNA="always"))
+dat2$Type_of_school[which(dat2$Type_of_school=="Post-secondary")] <- "PostSec"
 print(table(dat2$Type_of_school,useNA="always"))
 
 dat2$Type_of_school <- factor(dat2$Type_of_school,
@@ -262,6 +271,8 @@ p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
+p3 <- p3 + ylim(1,max(cur2$x)*1.02)
+p3 <- p3 + scale_y_sqrt(breaks=c(0,25,100,200,500,1000,2000))
 
 # annotate
 p3 <- p3 + school_th
@@ -280,7 +291,7 @@ message("* putting together grobs")
 # image of map + outbreak table
 tt3 <- ttheme_minimal(
   core=list(bg_params = list(fill = "#ff0000"),
-            fg_params=list(fontface=2,fontsize=36,
+            fg_params=list(fontface=2,fontsize=30,
 				col="white",
 				fontfamily="yantramanav",hjust=1,x=0.95),
 			padding=unit(c(1.5, 1), "cm")
@@ -298,10 +309,9 @@ ttlout <-  grobTree(
 )
 anno2 <-  grobTree(
 	rectGrob(gp=gpar(fill="white",col="white",lwd=8)),
-	textGrob("View the map. Submit a case.\nmasks4canada.org",
-		gp = gpar(fontsize=36,col="#68382C",
-		fontfamily="source-sans-pro",fill="white",
-		hjust=-5
+	textGrob("View the map. Submit a case. masks4canada.org",
+		gp = gpar(fontsize=30,col="#68382C",
+		fontfamily="source-sans-pro",fill="white"
 	))
 )
 message("* outbreak grob")
@@ -314,8 +324,8 @@ for (k in 1:nrow(outbreaks)) {
 tgrob <- tableGrob(outbreaks,rows=NULL,cols=NULL,theme=tt3)
 ttlGrob <- grobTree(ttlout, tgrob)
 message("* map grob")
-mapImage 	<- rasterGrob(png::readPNG("../images/map.png"),
-	width=unit(1,"npc"), height=unit(1,"npc"))
+mapImage 	<- rasterGrob(png::readPNG("../images/map.png"))
+	#width=unit(1,"npc"), height=unit(1,"npc"))
 obImage	<- rasterGrob(png::readPNG("../images/outbreak.png"))
 mapPlot <- ggplot() + geom_blank() + 
     annotation_custom(mapImage, 
@@ -325,7 +335,7 @@ mapPlot <- ggplot() + geom_blank() +
 #	annotation_custom(ttlout,
 #		xmin = 0.68, xmax=0.9, ymin=0.9,ymax=0.95) +
 	annotation_custom(anno2,
-		xmin = 0.01, xmax=0.6, ymin=0.02,ymax=0.2)
+		xmin = 0.4, xmax=0.8, ymin=0,ymax=0.1)
 
 		#tableGrob(table,rows=NULL, cols=NULL, theme=tt3))
 mapPlot <- mapPlot + theme(
@@ -372,14 +382,21 @@ pdf(pdfFile,width=28,height=16)
 tryCatch({
 	grid.arrange(
 	  p1,p2,p3,mapPlot,top,rt,rt2,rt3,rt4,
-	  widths = c(0.07,1, 1, 1, 1, 1, 1, 1,0.07),
-	  heights = c(0.05,0.5,0.3,2,2,3),
+	  widths = c(0.07,1, 1, 1, 1, 1, 1, 1,0.13),
+	  heights = c(0.05,0.5,0.3,2,2,3,0.07),
 	  layout_matrix = rbind(rep(NA,9),
-							c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
+							c(NA, 5, 5, 5, 5, 5, 6, 7,NA), #header
 							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
-							c(NA, 4, 4, 4, 1, 1, 1, 1,NA),
-							c(NA, 4, 4, 4, 2, 2, 2, 2,NA),
-	                        c(NA, 3, 3, 3, 3, 3, 3, 3,NA)),
+							c(NA, 1, 1, 1, 3, 3, 3, 3,NA),
+							c(NA, 2, 2, 2, 3, 3, 3, 3, NA),
+							c(NA, 4, 4, 4, NA, NA, NA, NA, NA),
+							rep(NA,9)),
+###	  layout_matrix = rbind(rep(NA,9),
+###							c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
+###							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
+###							c(NA, 4, 4, 4, 1, 1, 1, 1,NA),
+###							c(NA, 4, 4, 4, 2, 2, 2, 2,NA),
+###	                        c(NA, 3, 3, 3, NA, NA, NA, NA,NA)),
 	  	bottom = textGrob(
 	    	sprintf("@covidschoolsCA | Updated %s",footerDate()),
 	    	gp = gpar(fontface = 2, fontsize = 40,
