@@ -230,6 +230,7 @@ dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
 dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
 dat$School.board[grep("SD36",dat$School.board)] <- "SD36 Surrey"
 dat$School.board[grep("SD39",dat$School.board)] <- "SD39 Vancouver" 
+dat$School.board[grep("SD38",dat$School.board)] <- "SD38 Richmond"
 dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby" 
 
 
