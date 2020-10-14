@@ -64,7 +64,7 @@ if (addLabels) {
  p2 <- p2 +  geom_text(aes( 
 		label = scales::percent(..prop.., accuracy=1),
         y= ..prop.. ), stat= "count", vjust = -.5,
-		size=11,colour="#550000") 
+		size=8.6,colour="#550000") 
 }
 p2 <- p2 + facet_grid(~Province,switch="x")
 p2 <- p2 + th
@@ -179,6 +179,7 @@ colnames(df3)[2] <- "Outbreaks"
 # For BC put in number of clusters
 numc <- length(intersect(which(dat$Province=="BC"),
 	grep("Cluster",dat$Outbreak.Status)))
+tweetRes[["total_outbreak"]] <- ob+numc # add clusters to total
 tmp <- data.frame(Province="BC",Outbreaks=numc)
 df3 <- rbind(df3,tmp)
 df3 <- df3[order(df3$Outbreaks,decreasing=TRUE),]
@@ -194,6 +195,8 @@ if (!is.null(qcStats)) {
 	message("\tAdding annotated QC data")
 	dat2 <- rbind(dat2,qcStats)
 }
+tweetRes[["dat_qcStats"]] <- dat2
+
 dat2$Type_of_school[which(dat2$Type_of_school=="Field Office")] <- "Office"
 dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
 dat2$Type_of_school[which(dat2$Type_of_school=="Post-secondary")] <- "PostSec"
@@ -208,6 +211,7 @@ if (any(is.na(dat2$Type_of_school))) {
 	browser()
 	print(dat2[idx,])
 }
+dat2Full <- dat2
 
 p2 <- getSchoolPlot(dat2,school_th,FALSE)
 pschlb <- getSchoolPlot(dat2,school_th,TRUE)
@@ -228,7 +232,8 @@ if (length(bad)>0) {
 	browser()
 }
 #dat2$Date[bad] <- sub("; 2020-09-21","",dat2$Date[bad])
-dat2 <- dat2[,c("Date","Province","Total.cases.to.date")]
+dat2 <- dat2[,c("Date","Province","Total.cases.to.date",
+	"institute.name")]
 lv <- levels(dat2$Province)
 dat2$Province <- as.character(dat2$Province)
 dat2 <- flattenCases(dat2)
@@ -264,7 +269,7 @@ cur <- aggregate(cur$cs,
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
 p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
-p3 <- p3 + geom_line(lwd=2)#geom_p#oint() + geom_line()
+p3 <- p3 + geom_line(lwd=1.7)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
 		linetype="dashed",lwd=2)
 p3 <- p3 + xlab("")
@@ -278,14 +283,50 @@ p3 <- p3 + scale_y_sqrt(breaks=c(0,25,100,200,500,1000,2000))
 p3 <- p3 + school_th
 p3 <- p3 + theme(
 	axis.text.x = element_text(angle = 20,
-		size=40,vjust=0.5),
+		size=30,vjust=0.5),
 	axis.text.y = element_text(size=48),
-	legend.text=element_text(size=36,colour="#550000"),
+	legend.text=element_text(size=30,colour="#550000"),
 	legend.title=element_blank(),
 	legend.key.size=unit(1.5,"cm"),
 	legend.background=element_rect(fill="white"),
 	legend.position = c(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
 )
+
+###cur4 <- aggregate(dat2$Total.cases.to.date,
+###	by=list(school=dat2$institute.name,Province=dat2$Province
+###		),
+###	FUN=sum)
+###pobcum <- ggplot(cur4,aes(x=x,group=Province))
+###pobcum <- p4 + geom_line(
+###	aes(y = ..count..), stat="count")
+
+#### now repeat for outbreaks
+###dat2 <- subset(dat2,Province!="QC")
+###dat2 <- dat[,c("Province","Date","Total.outbreaks.to.date",
+###	"Outbreak.dates","Outbreak.Status")]
+###dat2 <- dat2[union(which(dat2$Total.outbreaks.to.date>0),
+###		grep("Cluster",dat2$Outbreak.Status)),]
+###dat2$Outbreak.dates[which(dat2$Outbreak.dates %in% c(NA,""))] <- NA
+###for (k in grep(";",dat2$Date)){
+###	x <- unlist(strsplit(dat2$Date[k],";"))
+###	x <- stringr::str_trim(x[length(x)])
+###	dat2$Outbreak.dates[k] <- x	
+###}
+###dat2$tstamp <- as.Date(dat2$Outbreak.dates)
+###cur3 <- dat2 %>%
+###	group_by(Province) %>%
+###	arrange(tstamp) %>% 
+###	mutate(cs = cumsum(Total.outbreaks.to.date))
+###pobcum <- ggplot(cur3,aes(x=tstamp,y=x,colour=Province))
+###pobcum <- pobcum + geom_line(lwd=1)#geom_p#oint() + geom_line()
+###pobcum <- pobcum + geom_vline(xintercept=mondays,col="#ff6666",
+###		linetype="dashed",lwd=2)
+###pobcum <- pobcum + xlab("")
+###pobcum <- pobcum + ylab("")
+
+
+
+
 
 message("* putting together grobs")
 # image of map + outbreak table
@@ -376,7 +417,9 @@ rt4 <-  textGrob(
 # -----------------------------------------
 # Create Twitter thread
 message("Making tweets")
-genTweet(inDir,tweetRes)
+tweetDir <- sprintf("%s/social_media",inDir)
+if (!file.exists(tweetDir)) dir.create(tweetDir)
+genTweet(tweetDir,tweetRes)
 
 pdf(pdfFile,width=28,height=16)
 tryCatch({
@@ -389,7 +432,7 @@ tryCatch({
 							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
 							c(NA, 1, 1, 1, 3, 3, 3, 3,NA),
 							c(NA, 2, 2, 2, 3, 3, 3, 3, NA),
-							c(NA, 4, 4, 4, NA, NA, NA, NA, NA),
+							c(NA, 4, 4, 4, 3, 3, 3, 3, NA),
 							rep(NA,9)),
 ###	  layout_matrix = rbind(rep(NA,9),
 ###							c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
@@ -410,6 +453,10 @@ tryCatch({
 	pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
 	print(pschlb)
 	dev.off()
+	
+	system2("convert",args=c("-density","400","-quality","100",
+		sprintf("%s/schoolPct.pdf",inDir),
+		sprintf("%s/social_media/schoolPct.jpg",inDir)))
 
 	message("* Finished successfully.")
 	

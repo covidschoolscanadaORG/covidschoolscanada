@@ -63,6 +63,8 @@ dat$School.board <- sub("Franco-Manitobaine SD SD",
 	dat$School.board)
 dat$School.board <- sub("Indep. ","Indep ",
 	dat$School.board)
+dat$School.board <- sub("Rocky View Schools","Rocky View SD",
+	dat$School.board)
 
 
 dat$ct <- 1
@@ -101,10 +103,13 @@ for (prov in unique(df2$Province)) {
 	}
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
 	p <- p + ylab("Number of affected schools") + xlab("")
-	pdf(sprintf("%s/%s_schoolboard.pdf",inDir,prov),
-		width=9,height=5.5)
-	
+	pdfFile <- sprintf("%s/%s_schoolboard.pdf",inDir,prov)
+	pdf(pdfFile,width=9,height=5.5)
 	print(p)
 	dev.off()
+
+	message("* Converting to jpg")
+	system2("convert",args=c("-density","400","-quality","100",
+		pdfFile,sprintf("%s/social_media/%s_schoolboard.jpg",inDir,prov)))
 }
 

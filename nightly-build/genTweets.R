@@ -1,5 +1,6 @@
 
 require(emo)
+require(googledrive)
 
 tweetDate <- function(){
 t1 <- toupper(format(Sys.time(), "%d %b %Y"))
@@ -26,7 +27,8 @@ public_sch <- list(
 	AB=2080,
 	BC=1578,
 	MB=690,
-	SK=769
+	SK=769,
+	NB=302 # GNB Policy & Planning, Dept Ed & ECDev April 2017
 )
 # private only
 private_sch <- list(
@@ -72,7 +74,8 @@ getCoords <- function() {
 		SK="&ll=54.68857226971919%2C-110.27476094987723&z=6",
 		MB="&ll=53.74476051758362%2C-99.17430471694146&z=6",
 		ON="&ll=47.84454183589612%2C-88.18797659194146&z=6",
-		QC="&ll=48.39486655697718%2C-74.28622180721197&z=6"
+		QC="&ll=48.39486655697718%2C-74.28622180721197&z=6",
+		NB="&ll=46.52185832861437%2C-65.72942947682745&z=7"
 	)
 	coords
 }
@@ -116,7 +119,8 @@ genTweet <- function(outDir,res) {
 		AB="Alberta",
 		MB="Manitoba",
 		SK="Saskatchewan",
-		QC="Québec"
+		QC="Québec",
+		NB="New Brunswick"
 	)
 	outFile <- sprintf("%s/tweetgen_%s.txt",outDir,dt)
 
@@ -145,7 +149,7 @@ genTweet <- function(outDir,res) {
 		cat(sprintf("%s  THREAD: %% + SCHOOL BOARDS\n", 
 			emo::ji("right_arrow_curving_down")),file=twf)
 
-		cat(sprintf("%s Live Map: https://tinyurl.com/covidschoolsCA-map\n", 
+		cat(sprintf("%s Map: https://tinyurl.com/covidschoolsCA-map\n", 
 			emo::ji("round_pushpin")),file=twf)
 		cat(sprintf("%s Submit a confirmed report or correction:  https://tinyurl.com/covidschoolsCA-submit\n", 
 			emo::ji("incoming_envelope")),file=twf)
@@ -158,7 +162,6 @@ genTweet <- function(outDir,res) {
 		# -------------------------
 		# TWEET: % Schools
 		# -------------------------
-	
 		sch <- getSchoolTotals(res$num_school)
 		cat(sprintf("%s SCHOOLS, by %% %s\n",
 			emo::ji("school"),emo::ji("school")),file=twf)
@@ -182,7 +185,7 @@ genTweet <- function(outDir,res) {
 		# -------------------------
 		# TWEET: School type %
 		# -------------------------
-		dat2 <- subset(dat, Province != "QC")
+		dat2 <- tweetRes$dat_qcStats #subset(dat, Province != "QC")
 		dat2$Type_of_school[which(dat$Type_of_school=="Middle School")] <- "Elementary"
 		tbl <- table(dat2$Type_of_school)
 		tbl <- data.frame(Type=names(tbl),Count=as.integer(tbl))
@@ -205,8 +208,9 @@ tbl$Type <- as.character(tbl$Type)
 		fun("books","Secondary")
 		fun("children_crossing","Mixed")
 		fun("office","Field Office")
+		fun("mortar_board","Post-secondary")
 		fun("question","TBA")
-		cat(sprintf("\n%s By Province (QC under curation)\n",
+		cat(sprintf("\n%s By Province (QC updates on Mondays)\n",
 				emo::ji("down_arrow")),file=twf)
 		cat(sprintf("/%i\n\n",tweet_ct),file=twf)
 			cat("\n------------\n",file=twf) # separator
