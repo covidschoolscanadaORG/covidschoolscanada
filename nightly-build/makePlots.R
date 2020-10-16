@@ -123,6 +123,8 @@ tryCatch({
 
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
+idx <- which(is.na(qcStats$institute.name))
+if (any(idx)) qcStats <- qcStats[-idx,]
 
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
@@ -208,8 +210,8 @@ dat2$Schoolstr <- as.character(dat2$Type_of_school)
 if (any(is.na(dat2$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat2$Type_of_school))
-	browser()
 	print(dat2[idx,])
+	browser()
 }
 dat2Full <- dat2
 
