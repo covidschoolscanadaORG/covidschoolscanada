@@ -269,6 +269,21 @@ tbl$Type <- as.character(tbl$Type)
 		cat("\n------------\n",file=twf) # separator
 
 		# -------------------------
+		# TWEET: DATA
+		# -------------------------
+		cat(sprintf("%s GET THE DATA %s\n\n", 
+			emo::ji("chart_with_upwards_trend"),
+			emo::ji("map")), file=twf)
+		cat(sprintf("%s \n", tweetDate()),file=twf)
+		cat(sprintf("Cases/outbreaks to date in Canadian schools %s%s\n",
+			emo::ji("school"),emo::ji("canada")),file=twf)
+		cat(sprintf("%s CSV: \n", 
+			emo::ji("notebook")),file=twf)
+		cat("Opens with Google sheet, Excel, or programming language\n", file=twf)
+
+		tweet_ct <- tweet_ct+1
+		cat("\n------------\n",file=twf) # separator
+		# -------------------------
 		# TWEET: E-MAIL DISCLAIMER
 		# -------------------------
 		cat("We ask for e-mail addresses in case we need to contact you to verify info (e.g. get letter from school or PHU).\n\n",
