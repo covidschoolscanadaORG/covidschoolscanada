@@ -59,14 +59,6 @@ qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
 dat <- rbind(dat,qcStats)
-dat$School.board <- sub("Franco-Manitobaine SD SD",
-	"Franco-Manitobaine SD",
-	dat$School.board)
-dat$School.board <- sub("Indep. ","Indep ",
-	dat$School.board)
-dat$School.board <- sub("Rocky View Schools","Rocky View SD",
-	dat$School.board)
-
 
 dat$ct <- 1
 df2 <- aggregate(dat$ct, 
