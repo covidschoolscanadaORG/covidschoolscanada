@@ -54,6 +54,7 @@ inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 dat <- subset(dat, Province!="QC")
 
+
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
