@@ -40,5 +40,5 @@ Rscript fetchQCstats.R
 echo "Cleaning" >> $logfile
 Rscript qcStats.R
 
-# Call makePlots.R and schoolBoard.R after this.
-
+#### Call makePlots.R and schoolBoard.R after this.
+###
