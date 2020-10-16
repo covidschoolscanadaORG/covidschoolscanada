@@ -248,9 +248,6 @@ dat$School.board <- sub("Kawartha Pine DSB", "Kawartha Pine Ridge DSB",
 dat$School.board <- sub("SD 59 Peace River South", 
 	"SD59 Peace River South",
 	dat$School.board)
-dat$School.board <- sub("Kawartha Pine Region",
-	"Kawartha Pine Ridge",
-	dat$School.board)
 dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
 dat$School.board[grep("SD34",dat$School.board)] <- "SD34 Abbotsford"
 dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
@@ -260,6 +257,20 @@ dat$School.board[grep("SD39",dat$School.board)] <- "SD39 Vancouver"
 dat$School.board[grep("SD38",dat$School.board)] <- "SD38 Richmond"
 dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby" 
 dat$School.board[which(dat$School.board=="DDSB")] <- "Durham DSB"
+
+dat$School.board <- sub("Franco-Manitobaine SD SD",
+	"Franco-Manitobaine SD",
+	dat$School.board)
+dat$School.board <- sub("Indep\\. ","Indep ",
+	dat$School.board)
+dat$School.board <- sub("Rocky View Schools","Rocky View SD",
+	dat$School.board)
+dat$School.board <- sub("Indep. Vancouver","IndepVancouver",
+	dat$School.board)
+dat$School.board <- sub("^Indep","Indep ",
+	dat$School.board)
+dat$School.board[grep("Indep  Surrey",dat$School.board)] <- "Indep Surrey"
+dat$School.board[which(dat$School.board=="DCDSB")] <- "Dufferin-Peel CDSB"
 
 
 dat$School.board <- stringr::str_trim(dat$School.board)
