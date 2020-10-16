@@ -70,7 +70,7 @@ print(table(dat$Type_of_school))
 # --------------------------------------------
 # Clean region
 # --------------------------------------------
-dat$School.board <- sub("Decouvrers","Découvreurs",dat$School.board)
+dat$School.board <- sub("Decouvreurs","Découvreurs",dat$School.board)
 dat$School.board <- sub("Energie","Énergie",dat$School.board)
 dat$School.board <- sub("Jonquiere","Jonquière",dat$School.board)
 dat$School.board <- sub("Vallee des Tisserands","Vallée-des-Tisserands",
