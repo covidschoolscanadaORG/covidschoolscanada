@@ -1,7 +1,9 @@
 require(XML)
 
 args <- commandArgs(TRUE)
-inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-201004/CanadaMap_clean3.kml"# args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
+#inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-201004/CanadaMap_clean3.kml"# args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
+#inFile <- "/home/shraddhapai/Canada_COVID_tracker/export-201016/CanadaMap_clean3.kml"
+inFile <- args[1]
 print(inFile)
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -11,8 +13,18 @@ outFile <-  sprintf("%s-%s.txt",inFile,dt)
 # Convert to List
 tagsList <- xmlToList(tagsXML)
 # get into the level where the school data is stored
-schools <- tagsList$Document$Folder
-schools[[1]] <- NULL
+mega <- tagsList$Document
+idx <- which(names(mega)=="Folder")
+message(sprintf("* layers found", length(idx)))
+
+schools <- list()
+for (k in 1:length(idx)) {
+	cur <- mega[[idx[k]]]
+	nm <- cur$name
+	pl <- cur[which(names(cur)=="Placemark")] # get points
+	message(sprintf("Layer: %s: %i schools",nm, length(pl)))
+	schools <- c(schools,pl)
+}
 
 # parse each placeholder
 parseRec <- function(rec) {
@@ -47,8 +59,6 @@ other <- list()
 message("* Adding other fields")
 field_names <- c()
 for (k in 1:length(schools)) {
-#print(k)
-#if (k==617) browser()
 	other[[k]] <- t(as.matrix(parseRec(schools[[k]])))
 	
 }
@@ -67,4 +77,5 @@ table(df$Province)
 
 
 write.table(df,file=outFile,sep="\t",col=T,row=F,quote=T)
+message("* Table compiled")
 
