@@ -10,4 +10,9 @@ getTable <- function(dt) {
 }
 
 today <- getTable("201015")
+yest <- getTable("201014")
+
+idx <- which(!yest$institute.name %in% today$institute.name)
+browser()
+print(yest[idx,])
 
