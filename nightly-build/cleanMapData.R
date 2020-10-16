@@ -105,6 +105,8 @@ idx <- which(dat$Type_of_school=="?")
 if (any(idx)) dat$Type_of_school[idx] <- "TBA"
 idx <- which(dat$Type_of_school=="HIgh School")
 if (any(idx)) dat$Type_of_school[idx] <- "High School"
+idx <- which(dat$Type_of_school=="Elementary ; Middle School")
+if (any(idx)) dat$Type_of_school[idx] <- "Mixed"
 
 idx <- which(dat$Type_of_school=="Middle")
 if (any(idx)) dat$Type_of_school[idx] <- "Middle School"
@@ -141,6 +143,29 @@ if (any(is.na(dat$Type_of_school))) {
 	stop("")
 }
 print(table(dat$Type_of_school,useNA="always"))
+# -----------------------------------------
+# CLEAN DATE
+dat$Date <- gsub(":",";",dat$Date)
+dat$Date <- gsub("^20-","2020-",dat$Date)
+
+# -----------------------------------------
+# CLEAN CASES
+dat$Total.cases.to.date <- gsub(":",";",dat$Total.cases.to.date)
+cs <- strsplit(dat$Total.cases.to.date,";")
+tryCatch({
+cs <- lapply(cs,function(x) { 
+	x <- stringr::str_trim(x)
+	x <- as.integer(x); 
+	sum(x,na.rm=TRUE)
+})
+cs <- unlist(cs)
+}, error=function(ex){
+	print("Error while processing # cases")
+	browser()
+},finally={
+})
+
+browser()
 
 # -----------------------------------------
 # CLEAN SCHOOL BOARD
@@ -227,11 +252,14 @@ dat$School.board <- sub("Kawartha Pine Region",
 	"Kawartha Pine Ridge",
 	dat$School.board)
 dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
+dat$School.board[grep("SD34",dat$School.board)] <- "SD34 Abbotsford"
 dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
+dat$School.board[grep("SD44",dat$School.board)] <- "SD44 North Vancouver"
 dat$School.board[grep("SD36",dat$School.board)] <- "SD36 Surrey"
 dat$School.board[grep("SD39",dat$School.board)] <- "SD39 Vancouver" 
 dat$School.board[grep("SD38",dat$School.board)] <- "SD38 Richmond"
 dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby" 
+dat$School.board[which(dat$School.board=="DDSB")] <- "Durham DSB"
 
 
 dat$School.board <- stringr::str_trim(dat$School.board)
