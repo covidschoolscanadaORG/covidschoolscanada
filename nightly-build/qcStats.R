@@ -75,6 +75,8 @@ dat$School.board <- sub("Energie","Énergie",dat$School.board)
 dat$School.board <- sub("Jonquiere","Jonquière",dat$School.board)
 dat$School.board <- sub("Vallee des Tisserands","Vallée-des-Tisserands",
 	dat$School.board)
+dat$School.board <- sub("Pays-de-Bluets","Pays-de-Bleuets",
+	dat$School.board)
 
 write.table(dat,file=outFile,sep=",",col=T,row=F,quote=TRUE)
 
