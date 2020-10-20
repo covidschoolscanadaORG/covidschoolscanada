@@ -165,8 +165,6 @@ cs <- unlist(cs)
 },finally={
 })
 
-browser()
-
 # -----------------------------------------
 # CLEAN SCHOOL BOARD
 message("------------------------------------")
@@ -256,6 +254,8 @@ dat$School.board[grep("SD36",dat$School.board)] <- "SD36 Surrey"
 dat$School.board[grep("SD39",dat$School.board)] <- "SD39 Vancouver" 
 dat$School.board[grep("SD38",dat$School.board)] <- "SD38 Richmond"
 dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby" 
+dat$School.board[grep("SD37",dat$School.board)] <- "SD37 Delta" 
+dat$School.board[grep("SD35",dat$School.board)] <- "SD35 Langley" 
 dat$School.board[which(dat$School.board=="DDSB")] <- "Durham DSB"
 
 dat$School.board <- sub("Franco-Manitobaine SD SD",
@@ -263,14 +263,16 @@ dat$School.board <- sub("Franco-Manitobaine SD SD",
 	dat$School.board)
 dat$School.board <- sub("Indep\\. ","Indep ",
 	dat$School.board)
+dat$School.board[grep("Indep  Schools",dat$School.board)] <- 
+	"Indep Schools"
 dat$School.board <- sub("Rocky View Schools","Rocky View SD",
 	dat$School.board)
-dat$School.board <- sub("Indep. Vancouver","IndepVancouver",
-	dat$School.board)
-dat$School.board <- sub("^Indep","Indep ",
-	dat$School.board)
+##dat$School.board <- sub("Indep. Vancouver","IndepVancouver",
+###	dat$School.board)
 dat$School.board[grep("Indep  Surrey",dat$School.board)] <- "Indep Surrey"
 dat$School.board[which(dat$School.board=="DCDSB")] <- "Dufferin-Peel CDSB"
+dat$School.board[grep("Manitoba Catholic School",dat$School.board)] <- "Manitoba Catholic Schools"
+dat$School.board[grep("Portage la Prairie",dat$School.board)] <- "Portage La Praire"
 
 
 dat$School.board <- stringr::str_trim(dat$School.board)
