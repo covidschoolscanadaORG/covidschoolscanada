@@ -133,7 +133,7 @@ genTweet <- function(outDir,res) {
 		# -------------------------
 		x <- sprintf("Good morning. %s\n", emo::ji("coffee"))
 		cat(x,file=twf)
-		cat("Here is our daily snapshot of COVID-19 in Canadian schools.\n\n",
+		cat("Here is our cumulative view of #COVID19 in Canadian schools.\n\n",
 			file=twf)
 
 		cat(sprintf("%s\n",tweetDate()),file=twf)
@@ -146,15 +146,16 @@ genTweet <- function(outDir,res) {
 			file=twf)
 		cat("\n",file=twf)
 
-		cat(sprintf("%s  THREAD: %% + SCHOOL BOARDS\n", 
-			emo::ji("right_arrow_curving_down")),file=twf)
-
 		cat(sprintf("%s Map: https://tinyurl.com/covidschoolsCA-map\n", 
 			emo::ji("round_pushpin")),file=twf)
-		cat(sprintf("%s Submit a confirmed report or correction:  https://tinyurl.com/covidschoolsCA-submit\n", 
+		cat(sprintf("%s Data: \n",
+			emo::ji("chart_with_upwards_trend")),file=twf)
+		cat(sprintf("%s Report cases/errors: https://tinyurl.com/covidschoolsCA-submit\n", 
 			emo::ji("incoming_envelope")),file=twf)
+		cat(sprintf("%s THREAD: \n",
+			emo::ji("right_arrow_curving_down")),file=twf)
 
-		cat("\n/1\n",file=twf)
+		cat("/1\n",file=twf)
 		cat("\n------------\n",file=twf) # separator
 
 		tweet_ct <-2 
@@ -268,21 +269,6 @@ tbl$Type <- as.character(tbl$Type)
 		tweet_ct <- tweet_ct+1
 		cat("\n------------\n",file=twf) # separator
 
-		# -------------------------
-		# TWEET: DATA
-		# -------------------------
-		cat(sprintf("%s GET THE DATA %s\n\n", 
-			emo::ji("chart_with_upwards_trend"),
-			emo::ji("map")), file=twf)
-		cat(sprintf("%s \n", tweetDate()),file=twf)
-		cat(sprintf("Cases/outbreaks to date in Canadian schools %s%s\n",
-			emo::ji("school"),emo::ji("canada")),file=twf)
-		cat(sprintf("%s CSV: \n", 
-			emo::ji("notebook")),file=twf)
-		cat("Opens with Google sheet, Excel, or programming language\n", file=twf)
-
-		tweet_ct <- tweet_ct+1
-		cat("\n------------\n",file=twf) # separator
 		# -------------------------
 		# TWEET: E-MAIL DISCLAIMER
 		# -------------------------
