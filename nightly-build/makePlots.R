@@ -279,7 +279,7 @@ p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
 p3 <- p3 + ylim(1,max(cur2$x)*1.02)
-p3 <- p3 + scale_y_sqrt(breaks=c(0,25,100,200,500,1000,2000))
+p3 <- p3 + scale_y_sqrt(breaks=c(0,25,100,200,500,1000,2000,2500))
 
 # annotate
 p3 <- p3 + school_th
@@ -326,14 +326,10 @@ p3 <- p3 + theme(
 ###pobcum <- pobcum + xlab("")
 ###pobcum <- pobcum + ylab("")
 
-
-
-
-
 message("* putting together grobs")
 # image of map + outbreak table
 tt3 <- ttheme_minimal(
-  core=list(bg_params = list(fill = "#ff0000"),
+  core=list(
             fg_params=list(fontface=2,fontsize=30,
 				col="white",
 				fontfamily="yantramanav",hjust=1,x=0.95),
@@ -351,7 +347,8 @@ ttlout <-  grobTree(
 	))
 )
 anno2 <-  grobTree(
-	rectGrob(gp=gpar(fill="white",col="white",lwd=8)),
+	rectGrob(gp=gpar(fill="white",col="white",
+			width=unit(1,"npc"),height=unit(1,"npc"))),
 	textGrob("View the map. Submit a case. masks4canada.org",
 		gp = gpar(fontsize=30,col="#68382C",
 		fontfamily="source-sans-pro",fill="white"
@@ -374,15 +371,16 @@ mapPlot <- ggplot() + geom_blank() +
     annotation_custom(mapImage, 
 		xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) + 
 	annotation_custom(tgrob,
-		xmin = 0.68, xmax=0.9, ymin=0.4,ymax=0.8) + 
+		xmin = 0.58, xmax=0.8, ymin=0.4,ymax=0.8) + 
 #	annotation_custom(ttlout,
 #		xmin = 0.68, xmax=0.9, ymin=0.9,ymax=0.95) +
 	annotation_custom(anno2,
-		xmin = 0.4, xmax=0.8, ymin=0,ymax=0.1)
+		xmin = 0.1, xmax=0.9, ymin=0,ymax=0.1)
 
 		#tableGrob(table,rows=NULL, cols=NULL, theme=tt3))
 mapPlot <- mapPlot + theme(
-	plot.margin = unit(c(0,0,0,0),"pt")
+	plot.margin = unit(c(0,0,0,0),"pt"),
+	panel.background=element_rect(fill="white")
 )
 
 message("* title grob")
@@ -427,8 +425,8 @@ pdf(pdfFile,width=28,height=16)
 tryCatch({
 	grid.arrange(
 	  p1,p2,p3,mapPlot,top,rt,rt2,rt3,rt4,
-	  widths = c(0.07,1, 1, 1, 1, 1, 1, 1,0.13),
-	  heights = c(0.05,0.5,0.3,2,2,3,0.07),
+	  widths = c(0.03,1, 1, 1, 1, 1, 1, 1,0.13),
+	  heights = c(0.07,0.5,0.3,2,2,3,0.07),
 	  layout_matrix = rbind(rep(NA,9),
 							c(NA, 5, 5, 5, 5, 5, 6, 7,NA), #header
 							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
@@ -443,13 +441,17 @@ tryCatch({
 ###							c(NA, 4, 4, 4, 2, 2, 2, 2,NA),
 ###	                        c(NA, 3, 3, 3, NA, NA, NA, NA,NA)),
 	  	bottom = textGrob(
-	    	sprintf("@covidschoolsCA | Updated %s",footerDate()),
-	    	gp = gpar(fontface = 2, fontsize = 40,
+	    	sprintf("@covidschoolsCA | Updated %s",
+				footerDate()),
+	    	gp = gpar(fontface = 2, fontsize = 36,
 				fontfamily="source-sans-pro",col="red"),
-	    	hjust = 0,vjust=0,
-	    	x = 0.05 
+	    	hjust = 1,vjust=-0.5,
+	    	x = 0.99 
 	  )
 	)
+	grid.rect(width = 0.99, height = 0.98, 
+		gp = gpar(lwd = 11, col = "red", fill = NA))
+
 	
 	# % schools by type	
 	pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
