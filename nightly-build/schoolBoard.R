@@ -58,6 +58,7 @@ dat <- subset(dat, Province!="QC")
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
+
 dat <- rbind(dat,qcStats)
 
 dat$ct <- 1
