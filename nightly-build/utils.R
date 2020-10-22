@@ -1,7 +1,26 @@
 # misc functions
 
-# num new values
-# 
+
+#' returns active/resolved column for cases
+#'
+#' @param dat (data.frame) cleaned school report table
+#' @param cur (Date) current date
+#' @param num_days (integer) max difference between cur and
+#' last reported date, to count as active. 
+#' @return (logical) TRUE if case is active; FALSE if resolved
+addActiveResolved <- function(dat,cur,num_days=21) {
+	# last date on case
+	lastDate <- sapply(dat$Date,function(x){
+			x <- gsub(" ","",x)
+			y <- unlist(strsplit(x,";"))
+			y <- y[length(y)]
+			y <- stringr::str_trim(y)
+	})
+	timelapse <- as.integer(cur-as.Date(lastDate))
+	stt <- timelapse > num_days
+	#pdf("test.pdf");plot(as.Date(lastDate),stt);dev.off()
+	return(stt)
+}
 
 getTable_dec <- function(x) {
 	tb <- table(x)
