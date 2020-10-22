@@ -31,7 +31,6 @@ echo "******************************************************" >> $logfile
 echo " Merging" >> $logfile
 echo "******************************************************" >> $logfile
 Rscript mergeQC.R $dt >> $logfile
-Rscript cleanMapData.R >> $logfile
 
 echo "******************************************************" >> $logfile
 echo " Fetching CEQ annotation sheet" >> $logfile
@@ -40,5 +39,19 @@ Rscript fetchQCstats.R
 echo "Cleaning" >> $logfile
 Rscript qcStats.R
 
+echo "******************************************************" >> $logfile
+echo " Fetch auto-generated entries " >> $logfile
+echo "******************************************************" >> $logfile
+dt2=`date +%Y-%m-%d`
+baseURL=https://covidschoolboards.s3.ca-central-1.amazonaws.com
+tgtDir=/home/shraddhapai/Canada_COVID_tracker/AutoGen
+inFile=${baseURL}/Peel_${dt2}.csv
+#wget $inFile
+#mv Peel_${dt}.csv ${tgtDir}/.
+
+echo "******************************************************" >> $logfile
+echo " Final cleanup " >> $logfile
+echo "******************************************************" >> $logfile
+#Rscript cleanMapData.R >> $logfile
 #### Call makePlots.R and schoolBoard.R after this.
 ###
