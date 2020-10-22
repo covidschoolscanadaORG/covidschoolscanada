@@ -6,8 +6,10 @@ message("-------------------------------------")
 message("Cleaning map data")
 message("-------------------------------------")
 
-dt <- format(Sys.Date(),"%y%m%d")
-inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+date2use <- Sys.Date()
+dt <- format(date2use,"%y%m%d")
+baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
+inDir <- sprintf("%s/export-%s",baseDir,dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
@@ -83,9 +85,11 @@ if(any(dat$Province %in% "Yukon")) {
 
 if (any(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB",
 	"NS","NL")) || any(is.na(dat$Province))) {
+	idx <- which(dat$Province=="")
+	dat <- dat[-idx,]
 	print(table(dat$Province,useNA="always"))
 	browser()
-	stop("Strange Province. Take a look")
+	#stop("Strange Province. Take a look")
 }
 
 dat$Province <- factor(dat$Province, 
@@ -319,7 +323,6 @@ dat$Date <- gsub(":",";",dat$Date)
 dat$Date <- gsub("--","-",dat$Date)
 dat$Date <- gsub("^20-","2020-",dat$Date)
 
-
 finalorder <- c("institute.name","Total.cases.to.date",
 	"Total.students.to.date","Total.staff.to.date",
 	"Date","Article",
@@ -328,6 +331,27 @@ finalorder <- c("institute.name","Total.cases.to.date",
 	"City","Province",
 	"Latitude","Longitude")
 dat  <- dat[,finalorder]
+
+# -----------------------------------------
+# ADD AUTOGEN TABLE
+dt2 <- format(date2use+1,"%Y-%m-%d")
+autoFile <- sprintf("%s/AutoGen/Peel_%s.csv",baseDir,dt2)
+autoDat <- read.delim(autoFile,sep=",",h=T,as.is=T)
+midx <- match(colnames(dat),colnames(autoDat))
+if (all.equal(colnames(autoDat)[midx],colnames(dat))!=TRUE) {
+	stop("colnames don't match")
+}
+autoDat <- autoDat[,midx]
+rmidx <- which(dat$School.board %in% unique(autoDat$School.board))
+message(sprintf("Removing %i entries for {%s}", length(rmidx),
+	paste(unique(autoDat$School.board),collapse=",")))
+
+message(sprintf("Adding %i auto-gen entries",nrow(autoDat)))
+dat <- rbind(dat,autoDat)
+dat$Type_of_school[grep("Partner organizations", dat$Type_of_school)] <- "Field Office"
+
+message("* Add active/resolved status")
+dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
 
 message("* Writing output file")
 write.table(dat,file=outFile,sep=",",
