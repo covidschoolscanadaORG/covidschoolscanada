@@ -1,7 +1,10 @@
 # convert qc update excel file into format compatible
 # with covidschoolsCA
 
-dt <- format(Sys.Date(),"%y%m%d")
+source("utils.R")
+
+date2use <- Sys.Date()
+dt <- format(date2use,"%y%m%d")
 outDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 
 inFile <- sprintf("%s/CEQ_annotated_%s.csv",outDir,dt)
@@ -64,7 +67,13 @@ dat$Type_of_school <- sub("Primaire","Elementary",dat$Type_of_school)
 dat$Type_of_school <- sub("Secondaire","Secondary",dat$Type_of_school)
 dat$Type_of_school <- sub("Commission scolaire","Field Office",dat$Type_of_school)
 dat$Type_of_school[grep("^Secondary s",dat$Type_of_school)] <- "Secondary"
-print(table(dat$Type_of_school))
+print(table(dat$Type_of_school,useNA="always"))
+idx <- which(is.na(dat$Type_of_school))
+if (any(idx)) {
+	message("Found schools with no type - excluding records")
+	message(sprintf("Excluding %i records",length(idx)))
+	dat <- dat[-idx,]
+}
 
 
 # --------------------------------------------
@@ -77,6 +86,9 @@ dat$School.board <- sub("Vallee des Tisserands","Vallée-des-Tisserands",
 	dat$School.board)
 dat$School.board <- sub("Pays-de-Bluets","Pays-de-Bleuets",
 	dat$School.board)
+
+# add active/resolved column
+dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
 
 write.table(dat,file=outFile,sep=",",col=T,row=F,quote=TRUE)
 
