@@ -128,6 +128,7 @@ genTweet <- function(outDir,res) {
 	twf <- file(outFile,"w")
 	tryCatch({
 
+message("started tweet")
 		# -------------------------
 		# TWEET: Overall
 		# -------------------------
@@ -186,12 +187,12 @@ genTweet <- function(outDir,res) {
 		# -------------------------
 		# TWEET: School type %
 		# -------------------------
-		dat2 <- tweetRes$dat_qcStats #subset(dat, Province != "QC")
-		dat2$Type_of_school[which(dat$Type_of_school=="Middle School")] <- "Elementary"
-		tbl <- table(dat2$Type_of_school)
+		dat2 <- tweetRes[["dat_qcStats"]] #subset(dat, Province != "QC")
+		dat2[which(dat2[,"Type_of_school"]=="Middle School"),"Type_of_school"] <- "Elementary"
+		tbl <- table(dat2[,"Type_of_school"])
 		tbl <- data.frame(Type=names(tbl),Count=as.integer(tbl))
 		tbl$Pct <- (tbl$Count/sum(tbl$Count))*100
-tbl$Type <- as.character(tbl$Type)
+		tbl$Type <- as.character(tbl$Type)
 		
 		fun <- function(emostr,x) {
 			p <-tbl$Pct[which(tbl$Type==x)]
