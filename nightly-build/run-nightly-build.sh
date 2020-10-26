@@ -42,10 +42,10 @@ Rscript qcStats.R
 echo "******************************************************" >> $logfile
 echo " Fetch auto-generated entries " >> $logfile
 echo "******************************************************" >> $logfile
-dt2=`date +%Y-%m-%d`
-baseURL=https://covidschoolboards.s3.ca-central-1.amazonaws.com
-tgtDir=/home/shraddhapai/Canada_COVID_tracker/AutoGen
-inFile=${baseURL}/Peel_${dt2}.csv
+#dt2=`$(date +%Y-%m-%d -d "$(date) + 1 day")`
+#baseURL=https://covidschoolboards.s3.ca-central-1.amazonaws.com
+#tgtDir=/home/shraddhapai/Canada_COVID_tracker/AutoGen
+#inFile=${baseURL}/Peel_${dt2}.csv
 #wget $inFile
 #mv Peel_${dt}.csv ${tgtDir}/.
 
