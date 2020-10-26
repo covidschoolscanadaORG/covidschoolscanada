@@ -1,10 +1,11 @@
 # first-pass map clean before running plots
 source("utils.R")
-options(warn=2)
 
 message("-------------------------------------")
 message("Cleaning map data")
 message("-------------------------------------")
+
+flag__addAutogen <- FALSE
 
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
@@ -14,8 +15,11 @@ inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
+failFile <- sprintf("%s/fail_cleanMapData.txt",
+	inDir)
 
 if (file.exists(outFile)) unlink(outFile)
+if (file.exists(failFile)) unlink(failFile)
 
 tryCatch({
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
@@ -83,13 +87,15 @@ if(any(dat$Province %in% "Yukon")) {
 		dat$Province[which(dat$Province == "Nova Scotia")] <- "YT"
 }
 
-if (any(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB",
-	"NS","NL")) || any(is.na(dat$Province))) {
-	idx <- which(dat$Province=="")
-	dat <- dat[-idx,]
+nogood <- union(which(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB","NS","NL")),which(is.na(dat$Province))) 
+
+if (length(nogood)>0){
 	print(table(dat$Province,useNA="always"))
-	browser()
-	#stop("Strange Province. Take a look")
+	message(sprintf("FAIL PROVINCE: excluding %i rows",
+			length(nogood)))
+	write.table(dat[nogood,],file=failFile,sep="\t",col=F,
+		row=F,quote=F,append=TRUE)
+	dat <- dat[-nogood,]
 }
 
 dat$Province <- factor(dat$Province, 
@@ -129,23 +135,28 @@ idx <- grep("Elementary school", dat$Type_of_school,
 		ignore.case=TRUE)
 if (any(idx)) dat$Type_of_school[idx] <- "Elementary"
 
-
-tryCatch({
-	dat$Type_of_school <- factor(dat$Type_of_school,
-		levels=schoolLevels_full())
-},error=function(ex){
-	stop("error while converting type of school")
-	print(ex)
-},finally={
-})
-
-if (any(is.na(dat$Type_of_school))) {
-	message("converting school to factor gave NA")
-	idx <- which(is.na(dat$Type_of_school))
-	print(dat[idx,])
-	browser()
-	stop("")
+idx <- which(!dat$Type_of_school %in% schoolLevels_full())
+if (any(idx)) {
+	message(sprintf("FAIL: School levels: excluding %i records",
+		length(idx)))
+	write.table(dat[idx,],file=failFile,sep="\t",col=T,row=F,quote=F)
+	dat <- dat[-idx,]
 }
+dat$Type_of_school <- factor(dat$Type_of_school,
+		levels=schoolLevels_full())
+###},error=function(ex){
+###	stop("error while converting type of school")
+###	print(ex)
+###},finally={
+###})
+
+###if (any(is.na(dat$Type_of_school))) {
+###	message("converting school to factor gave NA")
+###	idx <- which(is.na(dat$Type_of_school))
+###	print(dat[idx,])
+###	browser()
+###	stop("")
+###}
 print(table(dat$Type_of_school,useNA="always"))
 # -----------------------------------------
 # CLEAN DATE
@@ -156,18 +167,36 @@ dat$Date <- gsub("^20-","2020-",dat$Date)
 # CLEAN CASES
 dat$Total.cases.to.date <- gsub(":",";",dat$Total.cases.to.date)
 cs <- strsplit(dat$Total.cases.to.date,";")
-tryCatch({
-cs <- lapply(cs,function(x) { 
-	x <- stringr::str_trim(x)
-	x <- as.integer(x); 
-	sum(x,na.rm=TRUE)
-})
-cs <- unlist(cs)
-}, error=function(ex){
-	print("Error while processing # cases")
-	browser()
-},finally={
-})
+cs2 <- rep(NA,length(cs))
+for (k in 1:length(cs)) {
+	x <- stringr::str_trim(cs[[k]])
+	if (!any(is.na(suppressWarnings(as.integer(x))))) {
+		cs2[k] <- sum(as.integer(x))
+	}
+}
+
+bad_idx <- intersect(which(is.na(cs2)), 
+	dat$Province != "QC")
+if (length(bad_idx)>0){
+	message(sprintf("FAIL: Total cases is NA: excluding %i",
+		length(bad_idx)))
+	write.table(dat[bad_idx,],
+		file=failFile,sep="\t",col=F,row=F,
+		quote=F,append=TRUE)
+	dat <- dat[-bad_idx,]
+}
+###tryCatch({
+###cs <- lapply(cs,function(x) { 
+###	x <- stringr::str_trim(x)
+###	x <- as.integer(x); 
+###	sum(x,na.rm=TRUE)
+###})
+###cs <- unlist(cs)
+###}, error=function(ex){
+###	print("Error while processing # cases")
+###	browser()
+###},finally={
+###})
 
 # -----------------------------------------
 # CLEAN SCHOOL BOARD
@@ -260,6 +289,10 @@ dat$School.board[grep("SD38",dat$School.board)] <- "SD38 Richmond"
 dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby" 
 dat$School.board[grep("SD37",dat$School.board)] <- "SD37 Delta" 
 dat$School.board[grep("SD35",dat$School.board)] <- "SD35 Langley" 
+dat$School.board[grep("SD42",dat$School.board)] <- "SD42 Maple Ridge & Pitt Meadows"
+dat$School.board[grep("SD57",dat$School.board)] <- "SD57 Prince George"
+dat$School.board[grep("SD58",dat$School.board)] <- "SD58 Nicola-Similkameen"
+dat$School.board[grep("SD22",dat$School.board)] <- "SD22 Vernon"
 dat$School.board[which(dat$School.board=="DDSB")] <- "Durham DSB"
 
 dat$School.board <- sub("Franco-Manitobaine SD SD",
@@ -277,6 +310,7 @@ dat$School.board[grep("Indep  Surrey",dat$School.board)] <- "Indep Surrey"
 dat$School.board[which(dat$School.board=="DCDSB")] <- "Dufferin-Peel CDSB"
 dat$School.board[grep("Manitoba Catholic School",dat$School.board)] <- "Manitoba Catholic Schools"
 dat$School.board[grep("Portage la Prairie",dat$School.board)] <- "Portage La Praire"
+dat$School.board[grep("Portage La Prairie",dat$School.board)] <- "Portage La Praire"
 
 
 dat$School.board <- stringr::str_trim(dat$School.board)
@@ -296,7 +330,7 @@ for (prov in unique(df2$Province)) {
 	message("")
 	df3 <- subset(df2,Province==prov)
 	df3 <- df3[order(-df3$ct),]
-	print(df3)
+	#print(df3)
 }
 dat <- dat[,-which(colnames(dat)=="ct")]
 
@@ -314,7 +348,11 @@ for (k in 1:length(idx)) {
 	cur <- as.integer(stringr::str_trim(cur))
 	totcase[k] <- sum(cur)
 }
-dat$Outbreak.Status[idx[which(totcase > 1)]] <- "Cluster (BC)"
+
+clust <- idx[which(totcase>1)]
+
+dat$Outbreak.Status[intersect(clust,
+		which(dat$Outbreak.Status!="Declared outbreak"))] <- "Cluster (BC)"
 
 message("------------------------------------")
 message("* Dates cleanup")
@@ -332,23 +370,29 @@ finalorder <- c("institute.name","Total.cases.to.date",
 	"Latitude","Longitude")
 dat  <- dat[,finalorder]
 
-# -----------------------------------------
-# ADD AUTOGEN TABLE
-dt2 <- format(date2use+1,"%Y-%m-%d")
-autoFile <- sprintf("%s/AutoGen/Peel_%s.csv",baseDir,dt2)
-autoDat <- read.delim(autoFile,sep=",",h=T,as.is=T)
-midx <- match(colnames(dat),colnames(autoDat))
-if (all.equal(colnames(autoDat)[midx],colnames(dat))!=TRUE) {
-	stop("colnames don't match")
-}
-autoDat <- autoDat[,midx]
-rmidx <- which(dat$School.board %in% unique(autoDat$School.board))
-message(sprintf("Removing %i entries for {%s}", length(rmidx),
-	paste(unique(autoDat$School.board),collapse=",")))
 
-message(sprintf("Adding %i auto-gen entries",nrow(autoDat)))
-dat <- rbind(dat,autoDat)
-dat$Type_of_school[grep("Partner organizations", dat$Type_of_school)] <- "Field Office"
+if (flag__addAutogen) {
+	# -----------------------------------------
+	# ADD AUTOGEN TABLE
+	dt2 <- format(date2use-1,"%Y-%m-%d")
+	autoFile <- sprintf("%s/AutoGen/Peel_%s.csv",baseDir,dt2)
+	autoDat <- read.delim(autoFile,sep=",",h=T,as.is=T)
+	midx <- match(colnames(dat),colnames(autoDat))
+	if (all.equal(colnames(autoDat)[midx],colnames(dat))!=TRUE) {
+		stop("colnames don't match")
+	}
+	autoDat <- autoDat[,midx]
+	rmidx <- which(dat$School.board %in% unique(autoDat$School.board))
+	message(sprintf("Removing %i entries for {%s}", 
+		length(rmidx),
+	paste(unique(autoDat$School.board),collapse=",")))
+	dat <- dat[-rmidx,]
+	
+	message(sprintf("Adding %i auto-gen entries",nrow(autoDat)))
+	dat <- rbind(dat,autoDat)
+	dat$Type_of_school[grep("Partner organizations", 
+		dat$Type_of_school)] <- "Field Office"
+}
 
 message("* Add active/resolved status")
 dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
