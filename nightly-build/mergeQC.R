@@ -1,12 +1,14 @@
 # merge canada-wide and quebec
 source("utils.R")
-options(warn=2)
+#options(warn=2)
 
 args <- commandArgs(TRUE)
 dt <- args[1]
 rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
+failFile <- sprintf("%s/fail_mergeQC.txt",inDir)
+#fail <- open(failFile,"w")
 outFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
 statFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.stats.txt",
@@ -87,16 +89,17 @@ final <- x
 final$Total.cases.to.date <- stringr::str_trim(final$Total.cases.to.date)
 
 final$Total.outbreaks.to.date <- stringr::str_trim(final$Total.outbreaks.to.date)
-tryCatch({
-	final$Total.outbreaks.to.date <- as.integer(
-			final$Total.outbreaks.to.date)
-}, error=function(ex){
-	message("Converting outbreaks to integer failed")
-	browser()
-	stop("")
-},finally={
-})
-
+####tryCatch({
+###idx <- suppressWarnings(which(is.na(as.integer(final$Total.outbreaks.to.date))))
+###if (any(idx)) {
+###	message("Converting outbreaks to integer failed")
+###	write.table(final[idx,],file=failFile,sep="\t",
+###		col=T,row=F,quote=F)
+###	message(sprintf("\tFAILED: %i rows > excluding",length(idx)))
+###	final <- final[-idx,]
+###}
+###final$Total.outbreaks.to.date <- as.integer(
+###		final$Total.outbreaks.to.date)
 
 if (length(grep("Henry Wise Wood High School", 
 	final$Type_of_school))>0) {
@@ -109,8 +112,8 @@ message("")
 message("*** FINAL ***")
 message("")
 message(sprintf("# institutions = %i rows", nrow(final)))
-message(sprintf("# outbreaks = %i rows", sum(final$Total.outbreaks.to.date,
-		na.omit=TRUE)))
+#message(sprintf("# outbreaks = %i rows", sum(final$Total.outbreaks.to.date,
+#		na.omit=TRUE)))
 message("")
 message("-------------------------------------")
 message("* Num institutions: PROVINCE")
@@ -118,11 +121,11 @@ message("-------------------------------------")
 print(getTable_dec(final$Province))
 message("")
 
-message("-------------------------------------")
-message("* Num outbreaks: PROVINCE")
-message("-------------------------------------")
-tmp <- aggregate(final$Total.outbreaks.to.date, by=list(final$Province),FUN=sum)
-tmp2 <- tmp[,2]; names(tmp2) <- tmp[,1]; print(tmp2[order(tmp2,decreasing=TRUE)])
+###message("-------------------------------------")
+###message("* Num outbreaks: PROVINCE")
+###message("-------------------------------------")
+###tmp <- aggregate(final$Total.outbreaks.to.date, by=list(final$Province),FUN=sum)
+###tmp2 <- tmp[,2]; names(tmp2) <- tmp[,1]; print(tmp2[order(tmp2,decreasing=TRUE)])
 
 ###message("-------------------------------------")
 ###message("* Type of schools: CANADA")
