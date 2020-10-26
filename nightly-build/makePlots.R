@@ -14,6 +14,8 @@ options(warn=2)
 source("utils.R")
 source("genTweets.R")
 
+suppressMessages(require(googledrive))
+
 # add Google fonts
 font_add_google(name = "Yantramanav", family = "yantramanav")
 font_add_google(name = "Source Sans Pro", family = "source-sans-pro")
@@ -114,6 +116,8 @@ school_th <-  theme(
 
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
+failFile <- sprintf("%s/fail_makePlots.txt",inDir)
+if (file.exists(failFile)) unlink(failFile)
 tryCatch({
 	dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 },error=function(ex){
@@ -125,6 +129,10 @@ qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
 idx <- which(is.na(qcStats$institute.name))
 if (any(idx)) qcStats <- qcStats[-idx,]
+
+idx <- grep("catholique Montfort",dat$institute.name)
+dat$Total.outbreaks.to.date[idx] <- 2
+dat$Total.outbreaks.to.date <- as.integer(dat$Total.outbreaks.to.date)
 
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
@@ -173,6 +181,8 @@ p1 <- p
 #g <- annotPage(p,"Province",plotTitle=ttl)
 
 message("*PLOT: Outbreaks by Province")
+
+
 df3 <- aggregate(dat$Total.outbreaks.to.date,
 	by=list(Province=dat$Province),
 	FUN=sum,na.rm=TRUE)
@@ -197,7 +207,9 @@ if (!is.null(qcStats)) {
 	message("\tAdding annotated QC data")
 	dat2 <- rbind(dat2,qcStats)
 }
-tweetRes[["dat_qcStats"]] <- dat2
+
+dat_qcStats <- dat2
+tweetRes[["dat_qcStats"]] <- dat_qcStats
 
 dat2$Type_of_school[which(dat2$Type_of_school=="Field Office")] <- "Office"
 dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
@@ -211,7 +223,11 @@ if (any(is.na(dat2$Type_of_school))) {
 	message("converting school to factor gave NA")
 	idx <- which(is.na(dat2$Type_of_school))
 	print(dat2[idx,])
-	browser()
+	message(sprintf("\tFAIL: School factor conversion: excluded %i",
+		length(idx)))
+	write.table(dat2[idx,],file=failFile,
+		sep="\t",col=T,row=F,quote=F)
+	dat2 <- dat2[-idx,]
 }
 dat2Full <- dat2
 
@@ -231,7 +247,9 @@ idx2 <- grep(";",dat2$Total.cases.to.date)
 bad <- setdiff(idx1,idx2)
 if (length(bad)>0) {
 	print("bad rows")
-	browser()
+	message(sprintf("FAILED: BAD DATES: excluding %i rows",length(bad)))
+	write.table(dat2[bad,],file=failFile,sep="\t",col=F,row=F,quote=F,append=TRUE)
+	dat2 <- dat2[-bad,]
 }
 #dat2$Date[bad] <- sub("; 2020-09-21","",dat2$Date[bad])
 dat2 <- dat2[,c("Date","Province","Total.cases.to.date",
@@ -364,14 +382,14 @@ for (k in 1:nrow(outbreaks)) {
 tgrob <- tableGrob(outbreaks,rows=NULL,cols=NULL,theme=tt3)
 ttlGrob <- grobTree(ttlout, tgrob)
 message("* map grob")
-mapImage 	<- rasterGrob(png::readPNG("../images/map.png"))
+mapImage 	<- rasterGrob(png::readPNG("../images/map2.png"))
 	#width=unit(1,"npc"), height=unit(1,"npc"))
 obImage	<- rasterGrob(png::readPNG("../images/outbreak.png"))
 mapPlot <- ggplot() + geom_blank() + 
     annotation_custom(mapImage, 
 		xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) + 
 	annotation_custom(tgrob,
-		xmin = 0.58, xmax=0.8, ymin=0.4,ymax=0.8) + 
+		xmin = 0.58, xmax=0.8, ymin=0.3,ymax=0.7) + 
 #	annotation_custom(ttlout,
 #		xmin = 0.68, xmax=0.9, ymin=0.9,ymax=0.95) +
 	annotation_custom(anno2,
@@ -461,6 +479,10 @@ tryCatch({
 	system2("convert",args=c("-density","400","-quality","100",
 		sprintf("%s/schoolPct.pdf",inDir),
 		sprintf("%s/social_media/schoolPct.jpg",inDir)))
+
+	system2("convert",args=c("-density","400","-quality","100",
+		sprintf("%s/arranged.pdf",inDir),
+		sprintf("%s/social_media/arranged.jpg",inDir)))
 
 	message("* Finished successfully.")
 	
