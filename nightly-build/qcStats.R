@@ -91,4 +91,5 @@ dat$School.board <- sub("Pays-de-Bluets","Pays-de-Bleuets",
 dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
 
 write.table(dat,file=outFile,sep=",",col=T,row=F,quote=TRUE)
+message("Done QC annotation processing")
 
