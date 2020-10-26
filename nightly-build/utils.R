@@ -8,7 +8,7 @@
 #' @param num_days (integer) max difference between cur and
 #' last reported date, to count as active. 
 #' @return (logical) TRUE if case is active; FALSE if resolved
-addActiveResolved <- function(dat,cur,num_days=21) {
+addActiveResolved <- function(dat,cur,num_days=14) {
 	# last date on case
 	lastDate <- sapply(dat$Date,function(x){
 			x <- gsub(" ","",x)
@@ -36,7 +36,7 @@ getProvTerr <- function() {
 }
 
 # convert each entry of 1;1; cases into one record per case
-flattenCases <- function(curd) {
+flattenCases <- function(curd,type="case") {
 	message("Flattening cases...")
 	idx <- grep(";", curd$Total.cases.to.date)
 	simple <- setdiff(1:nrow(curd),idx)
