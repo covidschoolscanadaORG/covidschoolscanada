@@ -1,6 +1,5 @@
 # misc functions
 
-
 #' returns active/resolved column for cases
 #'
 #' @param dat (data.frame) cleaned school report table
@@ -37,31 +36,60 @@ getProvTerr <- function() {
 
 # convert each entry of 1;1; cases into one record per case
 flattenCases <- function(curd,type="case") {
+curd$Province <- as.character(curd$Province)
+	if (type=="case"){ 
+		type <- "Total.cases.to.date"
+		dtype <- "Date"
+	} else {
+		type <- "Total.outbreaks.to.date"
+		dtype <- "Outbreak.dates"
+		curd <- curd[,c(dtype,"Province",type)]
+	}
+
 	message("Flattening cases...")
-	idx <- grep(";", curd$Total.cases.to.date)
+	idx <- grep(";", curd[,dtype])
 	simple <- setdiff(1:nrow(curd),idx)
 	simple 	<- curd[simple,]
 	multi 	<- curd[idx,]
 tryCatch({
-	multi$Total.cases.to.date <- stringr::str_trim(multi$Total.cases.to.date)
-	multi$Total.cases.to.date <- gsub(" ","",
-		multi$Total.cases.to.date)
+	multi[,type] <- stringr::str_trim(multi[,type])
+	multi[,type] <- gsub(" ","",multi[,type])
+	multi[,dtype] <- gsub(" ","",multi[,dtype])
 	
-	for (i in 1:length(multi)) {
+	for (i in 1:nrow(multi)) {
+		if (type=="Total.outbreaks.to.date"){
+			tmp <- paste(rep(1,multi[i,type]),collapse=";")
+			multi[i,type] <- tmp
+		}
+		tryCatch({
 		x <- as.integer(unlist(
-			strsplit(multi$Total.cases.to.date[i],";")))
-		y <- trimws(unlist(strsplit(multi$Date[i],";")))
+			strsplit(multi[i,type],";")))
+		},error=function(ex){ 
+			browser()
+			print(ex)
+			message("Error while flattening")
+		})	
+		y <- trimws(unlist(strsplit(multi[i,dtype],";")))
+		if (any(is.na(x))|| any(is.na(y))) {
+			message("NA case/date")
+			print(multi[i,])
+			browser()
+		}
 		for (j in 1:length(x)) {
 			simple <- rbind(simple, 
 				c(y[j],multi$Province[i],x[j]))
 		}
+	     cat(sprintf("%s: {%s}",multi[i,type],
+			paste(x,collapse=",")),file="test.txt",append=TRUE)
 	}
-	curd$Date <- stringr::str_trim(curd$Date)
+	curd[,dtype] <- stringr::str_trim(curd[,dtype])
 
 	# shared cases have NA dates
-	if (any(is.na(curd$Total.cases.to.date))) {
-		curd$Total.cases.to.date[which(is.na(curd$Total.cases.to.date))] <- 0
+	if (any(is.na(curd[,type]))) {
+		curd[which(is.na(curd[,type])),type] <- 0
 	}
+	idx <- which(is.na(curd$institute.name))	
+	if (any(idx)) curd <- curd[-idx,]
 },error=function(ex){
 	print(ex)
 	browser()
