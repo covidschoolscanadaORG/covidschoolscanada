@@ -16,7 +16,6 @@ for (k in 1:ncol(dat)) {
 	dat[,k] <- stringr::str_trim(dat[,k])
 }
 
-
 map_colname <- list(
 	"École"="institute.name",
 	"Nombre"="Total.cases.to.date",
@@ -74,7 +73,6 @@ if (any(idx)) {
 	message(sprintf("Excluding %i records",length(idx)))
 	dat <- dat[-idx,]
 }
-
 
 # --------------------------------------------
 # Clean region
