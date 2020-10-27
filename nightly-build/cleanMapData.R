@@ -5,7 +5,7 @@ message("-------------------------------------")
 message("Cleaning map data")
 message("-------------------------------------")
 
-flag__addAutogen <- FALSE
+flag__addAutogen <- TRUE
 
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
@@ -33,6 +33,8 @@ dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 message("* Removing trailing whitespace")
 for (k in 1:ncol(dat)) {
 	dat[,k] <- stringr::str_trim(dat[,k])
+	dat[,k] <- gsub("Â", "", dat[,k])
+	dat[,k] <- gsub("\u00A0", "", dat[,k])
 	dat[,k] <- trimws(dat[,k])
 }
 
@@ -162,6 +164,11 @@ print(table(dat$Type_of_school,useNA="always"))
 # CLEAN DATE
 dat$Date <- gsub(":",";",dat$Date)
 dat$Date <- gsub("^20-","2020-",dat$Date)
+
+# -----------------------------------------
+# CLEAN INSTITUTE NAME
+dat$institute.name <- gsub("Ã‰","É",dat$institute.name)
+dat$institute.name <- gsub("Ã©","é",dat$institute.name)
 
 # -----------------------------------------
 # CLEAN CASES
@@ -375,14 +382,16 @@ if (flag__addAutogen) {
 	# -----------------------------------------
 	# ADD AUTOGEN TABLE
 	dt2 <- format(date2use-1,"%Y-%m-%d")
-	autoFile <- sprintf("%s/AutoGen/Peel_%s.csv",baseDir,dt2)
+	updateOnly <- "Peel DSB"
+	autoFile <- sprintf("%s/AutoGen/Automated_boards_%s.csv",baseDir,dt2)
 	autoDat <- read.delim(autoFile,sep=",",h=T,as.is=T)
 	midx <- match(colnames(dat),colnames(autoDat))
 	if (all.equal(colnames(autoDat)[midx],colnames(dat))!=TRUE) {
 		stop("colnames don't match")
 	}
 	autoDat <- autoDat[,midx]
-	rmidx <- which(dat$School.board %in% unique(autoDat$School.board))
+	autoDat <- subset(autoDat, School.board %in% updateOnly)
+	rmidx <- which(dat$School.board %in% updateOnly)#unique(autoDat$School.board))
 	message(sprintf("Removing %i entries for {%s}", 
 		length(rmidx),
 	paste(unique(autoDat$School.board),collapse=",")))
