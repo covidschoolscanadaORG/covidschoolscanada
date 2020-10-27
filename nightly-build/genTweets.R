@@ -149,17 +149,26 @@ message("started tweet")
 
 		cat(sprintf("%s Map: https://tinyurl.com/covidschoolsCA-map\n", 
 			emo::ji("round_pushpin")),file=twf)
-		cat(sprintf("%s Data: \n",
-			emo::ji("chart_with_upwards_trend")),file=twf)
 		cat(sprintf("%s Report cases/errors: https://tinyurl.com/covidschoolsCA-submit\n", 
 			emo::ji("incoming_envelope")),file=twf)
-		cat(sprintf("%s THREAD: \n",
+		cat(sprintf("%s BREAK: \n",
 			emo::ji("right_arrow_curving_down")),file=twf)
 
 		cat("/1\n",file=twf)
 		cat("\n------------\n",file=twf) # separator
 
 		tweet_ct <-2 
+
+		# -------------------------
+		# TWEET: Data
+		# -------------------------
+		cat("Download everything on the map to date\n",file=twf)
+		cat(sprintf("%s\n",
+			emo::ji("chart_with_upwards_trend")),file=twf)
+		cat("/2\n",file=twf)
+		cat("\n------------\n",file=twf) # separator
+		tweet_ct <-3 
+
 
 		# -------------------------
 		# TWEET: % Schools
@@ -180,7 +189,9 @@ message("started tweet")
 			}
 			cat("\n",file=twf)
 		}
-		cat(sprintf("\n/%i\n",tweet_ct),file=twf)
+		cat("** Interpret with caution: Unadjusted for group totals + staff cases",
+			file=twf)
+		cat(sprintf("\n/%i",tweet_ct),file=twf)
 		cat("\n------------\n",file=twf) # separator
 		tweet_ct <- tweet_ct+1
 
@@ -214,7 +225,7 @@ message("started tweet")
 		fun("question","TBA")
 		cat(sprintf("\n%s By Province (QC updates on Mondays)\n",
 				emo::ji("down_arrow")),file=twf)
-		cat(sprintf("/%i\n\n",tweet_ct),file=twf)
+		cat(sprintf("/%i",tweet_ct),file=twf)
 			cat("\n------------\n",file=twf) # separator
 		
 		tweet_ct <- tweet_ct+1
@@ -236,7 +247,7 @@ message("started tweet")
 				file=twf)
 			str <- "OUTBREAKS"
 			if (sch$Province[k]=="BC") {
-				str <- "CLUSTERS (2+ cases)"
+				str <- "CLUSTERS & OUTBREAKS"
 			} else  if (sch$Province[k]=="QC") {
 				str <- "OUTBREAKS (5+ cases)"
 			}
@@ -249,9 +260,11 @@ message("started tweet")
 				file=twf)
 			if (sch$Province[k]=="QC") {
 				cat("Source: @CovidEcoles\n",file=twf)
+			} else if (sch$Province[k]=="AB"){
+				cat("Source: @SOSAlberta\n",file=twf)
 			}
 
-			cat(sprintf("\n/%i\n", tweet_ct),file=twf)
+			cat(sprintf("\n/%i", tweet_ct),file=twf)
 			tweet_ct <- tweet_ct+1
 			cat("\n------------\n",file=twf) # separator
 		} 
@@ -266,7 +279,7 @@ message("started tweet")
 		cat("Orange: Declared outbreak (PHU; 2+ cases <14 days, linked)\n",
 				file=twf)
 		cat("Grey:     1+ case, outbreak status unknown\n",file=twf)
-		cat(sprintf("\n/%i\n", tweet_ct),file=twf)
+		cat(sprintf("\n/%i", tweet_ct),file=twf)
 		tweet_ct <- tweet_ct+1
 		cat("\n------------\n",file=twf) # separator
 
@@ -280,7 +293,7 @@ message("started tweet")
 		cat("We just want 100% transparency in our schools.\n",
 			file=twf)
 
-		cat(sprintf("\n/%i\n", tweet_ct),file=twf)
+		cat(sprintf("\n/%i", tweet_ct),file=twf)
 		tweet_ct <- tweet_ct+1
 		cat("\n------------\n",file=twf) # separator
 
