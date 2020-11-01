@@ -1,5 +1,48 @@
 # misc functions
 
+#' convert Prov to abbrev
+prov2abbrev <- function(x) {
+	if(any(x %in% "Newfoundland and Labrador")) {
+			x[which(x == "Newfoundland and Labrador")] <- "NL"
+	}
+	if(any(x %in% "Northwest Territories")){ 
+			x[which(x == "Northwest Territories")] <- "NWT"
+	}
+	if(any(x %in% "Prince Edward Island")){
+			x[which(x == "Prince Edward Island")] <- "PEI"
+	}
+	if(any(x %in% "Saskatchewan")){
+			x[which(x == "Saskatchewan")] <- "SK"
+	}
+	if(any(x %in% "New Brunswick")) {
+			x[which(x == "New Brunswick")] <- "NB"
+	}
+	if(any(x %in% "Québec")) {
+			x[which(x == "Québec")] <- "QC"
+	}
+	if(any(x %in% "Alberta")) {
+			x[which(x == "Alberta")] <- "AB"
+	}
+	if(any(x %in% "Ontario")) {
+			x[which(x == "Ontario")] <- "ON"
+	}
+	x[grep("British Columbia",x)] <- "BC"
+	
+	if(any(x %in% "Manitoba")) {
+			x[which(x == "Manitoba")] <- "MB"
+	}
+	if(any(x %in% "Nova Scotia")) {
+			x[which(x == "Nova Scotia")] <- "NS"
+	}
+	if(any(x %in% "Nunavut")) {
+			x[which(x == "Nunavut")] <- "NU"
+	}
+	if(any(x %in% "Yukon")) {
+			x[which(x == "Yukon")] <- "YT"
+}
+x
+}
+
 #' returns active/resolved column for cases
 #'
 #' @param dat (data.frame) cleaned school report table
@@ -219,3 +262,55 @@ addFooter <- function(g,plotType) {
 g
 }
 
+#' reverse geolocate - fetch city/prov given latlong
+#'
+#' @details Uses Photon Map API
+#' @param x (data.frame) school table with Latitude and Longitude columns
+#' @return (data.frame) columns Latitude, Longitude, City, Province
+#' @importFrom RCurl getURIAsynchronous
+#' @importFrom jsonlite fromJSON
+revGeo <- function(x) {
+message("Reverse geo-locating")
+out <- list()
+urlbase <- "https://photon.komoot.io/reverse?"
+for (k in 1:nrow(x)) {
+	urlFull <- sprintf("%slon=%s&lat=%s",urlbase,
+		as.character(x$Longitude[k]),as.character(x$Latitude[k]))
+	message(sprintf("\tFetching %s", urlFull))
+	tryCatch({
+		m <- RCurl::getURIAsynchronous(urlFull)
+		m2 <- RJSONIO::fromJSON(m)
+		m3 <- m2$features[[1]]$properties
+		city <- m3$city
+		if (is.null(city)) city <- m3$district
+		if (is.null(city)) city <- NA
+		prov <- m3$state
+		if (is.null(prov)) prov <- NA
+		out[[k]] <- c(x$Longitude[k],x$Latitude[k],city,prov)
+	}, error=function(ex) {
+		print(ex)
+		out[[k]] <- c(x$Longitude[k],x$Latitude[k],NA,NA)
+	},finally={
+	})
+}
+	out2 <- do.call("rbind",out)
+	out2[,4] <- prov2abbrev(out2[,4])
+
+	# make sure record order not mixed up
+	if (any(abs(floor(as.numeric(out2[,2])-blah$Latitude))>.Machine$double.eps)||
+			any(abs(floor(as.numeric(out2[,1])-blah$Longitude))>.Machine$double.eps)) {
+			message("lat/long order doesn't match")
+			browser()
+	}
+	out2
+}
+
+# tests revgeo
+revGeo_test <- function() {
+	inFile <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-201101/final_data/CanadaMap_QuebecMerge-201101.clean.csv"
+	dat <- read.delim(inFile,sep=",",h=T,as.is=T)
+	set.seed(123)
+	blah <- dat[sample(1:nrow(dat),50,F),]	
+	y <- revGeo(blah)
+browser()
+}
