@@ -49,44 +49,18 @@ if (any(idx)){
 	dat$Province[idx] <- "Alberta"
 	dat$City[idx] <- "Edmonton"
 }
-print(table(dat$Province,useNA="always"))
-if(any(dat$Province %in% "Newfoundland and Labrador")) {
-		dat$Province[which(dat$Province == "Newfoundland and Labrador")] <- "NL"
-}
-if(any(dat$Province %in% "Northwest Territories")){ 
-		dat$Province[which(dat$Province == "Northwest Territories")] <- "NWT"
-}
-if(any(dat$Province %in% "Prince Edward Island")){
-		dat$Province[which(dat$Province == "Prince Edward Island")] <- "PEI"
-}
-if(any(dat$Province %in% "Saskatchewan")){
-		dat$Province[which(dat$Province == "Saskatchewan")] <- "SK"
-}
-if(any(dat$Province %in% "New Brunswick")) {
-		dat$Province[which(dat$Province == "New Brunswick")] <- "NB"
-}
-if(any(dat$Province %in% "Québec")) {
-		dat$Province[which(dat$Province == "Québec")] <- "QC"
-}
-if(any(dat$Province %in% "Alberta")) {
-		dat$Province[which(dat$Province == "Alberta")] <- "AB"
-}
-if(any(dat$Province %in% "Ontario")) {
-		dat$Province[which(dat$Province == "Ontario")] <- "ON"
-}
-dat$Province[grep("British Columbia",dat$Province)] <- "BC"
 
-if(any(dat$Province %in% "Manitoba")) {
-		dat$Province[which(dat$Province == "Manitoba")] <- "MB"
-}
-if(any(dat$Province %in% "Nova Scotia")) {
-		dat$Province[which(dat$Province == "Nova Scotia")] <- "NS"
-}
-if(any(dat$Province %in% "Nunavut")) {
-		dat$Province[which(dat$Province == "Nova Scotia")] <- "NU"
-}
-if(any(dat$Province %in% "Yukon")) {
-		dat$Province[which(dat$Province == "Nova Scotia")] <- "YT"
+prov <- prov2abbrev(dat$Province)
+
+## Reverse geo-locate city/prov where blank
+idx <- which(is.na(dat$City))
+if (any(idx)) {
+		message(sprintf("* Found blank city! Running reverse geolocate (%i)", 
+			length(idx)))
+		y <- revGeo(dat[idx,])
+		dat$City[idx] <- y[,3]
+		dat$Province[idx] <- y[,4]	
+		message("done")
 }
 
 nogood <- union(which(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB","NS","NL")),which(is.na(dat$Province))) 
