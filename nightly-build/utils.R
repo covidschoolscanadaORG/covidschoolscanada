@@ -73,11 +73,12 @@ tryCatch({
 		if (any(is.na(x))|| any(is.na(y))) {
 			message("NA case/date")
 			print(multi[i,])
-			browser()
+			#browser()
 		}
 		for (j in 1:length(x)) {
 			simple <- rbind(simple, 
-				c(y[j],multi$Province[i],x[j]))
+				c(y[j],multi$Province[i],x[j],
+					multi$institute.name[i]))
 		}
 	     cat(sprintf("%s: {%s}",multi[i,type],
 			paste(x,collapse=",")),file="test.txt",append=TRUE)
