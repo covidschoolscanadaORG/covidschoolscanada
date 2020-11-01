@@ -5,13 +5,13 @@ require(rdrop2)
 require(dplyr)
 dbox <- "/home/shraddhapai/Canada_COVID_tracker/misc/dbox.rds"
 
-autoGen_boards <- c("Peel DSB", "Toronto DSB")
+autoGen_boards <- c("Peel DSB", "Toronto DSB","York Region DSB")
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 logFile <- sprintf("%s/finalize_data_%s.log",inDir,dt)
-inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
-	inDir,dt)
+baseF<- sprintf("CanadaMap_QuebecMerge-%s.clean.csv",dt)
+inFile <- sprintf("%s/%s",inDir,baseF)
 if (file.exists(logFile)) unlink(logFile)
 
 counts <- list()
@@ -71,5 +71,9 @@ cat(sprintf("Tally QC + autogen + other = %i\n", tot2),
 
 system2("cat",logFile)
 
+
+dir.create(sprintf("%s/final_data",inDir))
+file.rename(sprintf("%s/%s",inDir,baseF),
+		sprintf("%s/final_data/%s",inDir,baseF))
 # upload clean.csv to covidschoolscanada dropbox account
 
