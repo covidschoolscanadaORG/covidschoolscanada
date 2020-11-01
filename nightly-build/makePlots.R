@@ -10,6 +10,7 @@ suppressMessages(require(grid))	 # annotate page
 suppressMessages(require(gridExtra))	 # annotate page
 suppressMessages(require(showtext))
 suppressMessages(require(scales)) # date axis for cumulative
+suppressMessages(require(ggrepel)) # label key schools
 #options(warn=2)
 source("utils.R")
 source("genTweets.R")
@@ -40,6 +41,8 @@ reportDate <- format(Sys.Date(),"%d %B %Y")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
 pdfFile <- sprintf("%s/arranged.pdf",inDir)
 if (file.exists(pdfFile)) unlink(pdfFile)
+pdfinsta <- sprintf("%s/arranged_insta.pdf",inDir)
+if (file.exists(pdfinsta)) unlink(pdfinsta)
 
 logfile <- sprintf("%s/makePlotslog.txt",inDir)
 if (file.exists(logfile)) unlink(logfile)
@@ -265,9 +268,35 @@ dat2$Province <- as.character(dat2$Province)
 dat2 <- flattenCases(dat2)
 message("...done flattening")
 
+# distribution of num cases per school
 dat2gp <- aggregate(as.integer(dat2$Total.cases.to.date),
-	by=list(institute.name=dat2$institute.name,
+	by=list(institute=dat2$institute.name,
 			Province=dat2$Province), FUN=sum,na.rm=TRUE)
+
+top <- dat2gp %>% group_by(Province) %>% filter(x==max(x)) %>% arrange(institute, Province,x)
+top <- as.data.frame(top)
+top <- top[order(top$x,decreasing=TRUE),]
+colnames(top) <- c("School","Province","Cases")
+topTbl <- grobTree(tableGrob(top,rows=NULL,
+	theme=ttheme_default(base_size=8)))
+
+p <- ggplot(dat2gp,aes(x=Province,y=x)) 
+p <- p + geom_violin(aes(fill=Province),colour=NA)
+p <- p + geom_dotplot(fill="red",colour=NA,
+	binaxis='y',stackdir='center',dotsize=0.24,
+	stackratio=0.01,alpha=0.8,
+	position = position_jitter(0.2))	
+p <- p +scale_y_continuous(trans='log2',breaks=c(1,2,4,8,16,32,64))
+#p <- p + ylim(0,max(top$Cases)+4)
+p <- p + school_th
+p <- p + ggtitle("Number +ve cases per school")
+p <- p + ylab("")
+p <- p + theme(axis.text.y=element_text(size=30),
+	legend.position='none')
+p <- p + annotation_custom(topTbl,
+	xmin=1,xmax=2.5,ymin=log2(32),ymax=log2(64))
+
+pdf(sprintf("%s/dots.pdf",inDir),width=13,height=5); print(p); dev.off()
 
 ###pgp <- ggplot(dat2gp,aes(x,colour=Province)) + stat_ecdf()
 ###pgp <- pgp + ylim(0.5,1)
@@ -285,7 +314,8 @@ if (any(idx)) dat2 <- dat2[-idx,]
 
 dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$Date <- stringr::str_trim(dat2$Date)
-idx <- which(is.na(dat2$Date))
+#dat2$Date <- gsub("2020-10-13\\.","2020-10-13",dat2$Date)
+dat2$Date <- gsub("2020-1028","2020-10-28",dat2$Date)
 if (length(idx)>0) {
 	message("* found NA dates after flattening")
 	print(dat2[idx,])
@@ -293,6 +323,8 @@ if (length(idx)>0) {
 	dat2 <- na.omit(dat2)
 }
 tryCatch({
+	# you were going to put a check here for dates earlier than
+	# 2020 or even august 2020
 	dat2$tstamp <- as.POSIXct(dat2$Date)
 },error=function(ex){
 	message("posix conversion of date failed")
@@ -300,6 +332,13 @@ tryCatch({
 	browser()
 },finally={
 })
+
+idx <- which(as.Date(dat2$Date) < as.Date("2020-08-15"))
+if (any(idx)) {
+	print(dat2[idx,])
+	message("* Found mis-entered date")
+	browser()
+}
 
 dat2$Total.cases.to.date <- stringr::str_trim(
 		dat2$Total.cases.to.date)
@@ -527,7 +566,16 @@ tweetDir <- sprintf("%s/social_media",inDir)
 if (!file.exists(tweetDir)) dir.create(tweetDir)
 genTweet(tweetDir,tweetRes)
 
-pdf(pdfFile,width=28,height=16)
+
+pdfSet <- list(
+	main=list(pdfFile,28,16)
+	##insta=list(pdfinsta,28,28)
+)
+
+for (pdfI in 1:length(pdfSet)){
+curset <- pdfSet[[pdfI]]
+
+pdf(curset[[1]],width=curset[[2]],height=curset[[3]])
 tryCatch({
 	suppressWarnings(grid.arrange(
 	  p1,p2,p3,mapPlot,top,rt,rt2,rt3,rt4,
@@ -557,8 +605,12 @@ tryCatch({
 	))
 	grid.rect(width = 0.99, height = 0.98, 
 		gp = gpar(lwd = 11, col = "red", fill = NA))
-
-	
+},error=function(ex){
+	print(ex)
+},finally={
+	dev.off()
+})
+}
 	# % schools by type	
 	pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
 	suppressWarnings(print(pschlb))
@@ -568,12 +620,6 @@ tryCatch({
 		sprintf("%s/schoolPct.pdf",inDir),
 		sprintf("%s/social_media/schoolPct.jpg",inDir)))
 	message("* Finished successfully.")
-	
-},error=function(ex){
-	print(ex)
-},finally={
-	dev.off()
-})
 	system2("convert",args=c("-density","400","-quality","100",
 		sprintf("%s/arranged.pdf",inDir),
 		sprintf("%s/social_media/arranged.png",inDir)))
