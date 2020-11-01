@@ -2,7 +2,7 @@ require(XML)
 
 args <- commandArgs(TRUE)
 #inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-201004/CanadaMap_clean3.kml"# args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
-#inFile <- "/home/shraddhapai/Canada_COVID_tracker/export-201016/CanadaMap_clean3.kml"
+###inFile <- "/home/shraddhapai/Canada_COVID_tracker/export-201029/CanadaMap_clean3.kml"
 inFile <- args[1]
 print(inFile)
 
@@ -60,15 +60,20 @@ message("* Adding other fields")
 field_names <- c()
 for (k in 1:length(schools)) {
 	other[[k]] <- t(as.matrix(parseRec(schools[[k]])))
-	
 }
 field_names <- trimws(colnames(other[[1]]))
-other2 <- do.call("rbind",other)
-colnames(other2) <- field_names
+#ln <- unlist(lapply(other,length))
+#other_long <- do.call("rbind",other[which(ln > 20)])
+#other_long <- other_long[,1:15]
+
+#other2 <- do.call("rbind",other[which(ln==15)])
+#other2 <- rbind(other2,other_long)
+other <- do.call("rbind",other)
+colnames(other) <- field_names
 
 message("* Compiling table")
 df <- data.frame(institute.name=sname)
-df <- cbind(df,other2)
+df <- cbind(df,other)
 #df$latitude <- latitude
 #df$longitude <- longitude
 
