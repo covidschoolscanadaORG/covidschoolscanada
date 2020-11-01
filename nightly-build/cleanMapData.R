@@ -5,7 +5,7 @@ message("-------------------------------------")
 message("Cleaning map data")
 message("-------------------------------------")
 
-flag__addAutogen <- TRUE
+flag__addAutogen <- FALSE
 
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
@@ -164,6 +164,12 @@ print(table(dat$Type_of_school,useNA="always"))
 # CLEAN DATE
 dat$Date <- gsub(":",";",dat$Date)
 dat$Date <- gsub("^20-","2020-",dat$Date)
+dat$Date <- gsub("^2002","2020",dat$Date)
+
+###if (any(ln!=10)) {
+###	cat("date with extra/missing chars")
+###	browser()
+###}
 
 # -----------------------------------------
 # CLEAN INSTITUTE NAME
@@ -288,6 +294,7 @@ dat$School.board <- sub("SD 59 Peace River South",
 	dat$School.board)
 dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
 dat$School.board[grep("SD34",dat$School.board)] <- "SD34 Abbotsford"
+dat$School.board[grep("SD33",dat$School.board)] <- "SD33 Chilliwack"
 dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
 dat$School.board[grep("SD44",dat$School.board)] <- "SD44 North Vancouver"
 dat$School.board[grep("SD36",dat$School.board)] <- "SD36 Surrey"
@@ -301,12 +308,20 @@ dat$School.board[grep("SD57",dat$School.board)] <- "SD57 Prince George"
 dat$School.board[grep("SD58",dat$School.board)] <- "SD58 Nicola-Similkameen"
 dat$School.board[grep("SD22",dat$School.board)] <- "SD22 Vernon"
 dat$School.board[which(dat$School.board=="DDSB")] <- "Durham DSB"
+dat$School.board <- sub("Hamilton-Wenworth",
+	"Hamilton-Wentworth",
+	dat$School.board)
 
+dat$School.board[which(dat$School.board=="Regina CS")] <- "Regina CSD"
+dat$School.board[which(dat$School.board=="Regina Catholic Sd")] <- "Regina CS"
+dat$School.board[which(dat$School.board=="Regina CSD")] <- "Regina CS"
 dat$School.board <- sub("Franco-Manitobaine SD SD",
 	"Franco-Manitobaine SD",
 	dat$School.board)
 dat$School.board <- sub("Indep\\. ","Indep ",
 	dat$School.board)
+dat$School.board[grep("IndepVancouver",dat$School.board)] <- "Indep Vancouver"
+dat$School.board[which(dat$School.board=="DCDSB")] <- "Dufferin-Peel CDSB"
 dat$School.board[grep("Indep  Schools",dat$School.board)] <- 
 	"Indep Schools"
 dat$School.board <- sub("Rocky View Schools","Rocky View SD",
@@ -382,9 +397,9 @@ if (flag__addAutogen) {
 	# -----------------------------------------
 	# ADD AUTOGEN TABLE
 	dt2 <- format(date2use-1,"%Y-%m-%d")
-	updateOnly <- "Peel DSB"
 	autoFile <- sprintf("%s/AutoGen/Automated_boards_%s.csv",baseDir,dt2)
 	autoDat <- read.delim(autoFile,sep=",",h=T,as.is=T)
+	updateOnly <- "York Region DSB"
 	midx <- match(colnames(dat),colnames(autoDat))
 	if (all.equal(colnames(autoDat)[midx],colnames(dat))!=TRUE) {
 		stop("colnames don't match")
@@ -404,7 +419,7 @@ if (flag__addAutogen) {
 }
 
 message("* Add active/resolved status")
-dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
+#dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
 
 message("* Writing output file")
 write.table(dat,file=outFile,sep=",",
