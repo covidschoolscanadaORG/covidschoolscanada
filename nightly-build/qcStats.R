@@ -84,9 +84,11 @@ dat$School.board <- sub("Vallee des Tisserands","Vallée-des-Tisserands",
 	dat$School.board)
 dat$School.board <- sub("Pays-de-Bluets","Pays-de-Bleuets",
 	dat$School.board)
+dat$School.board <- sub("Vals-des-Cerfs","Vals-Des-Cerfs",
+	dat$School.board)
 
 # add active/resolved column
-dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
+#dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
 
 write.table(dat,file=outFile,sep=",",col=T,row=F,quote=TRUE)
 message("Done QC annotation processing")
