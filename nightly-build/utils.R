@@ -286,6 +286,7 @@ for (k in 1:nrow(x)) {
 		if (is.null(city)) city <- NA
 		prov <- m3$state
 		if (is.null(prov)) prov <- NA
+		message(sprintf("\t%s , %s",city, prov))
 		out[[k]] <- c(x$Longitude[k],x$Latitude[k],city,prov)
 	}, error=function(ex) {
 		print(ex)
@@ -297,8 +298,8 @@ for (k in 1:nrow(x)) {
 	out2[,4] <- prov2abbrev(out2[,4])
 
 	# make sure record order not mixed up
-	if (any(abs(floor(as.numeric(out2[,2])-blah$Latitude))>.Machine$double.eps)||
-			any(abs(floor(as.numeric(out2[,1])-blah$Longitude))>.Machine$double.eps)) {
+	if (any(abs(floor(as.numeric(out2[,2])-as.numeric(x$Latitude)))>.Machine$double.eps)||
+			any(abs(floor(as.numeric(out2[,1])-as.numeric(x$Longitude)))>.Machine$double.eps)) {
 			message("lat/long order doesn't match")
 			browser()
 	}
