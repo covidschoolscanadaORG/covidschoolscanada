@@ -3,12 +3,14 @@
 
 require(rdrop2)
 require(dplyr)
-dbox <- "/home/shraddhapai/Canada_COVID_tracker/misc/dbox.rds"
+#dbox <- "/home/shraddhapai/Canada_COVID_tracker/misc/dbox.rds"
+dbox <- "dbox.rds"
 
-autoGen_boards <- c("Peel DSB", "Toronto DSB","York Region DSB")
+autoGen_boards <- c("Peel DSB", "Toronto DSB","York Region DSB",
+	"Ottawa-Carleton DSB")
 
 dt <- format(Sys.Date(),"%y%m%d")
-inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
 logFile <- sprintf("%s/finalize_data_%s.log",inDir,dt)
 baseF<- sprintf("CanadaMap_QuebecMerge-%s.clean.csv",dt)
 inFile <- sprintf("%s/%s",inDir,baseF)
@@ -21,18 +23,18 @@ counts$total <- nrow(dat)
 cat(sprintf("Full = %i records\n",nrow(dat)),file=logFile,
 	append=TRUE)
 
-#### upload final data to dropbox
-###token <- readRDS(dbox)
-###message("Authorizing dropbox")
-###drop_acc(dtoken=token)
-###odir <- sprintf("daily_data/export-%s/final_data",dt)
-###if (!drop_exists(path=odir,dtoken=token)) {
-###	message("Making Dropbox folder")
-###	drop_create(path=odir,dtoken=token)
-###} 
-###	message("\tMoving final file to Dropbox")
-###	drop_upload(file=inFile,path=odir,dtoken=token)
-###	message("Upload successful!\n")
+# upload final data to dropbox
+token <- readRDS(dbox)
+message("Authorizing dropbox")
+drop_acc(dtoken=token)
+odir <- sprintf("daily_data/export-%s/final_data",dt)
+if (!drop_exists(path=odir,dtoken=token)) {
+	message("Making Dropbox folder")
+	drop_create(path=odir,dtoken=token)
+} 
+	message("\tMoving final file to Dropbox")
+	drop_upload(file=inFile,path=odir,dtoken=token)
+	message("Upload successful!\n")
 
 qc <- subset(dat,Province=="QC")
 counts$qc <- nrow(qc)
@@ -48,6 +50,7 @@ message("* Writing autogen file")
 autogen_idx <-which(dat$School.board %in% autoGen_boards)
 counts$autogen <- length(autogen_idx)
 autogen <- dat[autogen_idx,]
+print(table(autogen$School.board))
 cat(sprintf("Autogen = %i records\n",nrow(autogen)),
 	file=logFile,append=TRUE)
 write.table(autogen,
@@ -61,7 +64,9 @@ dat <- subset(dat,Province!="QC")
 counts$other <- nrow(dat)
 cat(sprintf("Other = %i records\n",nrow(dat)),file=logFile,
 	append=TRUE)
-write.table(dat,file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.nonQC.csv",inDir,dt),sep=",",col=T,row=F,quote=T)
+write.table(dat,
+	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.nonQC.csv",inDir,dt),
+	sep=",",col=T,row=F,quote=T)
 message("* Layer write done")
 
 message("Totalling...")
