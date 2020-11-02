@@ -221,29 +221,29 @@ dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
 dat2$Type_of_school[which(dat2$Type_of_school=="Post-secondary")] <- "PostSec"
 print(table(dat2$Type_of_school,useNA="always"))
 
-dat2$Type_of_school <- factor(dat2$Type_of_school,
-	levels=schoolLevels())
-dat2$Schoolstr <- as.character(dat2$Type_of_school)
-if (any(is.na(dat2$Type_of_school))) {
-	message("converting school to factor gave NA")
-	idx <- which(is.na(dat2$Type_of_school))
-	print(dat2[idx,])
-	message(sprintf("\tFAIL: School factor conversion: excluded %i",
-		length(idx)))
-	write.table(dat2[idx,],file=failFile,
-		sep="\t",col=T,row=F,quote=F)
-	dat2 <- dat2[-idx,]
-}
+###dat2$Type_of_school <- factor(dat2$Type_of_school,
+###	levels=schoolLevels())
+###dat2$Schoolstr <- as.character(dat2$Type_of_school)
+###if (any(is.na(dat2$Type_of_school))) {
+###	message("converting school to factor gave NA")
+###	idx <- which(is.na(dat2$Type_of_school))
+###	print(dat2[idx,])
+###	message(sprintf("\tFAIL: School factor conversion: excluded %i",
+###		length(idx)))
+###	write.table(dat2[idx,],file=failFile,
+###		sep="\t",col=T,row=F,quote=F)
+###	dat2 <- dat2[-idx,]
+###}
 dat2Full <- dat2
 
-p2 <- getSchoolPlot(dat2,school_th,FALSE)
-pschlb <- getSchoolPlot(dat2,school_th,TRUE)
-pschlb <- pschlb + labs(caption =sprintf("@covidschoolsCA | Updated %s ",
-	footerDate()))
-pschlb <- pschlb + theme(
-		plot.caption = element_text(family="source-sans-pro",size=30,
-		face="bold",hjust=0,colour="red")
-	)
+###p2 <- getSchoolPlot(dat2,school_th,FALSE)
+###pschlb <- getSchoolPlot(dat2,school_th,TRUE)
+###pschlb <- pschlb + labs(caption =sprintf("@covidschoolsCA | Updated %s ",
+###	footerDate()))
+###pschlb <- pschlb + theme(
+###		plot.caption = element_text(family="source-sans-pro",size=30,
+###		face="bold",hjust=0,colour="red")
+###	)
 
 message("* PLOT: Cumulative cases")
 mondays <- getAllMondays(2020)
@@ -578,15 +578,15 @@ curset <- pdfSet[[pdfI]]
 pdf(curset[[1]],width=curset[[2]],height=curset[[3]])
 tryCatch({
 	suppressWarnings(grid.arrange(
-	  p1,p2,p3,mapPlot,top,rt,rt2,rt3,rt4,
+	  p1,p3,mapPlot,top,rt,rt2,rt3,rt4,
 	  widths = c(0.03,1, 1, 1, 1, 1, 1, 1,0.13),
 	  heights = c(0.07,0.5,0.3,2,2,3,0.07),
 	  layout_matrix = rbind(rep(NA,9),
-							c(NA, 5, 5, 5, 5, 5, 6, 7,NA), #header
-							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
-							c(NA, 1, 1, 1, 3, 3, 3, 3,NA),
-							c(NA, 2, 2, 2, 3, 3, 3, 3, NA),
-							c(NA, 4, 4, 4, 3, 3, 3, 3, NA),
+							c(NA, 4, 4, 4, 4, 4, 5, 6,NA), #header
+							c(NA, 4, 4, 4, 4, 4, 7, 8,NA),
+							c(NA, 1, 1, 1, 2, 2, 2, 2,NA),
+							c(NA, 1, 1, 1, 2, 2, 2, 2, NA),
+							c(NA, 3, 3, 3, 2, 2, 2, 2, NA),
 							rep(NA,9)),
 ###	  layout_matrix = rbind(rep(NA,9),
 ###							c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
@@ -611,14 +611,14 @@ tryCatch({
 	dev.off()
 })
 }
-	# % schools by type	
-	pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
-	suppressWarnings(print(pschlb))
-	dev.off()
+###	# % schools by type	
+###	pdf(sprintf("%s/schoolPct.pdf",inDir),width=28,height=14)
+###	suppressWarnings(print(pschlb))
+###	dev.off()
 	
-	system2("convert",args=c("-density","400","-quality","100",
-		sprintf("%s/schoolPct.pdf",inDir),
-		sprintf("%s/social_media/schoolPct.jpg",inDir)))
+###	system2("convert",args=c("-density","400","-quality","100",
+###		sprintf("%s/schoolPct.pdf",inDir),
+###		sprintf("%s/social_media/schoolPct.jpg",inDir)))
 	message("* Finished successfully.")
 	system2("convert",args=c("-density","400","-quality","100",
 		sprintf("%s/arranged.pdf",inDir),
