@@ -50,20 +50,30 @@ if (any(idx)){
 	dat$City[idx] <- "Edmonton"
 }
 
-prov <- prov2abbrev(dat$Province)
+dat$Province <- prov2abbrev(dat$Province)
 
 ## Reverse geo-locate city/prov where blank
-idx <- which(is.na(dat$City))
+idx <- intersect(union(
+			which(is.na(dat$City)),which(dat$City=="")),
+	which(dat$Province!="QC"))
 if (any(idx)) {
 		message(sprintf("* Found blank city! Running reverse geolocate (%i)", 
 			length(idx)))
 		y <- revGeo(dat[idx,])
 		dat$City[idx] <- y[,3]
 		dat$Province[idx] <- y[,4]	
+
+	tmp <- union(which(y[,3]=="NA"), which(is.na(y[,3])))
+	if (length(tmp)>0){
+		blah <- dat[idx[tmp],c("institute.name","School.board","Date")]	
+		print(blah)
+		browser()
+	}
 		message("done")
 }
 
 nogood <- union(which(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB","NS","NL")),which(is.na(dat$Province))) 
+nogood <- union(nogood, which(dat$Province==""))
 
 if (length(nogood)>0){
 	print(table(dat$Province,useNA="always"))
@@ -73,7 +83,6 @@ if (length(nogood)>0){
 		row=F,quote=F,append=TRUE)
 	dat <- dat[-nogood,]
 }
-
 dat$Province <- factor(dat$Province, 
 	level=prov) 
 print(table(dat$Province,useNA="always"))
@@ -360,8 +369,10 @@ dat$Date <- gsub("^20-","2020-",dat$Date)
 finalorder <- c("institute.name","Total.cases.to.date",
 	"Total.students.to.date","Total.staff.to.date",
 	"Date","Article",
-	"Total.outbreaks.to.date","Outbreak.dates","Outbreak.Status",
-	"Type_of_school","School.board",
+	"Total.outbreaks.to.date",
+	"Outbreak.dates","Outbreak.Status",
+	"School.board",
+	"Type_of_school", # these fields not manually entered
 	"City","Province",
 	"Latitude","Longitude")
 dat  <- dat[,finalorder]
@@ -371,9 +382,10 @@ if (flag__addAutogen) {
 	# -----------------------------------------
 	# ADD AUTOGEN TABLE
 	dt2 <- format(date2use-1,"%Y-%m-%d")
-	autoFile <- sprintf("%s/AutoGen/Automated_boards_%s.csv",baseDir,dt2)
+	autoFile <- sprintf("%s/AutoGen/Automated_boards_%s.csv",
+		baseDir,dt2)
 	autoDat <- read.delim(autoFile,sep=",",h=T,as.is=T)
-	updateOnly <- "York Region DSB"
+	updateOnly <- "Ottawa-Carleton DSB"
 	midx <- match(colnames(dat),colnames(autoDat))
 	if (all.equal(colnames(autoDat)[midx],colnames(dat))!=TRUE) {
 		stop("colnames don't match")

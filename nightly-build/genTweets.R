@@ -151,7 +151,7 @@ message("started tweet")
 			emo::ji("round_pushpin")),file=twf)
 		cat(sprintf("%s Report cases/errors: https://tinyurl.com/covidschoolsCA-submit\n", 
 			emo::ji("incoming_envelope")),file=twf)
-		cat(sprintf("%s BREAK: \n",
+		cat(sprintf("%s BREAKDOWN: \n",
 			emo::ji("right_arrow_curving_down")),file=twf)
 
 		cat("/1\n",file=twf)
@@ -195,40 +195,40 @@ message("started tweet")
 		cat("\n------------\n",file=twf) # separator
 		tweet_ct <- tweet_ct+1
 
-		# -------------------------
-		# TWEET: School type %
-		# -------------------------
-		dat2 <- tweetRes[["dat_qcStats"]] #subset(dat, Province != "QC")
-		dat2[which(dat2[,"Type_of_school"]=="Middle School"),"Type_of_school"] <- "Elementary"
-		tbl <- table(dat2[,"Type_of_school"])
-		tbl <- data.frame(Type=names(tbl),Count=as.integer(tbl))
-		tbl$Pct <- (tbl$Count/sum(tbl$Count))*100
-		tbl$Type <- as.character(tbl$Type)
-		
-		fun <- function(emostr,x) {
-			p <-tbl$Pct[which(tbl$Type==x)]
-			if (p < 1) p <- "< 1%" else p  <- sprintf("%1.0f %%",p)
-			cat(sprintf("%s %s %s (%s)\n",
-				emo::ji(emostr),
-				pr(tbl$Count[which(tbl$Type==x)]),x,p),
-				file=twf)
-		}
-		cat(sprintf("%s AFFECTED SCHOOL TYPE %s\n",
-			emo::ji("green_apple"),
-			emo::ji("green_apple")),file=twf)
-		cat("Num (% of all affected)\n",file=twf)
-		fun("apple","Elementary")
-		fun("books","Secondary")
-		fun("children_crossing","Mixed")
-		fun("office","Field Office")
-		fun("mortar_board","Post-secondary")
-		fun("question","TBA")
-		cat(sprintf("\n%s By Province (QC updates on Mondays)\n",
-				emo::ji("down_arrow")),file=twf)
-		cat(sprintf("/%i",tweet_ct),file=twf)
-			cat("\n------------\n",file=twf) # separator
-		
-		tweet_ct <- tweet_ct+1
+###		# -------------------------
+###		# TWEET: School type %
+###		# -------------------------
+###		dat2 <- tweetRes[["dat_qcStats"]] #subset(dat, Province != "QC")
+###		dat2[which(dat2[,"Type_of_school"]=="Middle School"),"Type_of_school"] <- "Elementary"
+###		tbl <- table(dat2[,"Type_of_school"])
+###		tbl <- data.frame(Type=names(tbl),Count=as.integer(tbl))
+###		tbl$Pct <- (tbl$Count/sum(tbl$Count))*100
+###		tbl$Type <- as.character(tbl$Type)
+###		
+###		fun <- function(emostr,x) {
+###			p <-tbl$Pct[which(tbl$Type==x)]
+###			if (p < 1) p <- "< 1%" else p  <- sprintf("%1.0f %%",p)
+###			cat(sprintf("%s %s %s (%s)\n",
+###				emo::ji(emostr),
+###				pr(tbl$Count[which(tbl$Type==x)]),x,p),
+###				file=twf)
+###		}
+###		cat(sprintf("%s AFFECTED SCHOOL TYPE %s\n",
+###			emo::ji("green_apple"),
+###			emo::ji("green_apple")),file=twf)
+###		cat("Num (% of all affected)\n",file=twf)
+###		fun("apple","Elementary")
+###		fun("books","Secondary")
+###		fun("children_crossing","Mixed")
+###		fun("office","Field Office")
+###		fun("mortar_board","Post-secondary")
+###		fun("question","TBA")
+###		cat(sprintf("\n%s By Province (QC updates on Mondays)\n",
+###				emo::ji("down_arrow")),file=twf)
+###		cat(sprintf("/%i",tweet_ct),file=twf)
+###			cat("\n------------\n",file=twf) # separator
+###		
+###		tweet_ct <- tweet_ct+1
 
 		# -------------------------
 		# TWEET: PROVINCE-LEVEL
