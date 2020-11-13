@@ -1,10 +1,13 @@
 require(XML)
 
+#args <- "/home/shraddhapai/Canada_COVID_tracker/export-201108/CanadaMap_clean3.kml" #commandArgs(TRUE)
 args <- commandArgs(TRUE)
 #inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-201004/CanadaMap_clean3.kml"# args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
 ###inFile <- "/home/shraddhapai/Canada_COVID_tracker/export-201029/CanadaMap_clean3.kml"
 inFile <- args[1]
 print(inFile)
+
+Sys.setenv(TZ="America/Toronto")
 
 dt <- format(Sys.Date(),"%y%m%d")
 tagsXML <- xmlParse(inFile)
@@ -79,7 +82,6 @@ df <- cbind(df,other)
 
 df$Article <- gsub("\n","; ",df$Article)
 table(df$Province)
-
 
 write.table(df,file=outFile,sep="\t",col=T,row=F,quote=T)
 message("* Table compiled")
