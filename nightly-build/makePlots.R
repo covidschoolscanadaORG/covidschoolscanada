@@ -166,7 +166,7 @@ p <- ggplot(data=df2,aes(x=reorder(Province,-Count),y=Count))
 p <- p + geom_bar(stat="identity", fill="#FF6666")
 p <- p + geom_text(aes(label=df2$Count),
 		position=position_dodge(width=0.9),
-		vjust=-0.25,size=16,col="#FF6666")
+		vjust=-0.25,size=12,col="#FF6666")
 p <- p + scale_x_discrete(drop=F)
 p <- p + xlab("") + ylab("")
 p <- p + school_th
@@ -254,6 +254,7 @@ if (length(bad)>0) {
 	print("bad rows")
 	message(sprintf("FAILED: BAD DATES: excluding %i rows",
 		length(bad)))
+browser()
 	write.table(dat2[bad,],file=failFile,sep="\t",
 		col=F,row=F,quote=F,append=TRUE)
 	dat2 <- dat2[-bad,]
@@ -287,7 +288,7 @@ p <- p + geom_dotplot(fill="red",colour=NA,
 	stackratio=0.01,alpha=0.8,
 	position = position_jitter(0.2))	
 p <- p +scale_y_continuous(trans='log2',breaks=c(1,2,4,8,16,32,64))
-#p <- p + ylim(0,max(top$Cases)+4)
+#p <- p + xlim(-3,length(unique(dat2gp$Province))+2)
 p <- p + school_th
 p <- p + ggtitle("Number +ve cases per school")
 p <- p + ylab("")
@@ -319,12 +320,22 @@ dat2$Date <- gsub("2020-1028","2020-10-28",dat2$Date)
 if (length(idx)>0) {
 	message("* found NA dates after flattening")
 	print(dat2[idx,])
-	browser()
 	dat2 <- na.omit(dat2)
 }
 tryCatch({
 	# you were going to put a check here for dates earlier than
 	# 2020 or even august 2020
+	dat2$Date <- sub("2020-10-13\\.","2020-10-13",dat2$Date)
+IsDate <- function(mydate, date.format = "%Y-%m-%d") {
+  tryCatch(!is.na(as.Date(mydate, date.format)),  
+           error = function(err) {FALSE})  
+}
+	isd <- IsDate(dat2$Date)
+	if (any(isd==FALSE)) {
+		message("found malformed date")
+		print(dat2[which(!isd),])
+browser()
+	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
 },error=function(ex){
 	message("posix conversion of date failed")
@@ -334,6 +345,8 @@ tryCatch({
 })
 
 idx <- which(as.Date(dat2$Date) < as.Date("2020-08-15"))
+idx <- c(idx,which(as.Date(dat2$Date) > Sys.Date()))
+
 if (any(idx)) {
 	print(dat2[idx,])
 	message("* Found mis-entered date")
@@ -349,6 +362,7 @@ dat2$Total.cases.to.date <- as.integer(
 totcase <- aggregate(dat2$Total.cases.to.date,
 	by=list(Province=dat2$Province),FUN=sum)
 totcase$Province <- factor(totcase$Province,levels=lv)
+tweetRes$totcase <- totcase
 mega_totcase <- sum(totcase$x)
 
 cur <- dat2 %>%
@@ -366,7 +380,7 @@ cur <- aggregate(cur$cs,
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
 p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
-p3 <- p3 + geom_line(lwd=1.7)#geom_p#oint() + geom_line()
+p3 <- p3 + geom_line(lwd=1.9)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
 		linetype="dashed",lwd=2)
 p3 <- p3 + xlab("")
@@ -374,7 +388,7 @@ p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
 p3 <- p3 + ylim(1,max(cur2$x)*1.02)
-p3 <- p3 + scale_y_sqrt(breaks=c(0,25,100,200,500,1000,2000,2500,3000))
+p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000))
 
 caseText <- c()
 for (k in 1:length(lv)) {
@@ -383,9 +397,13 @@ for (k in 1:length(lv)) {
 		prettyNum(totcase$x[i],big.mark=",")))
 }
 cols <- scales::hue_pal()(nrow(totcase))
-p3 <- p3 + expand_limits(x=Sys.Date()+9)
+p3 <- p3 + expand_limits(x=Sys.Date()+13)
 p3 <- p3 + annotate("text",x=Sys.Date()+1,y=totcase$x,label=caseText,
-		colour=cols,size=10,fontface=2,vjust=0,hjust=0,fill="white")
+		colour=cols,size=11,fontface=2,vjust=0,hjust=0,fill="white")
+p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),y=4700,
+	hjust=0,vjust=0,
+	label="Linear scale",colour="#68382C",size=12,
+	fontface=4)
 
 # annotate
 p3 <- p3 + school_th
