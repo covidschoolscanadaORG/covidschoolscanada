@@ -7,6 +7,8 @@ message("-------------------------------------")
 
 flag__addAutogen <- FALSE
 
+Sys.setenv(TZ="America/Toronto")
+
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
 baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
@@ -67,22 +69,23 @@ if (any(idx)) {
 	if (length(tmp)>0){
 		blah <- dat[idx[tmp],c("institute.name","School.board","Date")]	
 		print(blah)
-		browser()
+		#browser()
 	}
 		message("done")
 }
 
-nogood <- union(which(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB","NS","NL")),which(is.na(dat$Province))) 
-nogood <- union(nogood, which(dat$Province==""))
-
-if (length(nogood)>0){
-	print(table(dat$Province,useNA="always"))
-	message(sprintf("FAIL PROVINCE: excluding %i rows",
-			length(nogood)))
-	write.table(dat[nogood,],file=failFile,sep="\t",col=F,
-		row=F,quote=F,append=TRUE)
-	dat <- dat[-nogood,]
-}
+###nogood <- union(which(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB","NS","NL")),which(!is.na(dat$Province))) 
+###nogood <- intersect(nogood, which(dat$Province!=""))
+###
+###if (length(nogood)>0){
+###	print(table(dat$Province,useNA="always"))
+###	message(sprintf("FAIL PROVINCE: excluding %i rows",
+###			length(nogood)))
+###	write.table(dat[nogood,],file=failFile,sep="\t",col=F,
+###		row=F,quote=F,append=TRUE)
+###browser()
+###	dat <- dat[-nogood,]
+###}
 dat$Province <- factor(dat$Province, 
 	level=prov) 
 print(table(dat$Province,useNA="always"))
@@ -121,12 +124,12 @@ idx <- grep("Elementary school", dat$Type_of_school,
 if (any(idx)) dat$Type_of_school[idx] <- "Elementary"
 
 idx <- which(!dat$Type_of_school %in% schoolLevels_full())
-if (any(idx)) {
-	message(sprintf("FAIL: School levels: excluding %i records",
-		length(idx)))
-	write.table(dat[idx,],file=failFile,sep="\t",col=T,row=F,quote=F)
-	dat <- dat[-idx,]
-}
+###if (any(idx)) {
+###	message(sprintf("FAIL: School levels: excluding %i records",
+###		length(idx)))
+###	write.table(dat[idx,],file=failFile,sep="\t",col=T,row=F,quote=F)
+###	dat <- dat[-idx,]
+###}
 dat$Type_of_school <- factor(dat$Type_of_school,
 		levels=schoolLevels_full())
 ###},error=function(ex){
@@ -232,7 +235,7 @@ dat$School.board <- sub("Independent","Indep.",
 	dat$School.board)
 dat$School.board <- sub("Durham-Peel","Dufferin-Peel",
 	dat$School.board)
-dat$School.board <- sub("Grande Prairie SD", "Grand Prairie SD",dat$School.board)
+dat$School.board <- sub("Grand Prairie SD", "Grande Prairie SD",dat$School.board)
 dat$School.board <- sub("TCDSB", "Toronto CDSB",dat$School.board)
 dat$School.board <- sub(" Kootenay/Columbia"," Kootenay-Columbia",dat$School.board)
 dat$School.board <- sub("Ottawa-Carleton ", "OC", 
@@ -287,6 +290,7 @@ dat$School.board[grep("SD41",dat$School.board)] <- "SD41 Burnaby"
 dat$School.board[grep("SD37",dat$School.board)] <- "SD37 Delta" 
 dat$School.board[grep("SD35",dat$School.board)] <- "SD35 Langley" 
 dat$School.board[grep("SD42",dat$School.board)] <- "SD42 Maple Ridge & Pitt Meadows"
+dat$School.board[grep("SD23",dat$School.board)] <- "SD23 Kelowna"
 dat$School.board[grep("SD57",dat$School.board)] <- "SD57 Prince George"
 dat$School.board[grep("SD58",dat$School.board)] <- "SD58 Nicola-Similkameen"
 dat$School.board[grep("SD22",dat$School.board)] <- "SD22 Vernon"
@@ -296,6 +300,7 @@ dat$School.board <- sub("Hamilton-Wenworth",
 	dat$School.board)
 
 dat$School.board[which(dat$School.board=="Regina CS")] <- "Regina CSD"
+dat$School.board[which(dat$School.board=="Lambton-Kent SD")] <- "Lambton-Kent DSB"
 dat$School.board[which(dat$School.board=="Regina Catholic Sd")] <- "Regina CS"
 dat$School.board[which(dat$School.board=="Regina CSD")] <- "Regina CS"
 dat$School.board <- sub("Franco-Manitobaine SD SD",
@@ -312,11 +317,24 @@ dat$School.board <- sub("Rocky View Schools","Rocky View SD",
 ##dat$School.board <- sub("Indep. Vancouver","IndepVancouver",
 ###	dat$School.board)
 dat$School.board[grep("Indep  Surrey",dat$School.board)] <- "Indep Surrey"
+dat$School.board[grep("IndepBurnaby",dat$School.board)] <- "Indep Burnaby"
+dat$School.board[grep("IndepChilliwack",dat$School.board)] <- "Indep Chilliwack"
+dat$School.board[grep("IndepAbbotsford",dat$School.board)] <- "Indep Abbotsford"
 dat$School.board[which(dat$School.board=="DCDSB")] <- "Dufferin-Peel CDSB"
 dat$School.board[grep("Manitoba Catholic School",dat$School.board)] <- "Manitoba Catholic Schools"
 dat$School.board[grep("Portage la Prairie",dat$School.board)] <- "Portage La Praire"
 dat$School.board[grep("Portage La Prairie",dat$School.board)] <- "Portage La Praire"
-
+dat$School.board[grep("Holy Family CRD",dat$School.board)] <- "Holy Family CSD"
+dat$School.board[grep("Greater St. Albert CSD",dat$School.board)] <- "Greater St. Albert CS"
+dat$School.board[grep("Greater St Albert CS",dat$School.board)] <- "Greater St. Albert CS"
+dat$School.board[grep("Calgary SCD",dat$School.board)] <- "Calgary CSD"
+dat$School.board[grep("Calgary SCD",dat$School.board)] <- "Calgary CSD"
+dat$School.board[grep("Lloydminster CS",dat$School.board)] <- "Lloydminster CSD"
+dat$School.board[grep("Lloydminster Public SD",dat$School.board)] <- "Lloydminster SD"
+dat$School.board[grep("Red Deer CRS",dat$School.board)] <- "Red Deer CS"
+dat$School.board[grep("Saint. James",dat$School.board)] <- "St. James-Assiniboia SD"
+dat$School.board[grep("Non-funded",dat$School.board)] <- "Non-Funded Schools"
+dat$School.board[grep("Algonquin and",dat$School.board)] <- "Algonquin & Lakeshore CDSB"
 
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")
@@ -406,6 +424,27 @@ if (flag__addAutogen) {
 
 message("* Add active/resolved status")
 #dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
+
+write.table(dat,
+	file=sprintf("%s/before_removing_duplicates.txt",inDir),
+	sep=",",col=T,row=F,quote=F)
+
+# remove duplicates
+dat <- dat[!duplicated(dat),]
+
+#### remove YCDSB duplicates
+###message("* Removing York CDSB duplicates")
+###idx <- which(dat$Province=="ON" & dat$School.board == "York CDSB")
+###dat <- dat[-idx,]
+###
+###yorkFile <- sprintf("%s/YorkCDSB_cleaned2.csv",inDir)
+###york <- read.delim(yorkFile,sep=",",h=T,as.is=T)
+###york$Date <- sub("^20-","2020-",york$Date)
+###idx <- which(colnames(york)=="X")
+###if (any(idx)) york <- york[,-idx]
+###message("\tAdding cleaned York CDSB")
+###dat2 <- rbind(dat,york)
+###dat <- dat2
 
 message("* Writing output file")
 write.table(dat,file=outFile,sep=",",
