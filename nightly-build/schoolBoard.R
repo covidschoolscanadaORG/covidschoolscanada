@@ -46,6 +46,7 @@ school_th <-  theme(
 
 # --------------------------------------
 # Start processing
+Sys.setenv(TZ="America/Toronto")
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
@@ -54,6 +55,7 @@ inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 dat <- subset(dat, Province!="QC")
 
+dat$School.board <- sub("Hamilton-Wentowrth","Hamilton-Wentworth",dat$School.board)
 
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)
@@ -92,7 +94,7 @@ for (prov in unique(df2$Province)) {
 					footerDate())
 	)
 	p <- p + school_th
-	if (prov=="QC") {
+	if (prov %in% c("QC","ON","AB")) {
 		p <- p + theme(axis.text.x=element_text(size=10))
 	}
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
