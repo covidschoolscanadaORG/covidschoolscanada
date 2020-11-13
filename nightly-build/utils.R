@@ -1,4 +1,5 @@
 # misc functions
+Sys.setenv(TZ="America/Toronto")
 
 #' convert Prov to abbrev
 prov2abbrev <- function(x) {
