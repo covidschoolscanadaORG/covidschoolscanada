@@ -151,7 +151,8 @@ message("started tweet")
 			emo::ji("round_pushpin")),file=twf)
 		cat(sprintf("%s Report cases/errors: https://tinyurl.com/covidschoolsCA-submit\n", 
 			emo::ji("incoming_envelope")),file=twf)
-		cat(sprintf("%s BREAKDOWN: \n",
+		cat(sprintf("%s%s More CHARTS in thread: \n",
+			emo::ji("chart_with_upwards_trend"),
 			emo::ji("right_arrow_curving_down")),file=twf)
 
 		cat("/1\n",file=twf)
@@ -189,8 +190,6 @@ message("started tweet")
 			}
 			cat("\n",file=twf)
 		}
-		cat("** Interpret with caution: Unadjusted for group totals + staff cases",
-			file=twf)
 		cat(sprintf("\n/%i",tweet_ct),file=twf)
 		cat("\n------------\n",file=twf) # separator
 		tweet_ct <- tweet_ct+1
@@ -235,6 +234,8 @@ message("started tweet")
 		# -------------------------
 
 		cur <- res$outbreaks; colnames(cur)[2] <- "Outbreaks"
+		totcase <- res$totcase
+		colnames(totcase)[2] <- "totcase"
 		sch <- merge(x=sch,y=cur,by="Province")
 		sch <- sch[order(sch$Count,decreasing=TRUE),]
 		coords <- getCoords()
@@ -244,6 +245,9 @@ message("started tweet")
 				file=twf)
 			cat(sprintf("%s %s %s\n", emo::ji("star"), 
 				toupper(provFull[[sch$Province[k]]]),emo::ji("star")),
+				file=twf)
+			cat(sprintf("%s %s CASES\n", emo::ji("microbe"),
+				pr(totcase$totcase[which(totcase$Province==sch$Province[k])])),
 				file=twf)
 			str <- "OUTBREAKS"
 			if (sch$Province[k]=="BC") {
