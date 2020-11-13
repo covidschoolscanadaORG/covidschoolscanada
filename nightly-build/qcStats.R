@@ -2,6 +2,7 @@
 # with covidschoolsCA
 
 source("utils.R")
+Sys.setenv(TZ="America/Toronto")
 
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
@@ -11,6 +12,8 @@ inFile <- sprintf("%s/CEQ_annotated_%s.csv",outDir,dt)
 outFile <- sprintf("%s/CEQ_annotated_clean_%s.csv",outDir,dt)
 
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
+idx <- which(dat[,"École"]=="")
+if (any(idx)) dat <- dat[-idx,]
 
 for (k in 1:ncol(dat)) {
 	dat[,k] <- stringr::str_trim(dat[,k])
@@ -49,7 +52,6 @@ finalorder <- c("institute.name","Total.cases.to.date",
 	"City","Province",
 	"Latitude","Longitude")
 
-
 dat$Article <- "https://www.covidecolesquebec.org/nouvelles-closions"
 dat  <- dat[,finalorder]
 
@@ -63,13 +65,22 @@ dat$Type_of_school[which(dat$Type_of_school %in%
 dat$Type_of_school <- sub("Primaire et Secondaire","Mixed",dat$Type_of_school)
 dat$Type_of_school[grep("et secondaire",dat$Type_of_school)] <- "Mixed"
 dat$Type_of_school <- sub("Primaire","Elementary",dat$Type_of_school)
+dat$Type_of_school <- sub("Pimaire","Elementary",dat$Type_of_school)
+dat$Type_of_school <- sub("","TBA",dat$Type_of_school)
 dat$Type_of_school <- sub("Secondaire","Secondary",dat$Type_of_school)
 dat$Type_of_school <- sub("Commission scolaire","Field Office",dat$Type_of_school)
 dat$Type_of_school[grep("^Secondary s",dat$Type_of_school)] <- "Secondary"
 print(table(dat$Type_of_school,useNA="always"))
 idx <- which(is.na(dat$Type_of_school))
+idx <- c(idx, which(dat$Type_of_school==""))
 if (any(idx)) {
 	message("Found schools with no type - excluding records")
+	message(sprintf("Excluding %i records",length(idx)))
+	dat <- dat[-idx,]
+}
+idx <- which(is.na(dat$Total.cases.to.date))
+if (any(idx)) {
+	message("Found NA cases")
 	message(sprintf("Excluding %i records",length(idx)))
 	dat <- dat[-idx,]
 }
