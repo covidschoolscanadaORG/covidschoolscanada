@@ -1,7 +1,9 @@
 require(XML)
 
 args <- commandArgs(TRUE)
-inFile <- args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200929/COVIDEcolesQuebec_clean3.kml"
+Sys.setenv(TZ="America/Toronto")
+dt <- format(Sys.Date(),"%y%m%d")
+inFile <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s/COVIDEcolesQuebec_clean3.kml",dt)
 datFile <- "/home/shraddhapai/Canada_COVID_tracker/CovidEcoles/CEQ_update_200928.csv"
 
 #args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
