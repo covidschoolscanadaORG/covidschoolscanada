@@ -3,14 +3,16 @@
 # Pulls Google map for @covidschoolsCA and @CovidEcoles, parses and 
 # converts into tables for downstream use.
 
-outRoot=~/Canada_COVID_tracker
+outRoot=/home/shraddhapai/Canada_COVID_tracker
 
 # Masks4Canada Canada-wide school tracker
 canadaMidFile=1blA_H3Hv5S9Ii_vyudgDk-j6SfJQil9S
 # Quebec tracker
 QCMidFile=1S-b-tmhKP1RQeMaIZslrR_hqApM-KERq
 
+TZ="America/Toronto"
 dt=`date +%y%m%d`
+echo "Date is $dt"
 outDir=${outRoot}/export-${dt}
 mkdir -p $outDir
 
