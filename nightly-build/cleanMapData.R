@@ -279,9 +279,12 @@ dat$School.board <- sub("SD 59 Peace River South",
 	"SD59 Peace River South",
 	dat$School.board)
 dat$School.board[grep("SD45",dat$School.board)] <- "SD45 West Vancouver"
+dat$School.board[grep("SD60",dat$School.board)] <- "SD60 Peace River North"
+dat$School.board[grep("SD 60 ",dat$School.board)] <- "SD60 Peace River North"
 dat$School.board[grep("SD34",dat$School.board)] <- "SD34 Abbotsford"
 dat$School.board[grep("SD33",dat$School.board)] <- "SD33 Chilliwack"
 dat$School.board[grep("SD43",dat$School.board)] <- "SD43 Coquitlam"
+dat$School.board[grep("SD78",dat$School.board)] <- "SD78 Fraser-Cascade"
 dat$School.board[grep("SD44",dat$School.board)] <- "SD44 North Vancouver"
 dat$School.board[grep("SD36",dat$School.board)] <- "SD36 Surrey"
 dat$School.board[grep("SD39",dat$School.board)] <- "SD39 Vancouver" 
@@ -291,9 +294,13 @@ dat$School.board[grep("SD37",dat$School.board)] <- "SD37 Delta"
 dat$School.board[grep("SD35",dat$School.board)] <- "SD35 Langley" 
 dat$School.board[grep("SD42",dat$School.board)] <- "SD42 Maple Ridge & Pitt Meadows"
 dat$School.board[grep("SD23",dat$School.board)] <- "SD23 Kelowna"
+dat$School.board[grep("SD23",dat$School.board)] <- "SD23 Kelowna"
 dat$School.board[grep("SD57",dat$School.board)] <- "SD57 Prince George"
 dat$School.board[grep("SD58",dat$School.board)] <- "SD58 Nicola-Similkameen"
 dat$School.board[grep("SD22",dat$School.board)] <- "SD22 Vernon"
+dat$School.board[grep("SD 68 ",dat$School.board)] <- "SD68 Nanaimo Ladysmith"
+dat$School.board[grep("SD68",dat$School.board)] <- "SD68 Nanaimo Ladysmith"
+dat$School.board[grep("SD48",dat$School.board)] <- "SD48 Sea to Sky"
 dat$School.board[which(dat$School.board=="DDSB")] <- "Durham DSB"
 dat$School.board <- sub("Hamilton-Wenworth",
 	"Hamilton-Wentworth",
