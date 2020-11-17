@@ -94,7 +94,7 @@ for (prov in unique(df2$Province)) {
 					footerDate())
 	)
 	p <- p + school_th
-	if (prov %in% c("QC","ON","AB")) {
+	if (prov %in% c("QC","ON","AB","BC")) {
 		p <- p + theme(axis.text.x=element_text(size=10))
 	}
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
