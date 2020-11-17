@@ -388,7 +388,7 @@ p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
 p3 <- p3 + ylim(1,max(cur2$x)*1.02)
-p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000))
+p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000))
 
 caseText <- c()
 for (k in 1:length(lv)) {
@@ -400,7 +400,8 @@ cols <- scales::hue_pal()(nrow(totcase))
 p3 <- p3 + expand_limits(x=Sys.Date()+13)
 p3 <- p3 + annotate("text",x=Sys.Date()+1,y=totcase$x,label=caseText,
 		colour=cols,size=11,fontface=2,vjust=0,hjust=0,fill="white")
-p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),y=4700,
+p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
+	y=4900,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)
