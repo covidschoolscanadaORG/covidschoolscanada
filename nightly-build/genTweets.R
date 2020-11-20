@@ -28,7 +28,8 @@ public_sch <- list(
 	BC=1578,
 	MB=690,
 	SK=769,
-	NB=302 # GNB Policy & Planning, Dept Ed & ECDev April 2017
+	NB=302, # GNB Policy & Planning, Dept Ed & ECDev April 2017
+	NS=370
 )
 # private only
 private_sch <- list(
@@ -75,7 +76,8 @@ getCoords <- function() {
 		MB="&ll=53.74476051758362%2C-99.17430471694146&z=6",
 		ON="&ll=47.84454183589612%2C-88.18797659194146&z=6",
 		QC="&ll=48.39486655697718%2C-74.28622180721197&z=6",
-		NB="&ll=46.52185832861437%2C-65.72942947682745&z=7"
+		NB="&ll=46.52185832861437%2C-65.72942947682745&z=7",
+		NS="&ll=45.82732191451751%2C-66.61078319517088&z=7"
 	)
 	coords
 }
@@ -120,7 +122,8 @@ genTweet <- function(outDir,res) {
 		MB="Manitoba",
 		SK="Saskatchewan",
 		QC="Québec",
-		NB="New Brunswick"
+		NB="New Brunswick",
+		NS="Nova Scotia"
 	)
 	outFile <- sprintf("%s/tweetgen_%s.txt",outDir,dt)
 
@@ -178,8 +181,10 @@ message("started tweet")
 		cat(sprintf("%s SCHOOLS, by %% %s\n",
 			emo::ji("school"),emo::ji("school")),file=twf)
 		for (k in 1:nrow(sch)) {
+message(sch$Province[k])
 			cat(sprintf("%s - %s of %s (%1.1f%%)",
-				sch$Province[k],pr(sch$Count[k]),pr(sch$TOTAL[k]),
+				sch$Province[k],pr(sch$Count[k]),
+				pr(sch$TOTAL[k]),
 				sch$TOTAL_PCT[k]),
 				file=twf)
 			if (sch$Province[k] %in% c("AB","ON")){
