@@ -361,6 +361,10 @@ dat2$Total.cases.to.date <- as.integer(
 
 totcase <- aggregate(dat2$Total.cases.to.date,
 	by=list(Province=dat2$Province),FUN=sum)
+if (any(is.na(totcase$x))){
+	message("totcase NA")
+	browser()
+}
 totcase$Province <- factor(totcase$Province,levels=lv)
 tweetRes$totcase <- totcase
 mega_totcase <- sum(totcase$x)
@@ -396,10 +400,18 @@ for (k in 1:length(lv)) {
 	caseText <- c(caseText,sprintf("%s:%s", totcase$Province[i],
 		prettyNum(totcase$x[i],big.mark=",")))
 }
+
+xvals <- rep(Sys.Date()+1, nrow(totcase))
+xvals[which(totcase$Province=="NS")] <- Sys.Date()+14
+#idx <- which(totcase$Province %in% c("BC","MB","SK"))
+#yvals[idx] <- yvals[idx] + 350
+
 cols <- scales::hue_pal()(nrow(totcase))
-p3 <- p3 + expand_limits(x=Sys.Date()+13)
-p3 <- p3 + annotate("text",x=Sys.Date()+1,y=totcase$x,label=caseText,
-		colour=cols,size=11,fontface=2,vjust=0,hjust=0,fill="white")
+p3 <- p3 + expand_limits(x=Sys.Date()+20)
+p3 <- p3 + annotate("text",x=xvals,
+		y=totcase$x,label=caseText,
+		colour=cols,size=11,fontface=2,
+		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
 	y=4900,
 	hjust=0,vjust=0,
@@ -410,7 +422,7 @@ p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
 p3 <- p3 + school_th
 p3 <- p3 + theme(
 	axis.text.x = element_text(angle = 20,
-		size=30,vjust=0.5),
+		size=20,vjust=0.5),
 	axis.text.y = element_text(size=48),
 	legend.text=element_text(size=30,colour="#550000"),
 	legend.title=element_blank(),
