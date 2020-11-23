@@ -20,9 +20,12 @@ mv $dummy ${outDir}/${outName}.kml
 perl -pe 's/<\!\[CDATA\[(.*)\]\]>/$1/' ${outDir}/${outName}.kml > ${outDir}/${outName}_clean.kml
 
 perl -pe 's/<description>(.*)<\/description>//' ${outDir}/${outName}_clean.kml > ${outDir}/${outName}_clean2.kml
+
 perl -pe 's/&/&amp;/g' ${outDir}/${outName}_clean2.kml > ${outDir}/${outName}_clean3.kml
 
 # make table
+echo "Outdir is ${outDir}"
+
 Rscript kml_parse_extended_qc.R ${outDir}/${outName}_clean3.kml
 
 #rm ${outDir}/${outName}_clean.kml

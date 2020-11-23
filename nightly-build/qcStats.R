@@ -4,9 +4,11 @@
 source("utils.R")
 Sys.setenv(TZ="America/Toronto")
 
+args <- commandArgs(TRUE)
+
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
-outDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+outDir <- sprintf("%s-%s",args[1],dt)
 
 inFile <- sprintf("%s/CEQ_annotated_%s.csv",outDir,dt)
 outFile <- sprintf("%s/CEQ_annotated_clean_%s.csv",outDir,dt)

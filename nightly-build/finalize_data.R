@@ -6,8 +6,9 @@ require(dplyr)
 #dbox <- "/home/shraddhapai/Canada_COVID_tracker/misc/dbox.rds"
 dbox <- "dbox.rds"
 
-autoGen_boards <- c("Peel DSB", "Toronto DSB","York Region DSB",
-	"Ottawa-Carleton DSB")
+autoGen_boards <- c("Peel DSB", "Toronto DSB",
+	"York Region DSB","York CDSB",
+	"Ottawa-Carleton DSB","Ottawa CDSB")
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
@@ -36,6 +37,9 @@ if (!drop_exists(path=odir,dtoken=token)) {
 	drop_upload(file=inFile,path=odir,dtoken=token)
 	message("Upload successful!\n")
 
+# ---------------------------------------------------------
+# Quebec layer
+# ---------------------------------------------------------
 qc <- subset(dat,Province=="QC")
 counts$qc <- nrow(qc)
 message("* Writing QC")
@@ -45,7 +49,11 @@ write.table(qc,
 	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.QC.csv",
 		inDir,dt),
 	sep=",",col=T,row=F,quote=T)
+dat <- dat[-which(dat$Province=="QC"),]
 
+# ---------------------------------------------------------
+# Autogen
+# ---------------------------------------------------------
 message("* Writing autogen file")
 autogen_idx <-which(dat$School.board %in% autoGen_boards)
 counts$autogen <- length(autogen_idx)
@@ -58,9 +66,26 @@ write.table(autogen,
 		inDir,dt),
 	sep=",",col=T,row=F,quote=T)
 
-message("* Writing Other Provinces")
 dat <- dat[-autogen_idx,]
-dat <- subset(dat,Province!="QC")
+# ---------------------------------------------------------
+# Ontario
+# ---------------------------------------------------------
+ont_idx <- which(dat$Province == "ON")
+ont <- dat[ont_idx,]
+counts$ont <- nrow(ont)
+message("* Writing ON")
+cat(sprintf("ON = %i records\n",nrow(ont)),file=logFile,
+	append=TRUE)
+write.table(ont,
+	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.ON.csv",
+		inDir,dt),
+	sep=",",col=T,row=F,quote=T)
+
+dat <- dat[-ont_idx,]
+# ---------------------------------------------------------
+# Other Provinces
+# ---------------------------------------------------------
+message("* Writing Other Provinces")
 counts$other <- nrow(dat)
 cat(sprintf("Other = %i records\n",nrow(dat)),file=logFile,
 	append=TRUE)
@@ -70,8 +95,8 @@ write.table(dat,
 message("* Layer write done")
 
 message("Totalling...")
-tot2 <- counts$qc + counts$autogen + counts$other
-cat(sprintf("Tally QC + autogen + other = %i\n", tot2),
+tot2 <- counts$qc + counts$ont + counts$autogen + counts$other
+cat(sprintf("Tally QC + ON + autogen + other = %i\n", tot2),
 	file=logFile,append=TRUE)
 
 system2("cat",logFile)

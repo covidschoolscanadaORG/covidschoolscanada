@@ -11,7 +11,8 @@ Sys.setenv(TZ="America/Toronto")
 
 date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
-baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
+#baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
+baseDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker"
 inDir <- sprintf("%s/export-%s",baseDir,dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
@@ -51,8 +52,12 @@ if (any(idx)){
 	dat$Province[idx] <- "Alberta"
 	dat$City[idx] <- "Edmonton"
 }
+idx <- which(dat$Province %in% c("Napean","Ottawa"))
+if (any(idx)) dat$Province[idx] <- "ON"
 
 dat$Province <- prov2abbrev(dat$Province)
+idx <- grep("Manitoba",dat$Province)
+dat$Province[idx] <- "MB"
 
 ## Reverse geo-locate city/prov where blank
 idx <- intersect(union(
@@ -73,6 +78,7 @@ if (any(idx)) {
 	}
 		message("done")
 }
+message("after geocoding")
 
 ###nogood <- union(which(!dat$Province %in% c("AB","BC","ON","QC","MB","SK","YT","NB","NS","NL")),which(!is.na(dat$Province))) 
 ###nogood <- intersect(nogood, which(dat$Province!=""))
@@ -433,11 +439,21 @@ if (flag__addAutogen) {
 message("* Add active/resolved status")
 #dat$ActiveOrResolved <- addActiveResolved(dat,date2use)
 
+
 write.table(dat,
 	file=sprintf("%s/before_removing_duplicates.txt",inDir),
 	sep=",",col=T,row=F,quote=F)
 
 # remove duplicates
+
+idx <- which(duplicated(dat))
+if (any(idx)) {
+	message(sprintf("%i duplicates found, writing to file", 
+		length(idx)))
+	write.table(dat[idx,],file=sprintf("%s/duplicates.csv",
+		inDir),sep=",",col=T,row=F,quote=F)
+}
+
 dat <- dat[!duplicated(dat),]
 
 #### remove YCDSB duplicates

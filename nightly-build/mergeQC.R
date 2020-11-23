@@ -4,7 +4,9 @@ source("utils.R")
 
 args <- commandArgs(TRUE)
 dt <- args[1]
-rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
+rootDir <- args[2]
+#rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
+#rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
 failFile <- sprintf("%s/fail_mergeQC.txt",inDir)

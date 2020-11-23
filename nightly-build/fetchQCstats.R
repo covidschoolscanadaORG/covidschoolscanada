@@ -1,10 +1,12 @@
 # download CovidEcoles sheet with school annotation
 
+args <- commandArgs(TRUE)
+outRoot <- args[1]
 sheetURL <- "https://docs.google.com/spreadsheets/d/1Il2Xhz-VKhME4B9EqKkzbmT5APf3IaKktyk80SQi6JA/edit#gid=154085736"
 
 Sys.setenv(TZ="America/Toronto")
 dt <- format(Sys.Date(),"%y%m%d")
-outDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+outDir <- sprintf("%s-%s",args[1], dt)
 
 require(gsheet)
 message("* Fetching CEQ annotation")

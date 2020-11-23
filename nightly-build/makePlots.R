@@ -10,7 +10,6 @@ suppressMessages(require(grid))	 # annotate page
 suppressMessages(require(gridExtra))	 # annotate page
 suppressMessages(require(showtext))
 suppressMessages(require(scales)) # date axis for cumulative
-suppressMessages(require(ggrepel)) # label key schools
 #options(warn=2)
 source("utils.R")
 source("genTweets.R")
@@ -38,7 +37,8 @@ tweetRes <- list()
 
 tweetRes[["date"]] <- Sys.Date()
 reportDate <- format(Sys.Date(),"%d %B %Y")
-inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+#inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
 pdfFile <- sprintf("%s/arranged.pdf",inDir)
 if (file.exists(pdfFile)) unlink(pdfFile)
 pdfinsta <- sprintf("%s/arranged_insta.pdf",inDir)
@@ -335,6 +335,7 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 		message("found malformed date")
 		print(dat2[which(!isd),])
 browser()
+	dat2$Date[which(!isd)] <- rep("2020-10-01",sum(!isd))
 	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
 },error=function(ex){
@@ -413,7 +414,7 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=4900,
+	y=5200,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)

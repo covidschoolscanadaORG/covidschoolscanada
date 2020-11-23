@@ -49,7 +49,8 @@ school_th <-  theme(
 Sys.setenv(TZ="America/Toronto")
 
 dt <- format(Sys.Date(),"%y%m%d")
-inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+#inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
+inDir <- sprintf("//Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)

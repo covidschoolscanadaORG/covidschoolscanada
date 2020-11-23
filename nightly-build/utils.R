@@ -275,6 +275,9 @@ message("Reverse geo-locating")
 out <- list()
 urlbase <- "https://photon.komoot.io/reverse?"
 for (k in 1:nrow(x)) {
+	if (is.na(x$Latitude[k])) {
+		out[[k]] <- rep(NA,4)
+	} else {
 	urlFull <- sprintf("%slon=%s&lat=%s",urlbase,
 		as.character(x$Longitude[k]),as.character(x$Latitude[k]))
 	message(sprintf("\tFetching %s", urlFull))
@@ -295,14 +298,25 @@ for (k in 1:nrow(x)) {
 	},finally={
 	})
 }
+}
 	out2 <- do.call("rbind",out)
 	out2[,4] <- prov2abbrev(out2[,4])
 
 	# make sure record order not mixed up
+	if (any(is.na(out2[,1]))) {
+		cat("found NA lat/long")
+		browser()
+	} else {
 	if (any(abs(floor(as.numeric(out2[,2])-as.numeric(x$Latitude)))>.Machine$double.eps)||
 			any(abs(floor(as.numeric(out2[,1])-as.numeric(x$Longitude)))>.Machine$double.eps)) {
 			message("lat/long order doesn't match")
 			browser()
+	}
+	}
+
+	if (any(is.na(out2[,3]))) {
+		cat("Found NA city/Province")
+		print(out2[which(is.na(out2[,3])),])
 	}
 	out2
 }
