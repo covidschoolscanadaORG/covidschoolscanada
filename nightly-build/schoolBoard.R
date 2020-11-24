@@ -57,6 +57,7 @@ dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 dat <- subset(dat, Province!="QC")
 
 dat$School.board <- sub("Hamilton-Wentowrth","Hamilton-Wentworth",dat$School.board)
+dat$School.board <- sub("Arch. of Winnipeg","Arch. Of Winnipeg",dat$School.board)
 
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)

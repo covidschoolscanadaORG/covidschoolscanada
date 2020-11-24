@@ -10,8 +10,10 @@ date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
 outDir <- sprintf("%s-%s",args[1],dt)
 
-inFile <- sprintf("%s/CEQ_annotated_%s.csv",outDir,dt)
-outFile <- sprintf("%s/CEQ_annotated_clean_%s.csv",outDir,dt)
+inFile <- sprintf("%s/CEQ_annotated_%s.csv",
+	outDir,dt)
+outFile <- sprintf("%s/CEQ_annotated_clean_%s.csv",
+	outDir,dt)
 
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 idx <- which(dat[,"École"]=="")

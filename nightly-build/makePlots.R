@@ -134,11 +134,15 @@ qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
 idx <- which(is.na(qcStats$institute.name))
 if (any(idx)) qcStats <- qcStats[-idx,]
 
+qcStats$Total.cases.to.date <- as.integer(qcStats$Total.cases.to.date)
+qcOB <- sum(qcStats$Total.cases.to.date >=5)
+
 dat$Total.outbreaks.to.date <- as.integer(dat$Total.outbreaks.to.date)
+tmp <- subset(dat, Province!="QC")
 
 message("---------")
 message(sprintf("Total cases = %i",nrow(dat)))
-ob <- sum(dat$Total.outbreaks.to.date,na.rm=TRUE)
+ob <- sum(tmp$Total.outbreaks.to.date,na.rm=TRUE) + qcOB
 dat$Province <- factor(dat$Province, 
 	level=prov) 
 message(sprintf("Total outbreaks = %i", ob))
@@ -189,9 +193,9 @@ df3 <- aggregate(dat$Total.outbreaks.to.date,
 	by=list(Province=dat$Province),
 	FUN=sum,na.rm=TRUE)
 colnames(df3)[2] <- "Outbreaks"
+
 # For BC put in number of clusters
 numc <- length(intersect(which(dat$Province=="BC"),
-###	union(grep("outbreak",dat$Outbreak.status,ignore.case=TRUE),
 			grep("Cluster",dat$Outbreak.Status,ignore.case=TRUE))
 )
 tweetRes[["total_outbreak"]] <- ob+numc # add clusters to total
@@ -200,6 +204,8 @@ ob_bc <- length(intersect(which(dat$Province=="BC"),
 numc2 <- numc+ob_bc
 df3[which(df3$Province=="BC"),"Outbreaks"] <- numc2
 df3 <- df3[order(df3$Outbreaks,decreasing=TRUE),]
+# For QC num schools with cases >=5 
+df3[which(df3$Province=="QC"),"Outbreaks"] <- qcOB
 
 tweetRes[["outbreaks"]] <- df3
 message("Total outbreaks, by Province")
@@ -351,6 +357,8 @@ idx <- c(idx,which(as.Date(dat2$Date) > Sys.Date()))
 if (any(idx)) {
 	print(dat2[idx,])
 	message("* Found mis-entered date")
+	dat2$Date[idx] <- sub("^2929-","2020-",dat2$Date[idx])
+	dat2$tstamp[idx] <- as.POSIXct(dat2$Date[idx])
 	browser()
 }
 

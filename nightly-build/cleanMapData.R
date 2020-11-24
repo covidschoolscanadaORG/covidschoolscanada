@@ -391,6 +391,10 @@ clust <- idx[which(totcase>1)]
 dat$Outbreak.Status[intersect(clust,
 		which(dat$Outbreak.Status!="Declared outbreak"))] <- "Cluster (BC)"
 
+# ----------------------------------------
+# QC - Set outbreaks
+# ----------------------------------------
+
 message("------------------------------------")
 message("* Dates cleanup")
 message("------------------------------------")
