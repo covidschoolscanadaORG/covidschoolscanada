@@ -264,6 +264,8 @@ dat$School.board <- sub("DSB Niagara", "Niagara DSB",
 	dat$School.board)
 dat$School.board <- sub("York Regional DSB", "York Region DSB",
 	dat$School.board)
+dat$School.board <- sub("Dufferin-Peel DSB", "Dufferin-Peel CDSB",
+	dat$School.board)
 dat$School.board <- sub("YRDSB", "York Region DSB",
 	dat$School.board)
 dat$School.board <- sub("HDSB", "Halton DSB",
@@ -347,6 +349,7 @@ dat$School.board[grep("Lloydminster CS",dat$School.board)] <- "Lloydminster CSD"
 dat$School.board[grep("Lloydminster Public SD",dat$School.board)] <- "Lloydminster SD"
 dat$School.board[grep("Red Deer CRS",dat$School.board)] <- "Red Deer CS"
 dat$School.board[grep("Saint. James",dat$School.board)] <- "St. James-Assiniboia SD"
+dat$School.board[grep("St. James Assiniboia SD",dat$School.board)] <- "St. James-Assiniboia SD"
 dat$School.board[grep("Non-funded",dat$School.board)] <- "Non-Funded Schools"
 dat$School.board[grep("Algonquin and",dat$School.board)] <- "Algonquin & Lakeshore CDSB"
 

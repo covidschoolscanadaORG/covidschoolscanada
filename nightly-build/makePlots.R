@@ -341,7 +341,7 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 		message("found malformed date")
 		print(dat2[which(!isd),])
 browser()
-	dat2$Date[which(!isd)] <- rep("2020-10-01",sum(!isd))
+	dat2$Date[which(!isd)] <- rep("2020-11-25",sum(!isd))
 	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
 },error=function(ex){

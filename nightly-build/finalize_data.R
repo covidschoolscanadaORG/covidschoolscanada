@@ -8,7 +8,8 @@ dbox <- "dbox.rds"
 
 autoGen_boards <- c("Peel DSB", "Toronto DSB",
 	"York Region DSB","York CDSB",
-	"Ottawa-Carleton DSB","Ottawa CDSB")
+	"Ottawa-Carleton DSB","Ottawa CDSB",
+	"Dufferin-Peel CDSB")
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
