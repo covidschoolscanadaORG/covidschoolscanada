@@ -17,7 +17,10 @@ provFull <- list(
 	ON="Ontario",
 	AB="Alberta",
 	MB="Manitoba",
-	SK="Saskatchewan"
+	SK="Saskatchewan",
+  NB="New Brunswick",
+	NS="Nova Scotia",
+	PEI="Prince Edward Island"
 )
 
 school_th <-  theme(

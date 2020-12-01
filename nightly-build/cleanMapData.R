@@ -272,6 +272,8 @@ dat$School.board <- sub("HDSB", "Halton DSB",
 	dat$School.board)
 dat$School.board <- sub("DSB of Niagara", "Niagara DSB",
 	dat$School.board)
+dat$School.board <- sub("Border Land DSB", "Borderland DSB",
+	dat$School.board)
 dat$School.board <- sub("Division Scolaire Franco-Manitobaine", "Franco-Manitobaine SD",
 	dat$School.board)
 dat$School.board <- sub("Franco-manitobian SD", "Franco-Manitobaine SD",

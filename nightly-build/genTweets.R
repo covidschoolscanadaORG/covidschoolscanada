@@ -29,7 +29,8 @@ public_sch <- list(
 	MB=690,
 	SK=769,
 	NB=302, # GNB Policy & Planning, Dept Ed & ECDev April 2017
-	NS=370
+	NS=370,
+	PEI=62
 )
 # private only
 private_sch <- list(
@@ -77,7 +78,8 @@ getCoords <- function() {
 		ON="&ll=47.84454183589612%2C-88.18797659194146&z=6",
 		QC="&ll=48.39486655697718%2C-74.28622180721197&z=6",
 		NB="&ll=46.52185832861437%2C-65.72942947682745&z=7",
-		NS="&ll=45.82732191451751%2C-66.61078319517088&z=7"
+		NS="&ll=45.82732191451751%2C-66.61078319517088&z=7",
+		PEI="&ll=46.29119004736826%2C-63.9002120375&z=8"
 	)
 	coords
 }
@@ -123,7 +125,8 @@ genTweet <- function(outDir,res) {
 		SK="Saskatchewan",
 		QC="Québec",
 		NB="New Brunswick",
-		NS="Nova Scotia"
+		NS="Nova Scotia",
+		PEI="Prince Edward Island"
 	)
 	outFile <- sprintf("%s/tweetgen_%s.txt",outDir,dt)
 

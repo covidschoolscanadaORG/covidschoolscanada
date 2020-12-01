@@ -113,7 +113,6 @@ school_th <-  theme(
 	plot.margin = unit(c(10,0,0,5),"pt")
 )
 
-
 # ----------------------------
 # Start processing
 
@@ -127,7 +126,6 @@ tryCatch({
 	print(ex)
 },finally={
 })
-
 
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
@@ -187,7 +185,6 @@ p1 <- p
 #g <- annotPage(p,"Province",plotTitle=ttl)
 
 message("*PLOT: Outbreaks by Province")
-
 
 df3 <- aggregate(dat$Total.outbreaks.to.date,
 	by=list(Province=dat$Province),
@@ -341,7 +338,7 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 		message("found malformed date")
 		print(dat2[which(!isd),])
 browser()
-	dat2$Date[which(!isd)] <- rep("2020-11-25",sum(!isd))
+#	dat2$Date[which(!isd)] <- rep("2020-11-25",sum(!isd))
 	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
 },error=function(ex){
@@ -400,8 +397,8 @@ p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
-p3 <- p3 + ylim(1,max(cur2$x)*1.02)
-p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000))
+p3 <- p3 + ylim(-200,max(cur2$x)*1.02)
+p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000))
 
 caseText <- c()
 for (k in 1:length(lv)) {
@@ -410,6 +407,8 @@ for (k in 1:length(lv)) {
 		prettyNum(totcase$x[i],big.mark=",")))
 }
 
+yvals <- totcase$x
+yvals[which(totcase$Province=="PEI")] <- -200
 xvals <- rep(Sys.Date()+1, nrow(totcase))
 xvals[which(totcase$Province=="NS")] <- Sys.Date()+14
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
@@ -418,7 +417,7 @@ xvals[which(totcase$Province=="NS")] <- Sys.Date()+14
 cols <- scales::hue_pal()(nrow(totcase))
 p3 <- p3 + expand_limits(x=Sys.Date()+20)
 p3 <- p3 + annotate("text",x=xvals,
-		y=totcase$x,label=caseText,
+		y=yvals,label=caseText,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
