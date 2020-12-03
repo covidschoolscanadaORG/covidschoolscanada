@@ -127,6 +127,7 @@ tryCatch({
 },finally={
 })
 
+
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
 idx <- which(is.na(qcStats$institute.name))
@@ -353,10 +354,7 @@ idx <- c(idx,which(as.Date(dat2$Date) > Sys.Date()))
 
 if (any(idx)) {
 	print(dat2[idx,])
-	message("* Found mis-entered date")
-	dat2$Date[idx] <- sub("^2929-","2020-",dat2$Date[idx])
-	dat2$tstamp[idx] <- as.POSIXct(dat2$Date[idx])
-	browser()
+
 }
 
 dat2$Total.cases.to.date <- stringr::str_trim(
@@ -421,7 +419,7 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=5200,
+	y=5800,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)
