@@ -185,13 +185,13 @@ message("started tweet")
 			emo::ji("school"),emo::ji("school")),file=twf)
 		for (k in 1:nrow(sch)) {
 message(sch$Province[k])
-			cat(sprintf("%s - %s of %s (%1.1f%%)",
+			cat(sprintf("%s - %s / %s (%1.1f%%)",
 				sch$Province[k],pr(sch$Count[k]),
 				pr(sch$TOTAL[k]),
 				sch$TOTAL_PCT[k]),
 				file=twf)
 			if (sch$Province[k] %in% c("AB","ON")){
-				cat(sprintf("%s %1.1f%% of %s public", 
+				cat(sprintf("%s %1.1f%% / %s public", 
 					emo::ji("right_arrow"), sch$PUBLIC_PCT[k],
 					pr(sch$PUBLIC[k])),
 					file=twf)
@@ -290,7 +290,7 @@ message(sch$Province[k])
 		cat("Yellow:   1+ unlinked case\n",file=twf)
 		cat("Orange: Declared outbreak (PHU; 2+ cases <14 days, linked)\n",
 				file=twf)
-		cat("Grey:     1+ case, outbreak status unknown\n",file=twf)
+		cat("Purple: Clusters (BC)\n",file=twf)
 		cat(sprintf("\n/%i", tweet_ct),file=twf)
 		tweet_ct <- tweet_ct+1
 		cat("\n------------\n",file=twf) # separator

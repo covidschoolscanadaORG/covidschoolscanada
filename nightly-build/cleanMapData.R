@@ -211,6 +211,9 @@ message("------------------------------------")
 dat$School.board <- sub("District School Board", 
 	"DSB",dat$School.board)
 dat$School.board <- sub("Catholic DSB", "CDSB",dat$School.board)
+dat$School.board <- sub("Light of Christ SD", 
+	"Light of Christ CS",
+	dat$School.board)
 dat$School.board <- sub("School Division", "SD",dat$School.board)
 dat$School.board <- sub("School District", "SD",dat$School.board)
 dat$School.board <- sub("Catholic SD", "CSD",dat$School.board)

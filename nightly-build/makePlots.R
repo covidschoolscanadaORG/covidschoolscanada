@@ -366,8 +366,15 @@ dat2$Total.cases.to.date <- as.integer(
 totcase <- aggregate(dat2$Total.cases.to.date,
 	by=list(Province=dat2$Province),FUN=sum)
 if (any(is.na(totcase$x))){
-	message("totcase NA")
+idx <- which(is.na(dat2$Total.cases.to.date))
+idx2 <- which(dat$Province!="QC")
+idx <- intersect(idx,idx2)
+print(dat2[idx,])
 	browser()
+	message("totcase NA")
+	#dat2$Total.cases.to.date[idx] <- 1
+#totcase <- aggregate(dat2$Total.cases.to.date,
+ # by=list(Province=dat2$Province),FUN=sum)	
 }
 totcase$Province <- factor(totcase$Province,levels=lv)
 tweetRes$totcase <- totcase
@@ -408,7 +415,7 @@ for (k in 1:length(lv)) {
 yvals <- totcase$x
 yvals[which(totcase$Province=="PEI")] <- -200
 xvals <- rep(Sys.Date()+1, nrow(totcase))
-xvals[which(totcase$Province=="NS")] <- Sys.Date()+14
+xvals[which(totcase$Province=="NS")] <- Sys.Date()+16
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
 #yvals[idx] <- yvals[idx] + 350
 

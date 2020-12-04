@@ -16,8 +16,13 @@ mv ${outDir}/*kml ${outDir}/backup_old/.
 
 #fetchUrl="https://www.google.com/maps/d/u/0/kml?mid=${mid}&cid=mp&forcekml=1"
 fetchUrl="https://www.google.com/maps/d/u/0/kml?mid=${mid}&cid=mp&cv=53DpL5LnT98.en."
+
+echo "Fetching map"
+echo $fetchURL
+
 wget "$fetchUrl"
 wait
+echo "got it!"
 
 ##dummy="kml?mid=${mid}&cid=mp&forcekml=1"
 dummy="kml?mid=${mid}&cid=mp&cv=53DpL5LnT98.en."
