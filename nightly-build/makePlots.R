@@ -146,6 +146,13 @@ dat$Province <- factor(dat$Province,
 	level=prov) 
 message(sprintf("Total outbreaks = %i", ob))
 
+if (any(is.na(dat$Province))) {
+	message("found NA province - check")
+	table(dat$Province,useNA="always")
+	print(dat[which(is.na(dat$Province)),])
+browser()
+}
+
 tweetRes[["total_school"]] <- nrow(dat)
 tweetRes[["total_outbreak"]] <- ob
 
@@ -338,8 +345,9 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 	if (any(isd==FALSE)) {
 		message("found malformed date")
 		print(dat2[which(!isd),])
-browser()
-#	dat2$Date[which(!isd)] <- rep("2020-11-25",sum(!isd))
+	dat2$Date[which(!isd)] <- "2020-12-07"
+	#dat2$Date[grep("220-12-02",dat2$Date)] <- "2020-12-02"
+	#dat2$Date[which(!isd)] <- rep("2020-12-04",sum(!isd))
 	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
 },error=function(ex){
@@ -408,12 +416,15 @@ p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000))
 caseText <- c()
 for (k in 1:length(lv)) {
 	i <- which(totcase$Province==lv[k])
-	caseText <- c(caseText,sprintf("%s:%s", totcase$Province[i],
-		prettyNum(totcase$x[i],big.mark=",")))
+	if (lv[k] == "AB") str <- "*" else str <- ""
+	caseText <- c(caseText,sprintf("%s:%s%s", 
+		totcase$Province[i],
+		prettyNum(totcase$x[i],big.mark=","),str))
 }
 
 yvals <- totcase$x
 yvals[which(totcase$Province=="PEI")] <- -200
+yvals[which(totcase$Province=="AB")] <- 1800
 xvals <- rep(Sys.Date()+1, nrow(totcase))
 xvals[which(totcase$Province=="NS")] <- Sys.Date()+16
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
@@ -426,9 +437,14 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=5800,
+	y=6400,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
+	fontface=4)
+p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
+	y=5800,
+	hjust=0,vjust=0,
+	label="* Pending update",colour="#ff0000",size=12,
 	fontface=4)
 
 # annotate

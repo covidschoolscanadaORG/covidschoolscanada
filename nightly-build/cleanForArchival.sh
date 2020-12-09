@@ -1,6 +1,6 @@
 
 #inDir=/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/10-2020
-inDir=/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/09-2020
+inDir=/Users/shraddhapai/Google_covidschools/11-2020
 
 for x in ${inDir}/export-*; do
 	echo $x

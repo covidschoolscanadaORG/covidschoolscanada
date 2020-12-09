@@ -8,8 +8,7 @@ dbox <- "dbox.rds"
 
 autoGen_boards <- c("Peel DSB", "Toronto DSB",
 	"York Region DSB","York CDSB",
-	"Ottawa-Carleton DSB","Ottawa CDSB",
-	"Dufferin-Peel CDSB")
+	"Ottawa-Carleton DSB","Ottawa CDSB")
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
@@ -43,6 +42,10 @@ if (!drop_exists(path=odir,dtoken=token)) {
 # ---------------------------------------------------------
 qc <- subset(dat,Province=="QC")
 counts$qc <- nrow(qc)
+if (nrow(qc)>2000) {
+message("QC over 2000")
+browser()
+}
 message("* Writing QC")
 cat(sprintf("QC = %i records\n",nrow(qc)),file=logFile,
 	append=TRUE)
@@ -59,6 +62,10 @@ message("* Writing autogen file")
 autogen_idx <-which(dat$School.board %in% autoGen_boards)
 counts$autogen <- length(autogen_idx)
 autogen <- dat[autogen_idx,]
+if (nrow(autogen)>2000) {
+message("autogen over 2000")
+browser()
+}
 print(table(autogen$School.board))
 cat(sprintf("Autogen = %i records\n",nrow(autogen)),
 	file=logFile,append=TRUE)
@@ -74,6 +81,10 @@ dat <- dat[-autogen_idx,]
 ont_idx <- which(dat$Province == "ON")
 ont <- dat[ont_idx,]
 counts$ont <- nrow(ont)
+if (nrow(ont)>2000) {
+message("ont over 2000")
+browser()
+}
 message("* Writing ON")
 cat(sprintf("ON = %i records\n",nrow(ont)),file=logFile,
 	append=TRUE)
@@ -88,6 +99,9 @@ dat <- dat[-ont_idx,]
 # ---------------------------------------------------------
 message("* Writing Other Provinces")
 counts$other <- nrow(dat)
+if (nrow(dat)>2000) {
+	message("other over 2000")
+}
 cat(sprintf("Other = %i records\n",nrow(dat)),file=logFile,
 	append=TRUE)
 write.table(dat,
