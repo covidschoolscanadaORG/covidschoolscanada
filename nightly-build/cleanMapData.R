@@ -483,5 +483,6 @@ dat <- dat[!duplicated(dat),]
 ###dat <- dat2
 
 message("* Writing output file")
+
 write.table(dat,file=outFile,sep=",",
 	col=TRUE,row=FALSE,quote=TRUE)

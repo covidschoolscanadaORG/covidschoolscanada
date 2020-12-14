@@ -150,6 +150,7 @@ if (any(is.na(dat$Province))) {
 	message("found NA province - check")
 	table(dat$Province,useNA="always")
 	print(dat[which(is.na(dat$Province)),])
+	dat$Province[which(is.na(dat$Province))] <- "NS"
 browser()
 }
 

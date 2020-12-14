@@ -53,7 +53,12 @@ write.table(qc,
 	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.QC.csv",
 		inDir,dt),
 	sep=",",col=T,row=F,quote=T)
+###write.table(qc[2001:nrow(qc),],
+###	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.QC2.csv",
+###		inDir,dt),
+###	sep=",",col=T,row=F,quote=T)
 dat <- dat[-which(dat$Province=="QC"),]
+browser()
 
 # ---------------------------------------------------------
 # Autogen
