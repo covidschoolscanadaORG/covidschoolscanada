@@ -10,6 +10,7 @@ outRoot=/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker
 canadaMidFile=1blA_H3Hv5S9Ii_vyudgDk-j6SfJQil9S
 # Quebec tracker
 QCMidFile=1S-b-tmhKP1RQeMaIZslrR_hqApM-KERq
+QCMidFile2="1S-b-tmhKP1RQeMaIZslrR_hqApM-KERq&lid=I0FmFF_CM9A"
 
 TZ="America/Toronto"
 dt=`date +%y%m%d`
@@ -29,6 +30,11 @@ echo "******************************************************"
 echo "Fetching Quebec map"
 echo "******************************************************"
 ./setup_datatable_quebec2.sh $outDir $QCMidFile COVIDEcolesQuebec 
+
+echo "******************************************************"
+echo "Fetching Quebec map layer 2"
+echo "******************************************************"
+./setup_datatable_quebec2.sh $outDir $QCMidFile2 COVIDEcolesQuebec_layer2 
 
 echo "******************************************************" >> $logfile
 echo " Merging" >> $logfile

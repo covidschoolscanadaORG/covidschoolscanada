@@ -13,6 +13,9 @@ date2use <- Sys.Date()
 dt <- format(date2use,"%y%m%d")
 #baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
 baseDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker"
+
+ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2020-11-22.csv"
+
 inDir <- sprintf("%s/export-%s",baseDir,dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
 	inDir,dt)
@@ -30,6 +33,15 @@ dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 	print(ex)
 },finally={
 })
+# -----------------------------------------
+# ADD ALBERTA AUTOGEN
+AB <- read.delim(ABfile,sep=",",h=T,as.is=T)
+AB <- AB[,colnames(dat)]
+message("* Adding AB autogen")
+dat <- dat[-which(dat$Province=="AB"),]
+old <- nrow(dat)
+dat <- rbind(dat,AB)
+message(sprintf("Added AB autogen: %i to %i rows", old, nrow(dat)))
 
 # -----------------------------------------
 # WHITESPACE REMOVE
@@ -357,6 +369,11 @@ dat$School.board[grep("Saint. James",dat$School.board)] <- "St. James-Assiniboia
 dat$School.board[grep("St. James Assiniboia SD",dat$School.board)] <- "St. James-Assiniboia SD"
 dat$School.board[grep("Non-funded",dat$School.board)] <- "Non-Funded Schools"
 dat$School.board[grep("Algonquin and",dat$School.board)] <- "Algonquin & Lakeshore CDSB"
+dat$School.board[grep("Foundations for the Future",dat$School.board)] <- "Foundations for the Future (Charter)"
+dat$School.board[grep("Maskwacis",dat$School.board)] <- "Maskwacis"
+dat$School.board[grep("Clear Water Academy",dat$School.board)] <- "Clear Water"
+dat$School.board <- gsub("^The ","",dat$School.board)
+dat$School.board <- gsub(" Catholic Separate","",dat$School.board)
 
 dat$School.board <- stringr::str_trim(dat$School.board)
 idx <- which(dat$School.board=="")

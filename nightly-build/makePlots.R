@@ -150,7 +150,6 @@ if (any(is.na(dat$Province))) {
 	message("found NA province - check")
 	table(dat$Province,useNA="always")
 	print(dat[which(is.na(dat$Province)),])
-	dat$Province[which(is.na(dat$Province))] <- "NS"
 browser()
 }
 
@@ -328,7 +327,7 @@ if (any(idx)) dat2 <- dat2[-idx,]
 dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$Date <- stringr::str_trim(dat2$Date)
 #dat2$Date <- gsub("2020-10-13\\.","2020-10-13",dat2$Date)
-dat2$Date <- gsub("2020-1028","2020-10-28",dat2$Date)
+#dat2$Date <- gsub("2020-1028","2020-10-28",dat2$Date)
 if (length(idx)>0) {
 	message("* found NA dates after flattening")
 	print(dat2[idx,])
@@ -337,7 +336,6 @@ if (length(idx)>0) {
 tryCatch({
 	# you were going to put a check here for dates earlier than
 	# 2020 or even august 2020
-	dat2$Date <- sub("2020-10-13\\.","2020-10-13",dat2$Date)
 IsDate <- function(mydate, date.format = "%Y-%m-%d") {
   tryCatch(!is.na(as.Date(mydate, date.format)),  
            error = function(err) {FALSE})  
@@ -346,8 +344,8 @@ IsDate <- function(mydate, date.format = "%Y-%m-%d") {
 	if (any(isd==FALSE)) {
 		message("found malformed date")
 		print(dat2[which(!isd),])
-	dat2$Date[which(!isd)] <- "2020-12-07"
-	#dat2$Date[grep("220-12-02",dat2$Date)] <- "2020-12-02"
+	browser()
+	#dat2$Date[which(!isd)] <- "2020-12-07"
 	#dat2$Date[which(!isd)] <- rep("2020-12-04",sum(!isd))
 	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
@@ -373,14 +371,14 @@ dat2$Total.cases.to.date <- as.integer(
 		dat2$Total.cases.to.date)
 
 totcase <- aggregate(dat2$Total.cases.to.date,
-	by=list(Province=dat2$Province),FUN=sum)
+	by=list(Province=dat2$Province),FUN=sum,na.rm=TRUE)
 if (any(is.na(totcase$x))){
 idx <- which(is.na(dat2$Total.cases.to.date))
 idx2 <- which(dat$Province!="QC")
 idx <- intersect(idx,idx2)
 print(dat2[idx,])
-	browser()
 	message("totcase NA")
+browser()
 	#dat2$Total.cases.to.date[idx] <- 1
 #totcase <- aggregate(dat2$Total.cases.to.date,
  # by=list(Province=dat2$Province),FUN=sum)	
@@ -411,8 +409,8 @@ p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
-p3 <- p3 + ylim(-200,max(cur2$x)*1.02)
-p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000))
+p3 <- p3 + ylim(-500,max(cur2$x)*1.02)
+p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000,7000))
 
 caseText <- c()
 for (k in 1:length(lv)) {
@@ -424,10 +422,9 @@ for (k in 1:length(lv)) {
 }
 
 yvals <- totcase$x
-yvals[which(totcase$Province=="PEI")] <- -200
-yvals[which(totcase$Province=="AB")] <- 1800
+yvals[which(totcase$Province=="PEI")] <- -250
 xvals <- rep(Sys.Date()+1, nrow(totcase))
-xvals[which(totcase$Province=="NS")] <- Sys.Date()+16
+yvals[which(totcase$Province=="NS")] <- -500#Sys.Date()+16
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
 #yvals[idx] <- yvals[idx] + 350
 
@@ -438,12 +435,12 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=6400,
+	y=6900,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=5800,
+	y=6400,
 	hjust=0,vjust=0,
 	label="* Pending update",colour="#ff0000",size=12,
 	fontface=4)
@@ -473,64 +470,64 @@ p3 <- p3 + theme(
 	legend.position = c(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
 )
 
-# ------------------------------------------------------
-# cumulative outbreaks
-message("* OUTBREAKS")
-dat3 <- dat2Full[,c("Province","Total.outbreaks.to.date",
-	"Outbreak.dates")]
-dat3 <- dat3[which(dat3$Outbreak.dates!=""),]
-dat3 <- flattenCases(dat3,"outbreaks")
-message("... done flattening")
-dat3$Province <- factor(dat3$Province, levels=lv)
-dat3$Outbreak.dates <- stringr::str_trim(dat3$Outbreak.dates)
-tryCatch({
-	dat3$tstamp <- as.POSIXct(dat3$Outbreak.dates)
-},error=function(ex){
-	message("posix conversion of date failed")
-	print(ex)
-	browser()
-},finally={
-})
-dat3$Total.outbreaks.to.date <- stringr::str_trim(
-		dat3$Total.outbreaks.to.date)
-dat3 <- na.omit(dat3)
-dat3$Total.outbreaks.to.date <- as.integer(
-		dat3$Total.outbreaks.to.date)
-cur <- dat3 %>%
-	group_by(Province) %>%
-	arrange(tstamp) %>% 
-	mutate(cs = cumsum(Total.outbreaks.to.date))
-
-cur <- as.data.frame(cur)
-cur$Province <- factor(cur$Province)
-cur <- aggregate(cur$cs,
-	by=list(tstamp=cur$tstamp,Province=cur$Province),
-	FUN=max)
-
-cur3 <- cur
-cur3$tstamp <- as.Date(cur3$tstamp)
-p4 <- ggplot(cur3,aes(x=tstamp,y=x,colour=Province))
-p4 <- p4 + geom_line(lwd=1.7)#geom_p#oint() + geom_line()
-p4 <- p4 + geom_vline(xintercept=mondays,col="#ff6666",
-		linetype="dashed",lwd=2)
-p4 <- p4 + xlab("date")
-p4 <- p4 + ylab("cumulative outbreaks")
-p4 <- p4 + ggtitle("Cumulative outbreaks by Province")
-
-dat3$week <- cut.Date(as.Date(dat3$tstamp),breaks="1 week",
-	labels=FALSE)
-cur4 <- aggregate(dat3$Total.outbreaks.to.date, 
-	by=list(Province=dat3$Province,
-		week=dat3$week),FUN=sum)
-pobwk <- ggplot(cur4,aes(x=week,y=x,colour=Province))
-pobwk <- pobwk + geom_line(lwd=2)
-pobwk <- pobwk + xlab("weeks")+ ylab("# outbreaks declare")
-pobwk <- pobwk + ggtitle("Outbreaks declared per week")
-
-pdf(sprintf("%s/outbreaks.pdf",inDir))
-print(p4); 
-print(pobwk)
-dev.off()
+#### ------------------------------------------------------
+#### cumulative outbreaks
+###message("* OUTBREAKS")
+###dat3 <- dat2Full[,c("Province","Total.outbreaks.to.date",
+###	"Outbreak.dates")]
+###dat3 <- dat3[which(dat3$Outbreak.dates!=""),]
+###dat3 <- flattenCases(dat3,"outbreaks")
+###message("... done flattening")
+###dat3$Province <- factor(dat3$Province, levels=lv)
+###dat3$Outbreak.dates <- stringr::str_trim(dat3$Outbreak.dates)
+###tryCatch({
+###	dat3$tstamp <- as.POSIXct(dat3$Outbreak.dates)
+###},error=function(ex){
+###	message("OUTBREAKS: posix conversion of date failed")
+###	print(ex)
+###	browser()
+###},finally={
+###})
+###dat3$Total.outbreaks.to.date <- stringr::str_trim(
+###		dat3$Total.outbreaks.to.date)
+###dat3 <- na.omit(dat3)
+###dat3$Total.outbreaks.to.date <- as.integer(
+###		dat3$Total.outbreaks.to.date)
+###cur <- dat3 %>%
+###	group_by(Province) %>%
+###	arrange(tstamp) %>% 
+###	mutate(cs = cumsum(Total.outbreaks.to.date))
+###
+###cur <- as.data.frame(cur)
+###cur$Province <- factor(cur$Province)
+###cur <- aggregate(cur$cs,
+###	by=list(tstamp=cur$tstamp,Province=cur$Province),
+###	FUN=max)
+###
+###cur3 <- cur
+###cur3$tstamp <- as.Date(cur3$tstamp)
+###p4 <- ggplot(cur3,aes(x=tstamp,y=x,colour=Province))
+###p4 <- p4 + geom_line(lwd=1.7)#geom_p#oint() + geom_line()
+###p4 <- p4 + geom_vline(xintercept=mondays,col="#ff6666",
+###		linetype="dashed",lwd=2)
+###p4 <- p4 + xlab("date")
+###p4 <- p4 + ylab("cumulative outbreaks")
+###p4 <- p4 + ggtitle("Cumulative outbreaks by Province")
+###
+###dat3$week <- cut.Date(as.Date(dat3$tstamp),breaks="1 week",
+###	labels=FALSE)
+###cur4 <- aggregate(dat3$Total.outbreaks.to.date, 
+###	by=list(Province=dat3$Province,
+###		week=dat3$week),FUN=sum)
+###pobwk <- ggplot(cur4,aes(x=week,y=x,colour=Province))
+###pobwk <- pobwk + geom_line(lwd=2)
+###pobwk <- pobwk + xlab("weeks")+ ylab("# outbreaks declare")
+###pobwk <- pobwk + ggtitle("Outbreaks declared per week")
+###
+###pdf(sprintf("%s/outbreaks.pdf",inDir))
+###print(p4); 
+###print(pobwk)
+###dev.off()
 
 message("* putting together grobs")
 # image of map + outbreak table

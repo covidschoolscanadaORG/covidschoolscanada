@@ -42,6 +42,18 @@ qc$Total.outbreaks.to.date <- rep(0,nrow(qc))
 qc$Total.outbreaks.to.date[grep("outbreak",qc[,4])]<- 1
 qc$Province <- "QC"
 
+qc2 <- read.delim(sprintf("%s/COVIDEcolesQuebec_layer2_clean3.kml-%s.txt",
+	inDir,dt),sep="\t",h=T,as.is=T)
+colnames(qc2)[4] <- "Outbreak.Status"
+qc2$Total.outbreaks.to.date <- rep(0,nrow(qc2))
+qc2$Total.outbreaks.to.date[grep("outbreak",qc2[,4])]<- 1
+qc2$Province <- "QC"
+qc2 <- qc2[,colnames(qc)]
+old <- nrow(qc)
+qc <- rbind(qc,qc2)
+message(sprintf("QC before, after merging: %i to %i rows",
+	old,nrow(qc)))
+
 message("")
 message("* Merging QC data")
 

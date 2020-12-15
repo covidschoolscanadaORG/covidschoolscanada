@@ -42,15 +42,15 @@ if (!drop_exists(path=odir,dtoken=token)) {
 # ---------------------------------------------------------
 qc <- subset(dat,Province=="QC")
 counts$qc <- nrow(qc)
-if (nrow(qc)>2000) {
-message("QC over 2000")
-browser()
-}
 message("* Writing QC")
 cat(sprintf("QC = %i records\n",nrow(qc)),file=logFile,
 	append=TRUE)
-write.table(qc,
-	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.QC.csv",
+write.table(qc[1:2000,],
+	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.QC_1.csv",
+		inDir,dt),
+	sep=",",col=T,row=F,quote=T)
+write.table(qc[2001:nrow(qc),],
+	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.QC_2.csv",
 		inDir,dt),
 	sep=",",col=T,row=F,quote=T)
 ###write.table(qc[2001:nrow(qc),],
@@ -58,7 +58,6 @@ write.table(qc,
 ###		inDir,dt),
 ###	sep=",",col=T,row=F,quote=T)
 dat <- dat[-which(dat$Province=="QC"),]
-browser()
 
 # ---------------------------------------------------------
 # Autogen

@@ -6,7 +6,7 @@ args <- commandArgs(TRUE)
 Sys.setenv(TZ="America/Toronto")
 dt <- format(Sys.Date(),"%y%m%d")
 
-inFile <- args[1]#sprintf("%s-%s/COVIDEcolesQuebec_clean3.kml",
+inFile <- args[1] #"/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-201215/COVIDEcolesQuebec_layer2_clean3.kml" #args[1]#sprintf("%s-%s/COVIDEcolesQuebec_clean3.kml",
 	#args[1],dt)
 
 #args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
@@ -19,7 +19,12 @@ outFile <-  sprintf("%s-%s.txt",inFile,dt)
 # Convert to List
 tagsList <- xmlToList(tagsXML)
 # get into the level where the school data is stored
-schools <- tagsList$Document$Folder
+
+if (any(grep("layer2",inFile))) {
+	schools <- tagsList$Document
+} else {
+	schools <- tagsList$Document$Folder
+}
 schools[[1]] <- NULL
 
 # parse each placeholder

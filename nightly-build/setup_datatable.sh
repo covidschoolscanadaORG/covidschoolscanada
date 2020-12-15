@@ -5,8 +5,6 @@ outDir=$1
 mid=$2 # ID for midfile
 outName=$3
 
-lid="y84_ssX2HbU"
-
 echo $outDir
 echo $mid
 echo $outName
@@ -23,6 +21,8 @@ echo $fetchURL
 wget "$fetchUrl"
 wait
 echo "got it!"
+
+fetchUrl="https://www.google.com/maps/d/u/0/kml?mid=1S-b-ddtmhKP1RQeMaIZslrR_hqApM-KERq"
 
 ##dummy="kml?mid=${mid}&cid=mp&forcekml=1"
 dummy="kml?mid=${mid}&cid=mp&cv=53DpL5LnT98.en."
