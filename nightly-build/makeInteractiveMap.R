@@ -1,8 +1,8 @@
 # set up map
 rm(list=ls())
 
-dt <- "201120"
-inDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-201120AMfreeze"
+dt <- "201216"
+inDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-201216AMfreeze"
 mapDir <- "/Users/shraddhapai/software/covidschoolscanada.github.io/maps/"
 
 dat <- read.delim(sprintf("%s/final_data/CanadaMap_QuebecMerge-%s.clean.csv",inDir,dt),sep=",",h=T,as.is=T)

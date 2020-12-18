@@ -408,7 +408,7 @@ p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
 p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
-p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
+#p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
 p3 <- p3 + ylim(-500,max(cur2$x)*1.02)
 p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000,7000))
 

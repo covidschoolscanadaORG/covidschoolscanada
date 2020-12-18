@@ -14,7 +14,7 @@ dt <- format(date2use,"%y%m%d")
 #baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
 baseDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker"
 
-ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2020-11-22.csv"
+ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2020-11-30.csv"
 
 inDir <- sprintf("%s/export-%s",baseDir,dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
