@@ -14,7 +14,7 @@ dt <- format(date2use,"%y%m%d")
 #baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
 baseDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker"
 
-ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2020-11-30.csv"
+ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2020-12-03.csv"
 
 inDir <- sprintf("%s/export-%s",baseDir,dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
@@ -411,10 +411,13 @@ for (k in 1:length(idx)) {
 	totcase[k] <- sum(cur)
 }
 
-clust <- idx[which(totcase>1)]
+idx <- which(dat$Province=="BC")
+isCluster <- findClusters(dat[idx,])
 
-dat$Outbreak.Status[intersect(clust,
-		which(dat$Outbreak.Status!="Declared outbreak"))] <- "Cluster (BC)"
+dat$Outbreak.Status[intersect(idx,
+		which(dat$institute.name %in% isCluster))] <- "Cluster (BC)"
+dat$Outbreak.Status[which(dat$Total.outbreaks.to.date>0)] <- "Declared outbreak"
+
 
 # ----------------------------------------
 # QC - Set outbreaks

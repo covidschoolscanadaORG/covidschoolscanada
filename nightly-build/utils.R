@@ -44,6 +44,42 @@ prov2abbrev <- function(x) {
 x
 }
 
+# checks date format
+IsDate <- function(mydate, date.format = "%Y-%m-%d") {
+  tryCatch(!is.na(as.Date(mydate, date.format)),  
+           error = function(err) {FALSE})  
+}
+
+# schools with cases < 14 days apart have clusters
+findClusters <- function(x) {
+
+x$Province <- as.character(x$Province)
+x <- x[,c("Date","Province","Total.cases.to.date","institute.name")]
+y <- flattenCases(x)
+isd <- IsDate(y$Date)
+if (any(isd==FALSE)) {
+	message("found malformed date")
+	print(y[which(!isd),])
+	browser()
+}
+y$tstamp <- as.POSIXct(y$Date)
+
+tbl <- table(y$institute.name)
+multi <- names(tbl)[which(as.integer(tbl)>=2)]
+cluster <- list()
+for (k in multi) {
+ dt <- sort(y$tstamp[which(y$institute.name==k)])
+	message(sprintf("%s: %i entries",k,length(dt)))
+ dtdiff <- as.integer(diff(dt))
+ if (any(dtdiff <= 14)) {
+		cluster <- c(cluster, k)
+		message("> cluster!")
+	}
+}
+return(cluster)
+}
+
+
 #' returns active/resolved column for cases
 #'
 #' @param dat (data.frame) cleaned school report table
@@ -271,25 +307,47 @@ g
 #' @importFrom RCurl getURIAsynchronous
 #' @importFrom jsonlite fromJSON
 revGeo <- function(x) {
+
+require(mapboxapi)
 message("Reverse geo-locating")
+
 out <- list()
-urlbase <- "https://photon.komoot.io/reverse?"
+### urlbase <- "https://photon.komoot.io/reverse?"
 for (k in 1:nrow(x)) {
 	if (is.na(x$Latitude[k])) {
 		out[[k]] <- rep(NA,4)
 	} else {
-	urlFull <- sprintf("%slon=%s&lat=%s",urlbase,
-		as.character(x$Longitude[k]),as.character(x$Latitude[k]))
-	message(sprintf("\tFetching %s", urlFull))
+###	urlFull <- sprintf("%slon=%s&lat=%s",urlbase,
+###		as.character(x$Longitude[k]),as.character(x$Latitude[k]))
+###	message(sprintf("\tFetching %s", urlFull))
+message(sprintf("Mapbox: RevGeo: %s: %s, %s", 
+	x$institute.name[k],
+	as.character(x$Latitude[k]),
+	as.character(x$Longitude[k])))
 	tryCatch({
-		m <- RCurl::getURIAsynchronous(urlFull)
-		m2 <- RJSONIO::fromJSON(m)
-		m3 <- m2$features[[1]]$properties
-		city <- m3$city
-		if (is.null(city)) city <- m3$district
-		if (is.null(city)) city <- NA
-		prov <- m3$state
-		if (is.null(prov)) prov <- NA
+		cur <- as.numeric(x[k,c("Latitude","Longitude")])
+		cur <- mb_reverse_geocode(coordinates=x[k,c("Longitude","Latitude")])
+		blah <- stringr::str_trim(unlist(strsplit(cur,",")))
+		city <- blah[length(blah)-2]
+		prov <- blah[length(blah)-1]
+	sp <- gregexpr(" ", prov)[[1]]
+	if (sp[1]>0) {
+		fr <- stringr::str_trim(substr(prov,1,sp[1]-1))
+		if (fr %in% c("Ontario","Alberta","Manitoba","Saskatchewan")) {
+			prov <- fr
+		} else {
+			prov <- substr(prov,1,sp[2]-1)
+		}
+	}
+
+###		m <- RCurl::getURIAsynchronous(urlFull)
+###		m2 <- RJSONIO::fromJSON(m)
+###		m3 <- m2$features[[1]]$properties
+###		city <- m3$city
+###		if (is.null(city)) city <- m3$district
+###		if (is.null(city)) city <- NA
+###		prov <- m3$state
+###		if (is.null(prov)) prov <- NA
 		message(sprintf("\t%s , %s",city, prov))
 		out[[k]] <- c(x$Longitude[k],x$Latitude[k],city,prov)
 	}, error=function(ex) {

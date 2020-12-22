@@ -2,6 +2,7 @@ require(XML)
 
 #args <- "/home/shraddhapai/Canada_COVID_tracker/export-201108/CanadaMap_clean3.kml" #commandArgs(TRUE)
 args <- commandArgs(TRUE)
+#args <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-201222/CanadaMap_clean3.kml"
 #inFile <- args[1] #"/home/shraddhapai/Canada_COVID_tracker/export-201004/CanadaMap_clean3.kml"# args[1]#"/home/shraddhapai/Canada_COVID_tracker/export-200923/CanadaMap_clean3.kml"#args[1]
 ###inFile <- "/home/shraddhapai/Canada_COVID_tracker/export-201029/CanadaMap_clean3.kml"
 inFile <- args[1]
@@ -71,7 +72,11 @@ field_names <- trimws(colnames(other[[1]]))
 
 #other2 <- do.call("rbind",other[which(ln==15)])
 #other2 <- rbind(other2,other_long)
-other <- do.call("rbind",other)
+other2 <- lapply(other, function(x) {
+	if (any(colnames(x) == "Board Name")) x <- x[,-which(colnames(x)=="Board Name"),drop=FALSE]
+	x <- as.matrix(x)
+})
+other <- do.call("rbind",other2)
 colnames(other) <- field_names
 
 message("* Compiling table")

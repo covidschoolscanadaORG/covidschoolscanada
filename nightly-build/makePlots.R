@@ -336,16 +336,15 @@ if (length(idx)>0) {
 tryCatch({
 	# you were going to put a check here for dates earlier than
 	# 2020 or even august 2020
-IsDate <- function(mydate, date.format = "%Y-%m-%d") {
-  tryCatch(!is.na(as.Date(mydate, date.format)),  
-           error = function(err) {FALSE})  
-}
+###IsDate <- function(mydate, date.format = "%Y-%m-%d") {
+###  tryCatch(!is.na(as.Date(mydate, date.format)),  
+###           error = function(err) {FALSE})  
+###}
 	isd <- IsDate(dat2$Date)
 	if (any(isd==FALSE)) {
 		message("found malformed date")
 		print(dat2[which(!isd),])
 	browser()
-	#dat2$Date[which(!isd)] <- "2020-12-07"
 	#dat2$Date[which(!isd)] <- rep("2020-12-04",sum(!isd))
 	}
 	dat2$tstamp <- as.POSIXct(dat2$Date)
@@ -435,12 +434,12 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=6900,
+	y=7400,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=6400,
+	y=7000,
 	hjust=0,vjust=0,
 	label="* Pending update",colour="#ff0000",size=12,
 	fontface=4)

@@ -24,18 +24,18 @@ counts$total <- nrow(dat)
 cat(sprintf("Full = %i records\n",nrow(dat)),file=logFile,
 	append=TRUE)
 
-# upload final data to dropbox
-token <- readRDS(dbox)
-message("Authorizing dropbox")
-drop_acc(dtoken=token)
-odir <- sprintf("daily_data/export-%s/final_data",dt)
-if (!drop_exists(path=odir,dtoken=token)) {
-	message("Making Dropbox folder")
-	drop_create(path=odir,dtoken=token)
-} 
-	message("\tMoving final file to Dropbox")
-	drop_upload(file=inFile,path=odir,dtoken=token)
-	message("Upload successful!\n")
+#### upload final data to dropbox
+###token <- readRDS(dbox)
+###message("Authorizing dropbox")
+###drop_acc(dtoken=token)
+###odir <- sprintf("daily_data/export-%s/final_data",dt)
+###if (!drop_exists(path=odir,dtoken=token)) {
+###	message("Making Dropbox folder")
+###	drop_create(path=odir,dtoken=token)
+###} 
+###	message("\tMoving final file to Dropbox")
+###	drop_upload(file=inFile,path=odir,dtoken=token)
+###	message("Upload successful!\n")
 
 # ---------------------------------------------------------
 # Quebec layer
@@ -99,12 +99,32 @@ write.table(ont,
 
 dat <- dat[-ont_idx,]
 # ---------------------------------------------------------
+# Alberta
+# ---------------------------------------------------------
+ab_idx <- which(dat$Province == "AB")
+ab <- dat[ab_idx,]
+counts$ab <- nrow(ab)
+if (nrow(ab)>2000) {
+message("AB over 2000")
+browser()
+}
+message("* Writing AB")
+cat(sprintf("AB = %i records\n",nrow(ab)),file=logFile,
+	append=TRUE)
+write.table(ab,
+	file=sprintf("%s/CanadaMap_QuebecMerge-%s.clean.AB.csv",
+		inDir,dt),
+	sep=",",col=T,row=F,quote=T)
+
+dat <- dat[-ab_idx,]
+# ---------------------------------------------------------
 # Other Provinces
 # ---------------------------------------------------------
 message("* Writing Other Provinces")
 counts$other <- nrow(dat)
 if (nrow(dat)>2000) {
 	message("other over 2000")
+browser()
 }
 cat(sprintf("Other = %i records\n",nrow(dat)),file=logFile,
 	append=TRUE)
@@ -114,7 +134,7 @@ write.table(dat,
 message("* Layer write done")
 
 message("Totalling...")
-tot2 <- counts$qc + counts$ont + counts$autogen + counts$other
+tot2 <- counts$qc + counts$ont + counts$ab + counts$autogen + counts$other
 cat(sprintf("Tally QC + ON + autogen + other = %i\n", tot2),
 	file=logFile,append=TRUE)
 
