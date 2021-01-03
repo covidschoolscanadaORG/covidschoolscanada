@@ -265,6 +265,7 @@ if (length(bad)>0) {
 	print("bad rows")
 	message(sprintf("FAILED: BAD DATES: excluding %i rows",
 		length(bad)))
+ dat2 <- dat2[-bad,]
 browser()
 	write.table(dat2[bad,],file=failFile,sep="\t",
 		col=F,row=F,quote=F,append=TRUE)
@@ -360,7 +361,8 @@ idx <- c(idx,which(as.Date(dat2$Date) > Sys.Date()))
 
 if (any(idx)) {
 	print(dat2[idx,])
-
+	message("have some dates out of range")
+	browser()
 }
 
 dat2$Total.cases.to.date <- stringr::str_trim(
@@ -414,10 +416,10 @@ p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000,7000)
 caseText <- c()
 for (k in 1:length(lv)) {
 	i <- which(totcase$Province==lv[k])
-	if (lv[k] == "AB") str <- "*" else str <- ""
-	caseText <- c(caseText,sprintf("%s:%s%s", 
+	#if (lv[k] == "AB") str <- "*" else str <- ""
+	caseText <- c(caseText,sprintf("%s:%s", 
 		totcase$Province[i],
-		prettyNum(totcase$x[i],big.mark=","),str))
+		prettyNum(totcase$x[i],big.mark=",")))
 }
 
 yvals <- totcase$x
@@ -438,11 +440,11 @@ p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)
-p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=7000,
-	hjust=0,vjust=0,
-	label="* Pending update",colour="#ff0000",size=12,
-	fontface=4)
+###p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
+###	y=7000,
+###	hjust=0,vjust=0,
+###	label="* Pending update",colour="#ff0000",size=12,
+###	fontface=4)
 
 # annotate
 p3 <- p3 + school_th

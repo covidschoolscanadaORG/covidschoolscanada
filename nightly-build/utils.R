@@ -69,11 +69,11 @@ multi <- names(tbl)[which(as.integer(tbl)>=2)]
 cluster <- list()
 for (k in multi) {
  dt <- sort(y$tstamp[which(y$institute.name==k)])
-	message(sprintf("%s: %i entries",k,length(dt)))
+#	message(sprintf("%s: %i entries",k,length(dt)))
  dtdiff <- as.integer(diff(dt))
  if (any(dtdiff <= 14)) {
 		cluster <- c(cluster, k)
-		message("> cluster!")
+#		message("> cluster!")
 	}
 }
 return(cluster)

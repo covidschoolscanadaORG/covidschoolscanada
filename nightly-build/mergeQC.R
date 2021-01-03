@@ -3,9 +3,9 @@ source("utils.R")
 #options(warn=2)
 
 args <- commandArgs(TRUE)
-dt <- args[1]
+dt <- "210103" # args[1]
 rootDir <- args[2]
-#rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
+#rootDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export"
 #rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)
@@ -19,16 +19,12 @@ statFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.stats.txt",
 if (file.exists(outFile)) unlink(outFile)
 if (file.exists(statFile)) unlink(statFile)
 
-can <- read.delim(sprintf("%s/CanadaMap_clean3.kml-%s.txt",
-	inDir,dt),fileEncoding="UTF-8",sep="\t",h=T,as.is=T,
+can <- read.delim(sprintf("%s/CanadaMap-%s.csv",inDir,dt),
+	sep=",",h=T,as.is=T,
 	stringsAsFactors=FALSE)
-colnames(can) <- sub("^X.","",colnames(can))
-colnames(can) <- sub("\\.$","",colnames(can))
 
 rest_of_canada <- subset(can, !Province %in% c( "QC","Québec"))
 can <- rest_of_canada
-
-
 
 message("* Provincial breakdown")
 print(table(can$Province,useNA="always"))
