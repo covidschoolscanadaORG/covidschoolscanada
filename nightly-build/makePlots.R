@@ -265,8 +265,8 @@ if (length(bad)>0) {
 	print("bad rows")
 	message(sprintf("FAILED: BAD DATES: excluding %i rows",
 		length(bad)))
- dat2 <- dat2[-bad,]
 browser()
+ dat2 <- dat2[-bad,]
 	write.table(dat2[bad,],file=failFile,sep="\t",
 		col=F,row=F,quote=F,append=TRUE)
 	dat2 <- dat2[-bad,]
@@ -436,7 +436,7 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=7400,
+	y=7600,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
 	fontface=4)

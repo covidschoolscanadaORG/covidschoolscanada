@@ -153,7 +153,7 @@ message("started tweet")
 			file=twf)
 		cat("\n",file=twf)
 
-		cat(sprintf("%s Map: https://tinyurl.com/covidschoolsCA-map\n", 
+		cat(sprintf("%s Map: ** New map coming soon, stay tuned **\n", 
 			emo::ji("round_pushpin")),file=twf)
 		cat(sprintf("%s Report cases/errors: https://tinyurl.com/covidschoolsCA-submit\n", 
 			emo::ji("incoming_envelope")),file=twf)
@@ -185,13 +185,13 @@ message("started tweet")
 			emo::ji("school"),emo::ji("school")),file=twf)
 		for (k in 1:nrow(sch)) {
 message(sch$Province[k])
-			cat(sprintf("%s - %s / %s (%1.1f%%)",
+			cat(sprintf("%s - %s / %s (%i%%)",
 				sch$Province[k],pr(sch$Count[k]),
 				pr(sch$TOTAL[k]),
 				sch$TOTAL_PCT[k]),
 				file=twf)
 			if (sch$Province[k] %in% c("AB","ON")){
-				cat(sprintf("%s %1.1f%% / %s public", 
+				cat(sprintf("%s %i%% / %s public", 
 					emo::ji("right_arrow"), sch$PUBLIC_PCT[k],
 					pr(sch$PUBLIC[k])),
 					file=twf)
@@ -267,13 +267,12 @@ message(sch$Province[k])
 				emo::ji("school"),pr(sch$Count[k]),sch$TOTAL_PCT[k],
 				emo::ji("rotating_light"),pr(sch$Outbreaks[k]),str),
 				file=twf)
-			cat(sprintf("%s Google Map: %s%s\n",
-				emo::ji("round_pushpin"),mapLink(),coords[[sch$Province[k]]]),
-				file=twf)
 			if (sch$Province[k]=="QC") {
 				cat("Source: @CovidEcoles\n",file=twf)
 			} else if (sch$Province[k]=="AB"){
 				cat("Source: @SOSAlberta\n",file=twf)
+			} else if (sch$Province[k]=="BC"){
+				cat("Source: BC Schools COVID Tracker\n",file=twf)
 			}
 
 			cat(sprintf("\n/%i", tweet_ct),file=twf)

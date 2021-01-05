@@ -50,9 +50,10 @@ message("Authorizing dropbox")
 drop_acc(dtoken=token)
 dt <- format(Sys.Date()-1,"%Y%m%d")
 odir <- sprintf("BC_automation/daily_update/export-%s",dt)
-ofile <- sprintf("%s/CanadaMap_BCMerge-%s.clean.csv",odir,dt)
+ofile <- sprintf("%s/CanadaMap_BC-%s.clean.csv",odir,dt)
 message("Downloading BC")
 lpath <- "."
+if (file.exists(basename(ofile))) unlink(basename(ofile))
 drop_download(path=ofile,dtoken=token,overwrite=TRUE)
 bc <- read.delim(basename(ofile),sep=",",h=T,as.is=T)
 colnames(bc)[which(colnames(bc)=="School.Name")] <- "institute.name"

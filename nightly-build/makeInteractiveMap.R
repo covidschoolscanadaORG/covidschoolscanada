@@ -1,8 +1,6 @@
 # set up map
-rm(list=ls())
 
-dt <- "201216"
-inDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-201216AMfreeze"
+makeGeoJSON <- function(inDir,dt) {
 mapDir <- "/Users/shraddhapai/software/covidschoolscanada.github.io/maps/"
 
 dat <- read.delim(sprintf("%s/final_data/CanadaMap_QuebecMerge-%s.clean.csv",inDir,dt),sep=",",h=T,as.is=T)
@@ -11,15 +9,27 @@ qc <- read.delim(sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt),sep=",",h=T,a
 qc <- qc[,colnames(dat)]
 qc$Longitude <- -1*qc$Longitude
 
-idx <- union(which(is.na(qc$Latitude)), which(is.na(qc$Longitude)))
+idx <- union(which(is.na(qc$Latitude)), 
+	which(is.na(qc$Longitude)))
 message(sprintf("* %i entries missing lat/long", length(idx)))
 qc <- qc[-idx,]
 
 qc$Outbreak.Status[grep("outbreak",qc$Outbreak.Status)] <- "Declared outbreak"
 
-#message("* Adding QC")
 dat <- dat[-which(dat$Province=="QC"),]
 dat <- rbind(dat,qc)
+
+# prettify link text
+links <- strsplit(dat$Article,";")
+links2 <- list()
+for (k in 1:length(links)) {
+	ln <- length(links[[k]])
+	links[[k]] <- paste('<a href="',links[[k]],">Link",1:ln,
+			"</a>",sep="")
+	links2[[k]] <- paste(links[[k]],collapse=";")
+}
+links2 <- unlist(links2)
+#dat$Article_Pretty <- links2
 
 # move each status type to own column
 message("* Adding status columns")
@@ -78,7 +88,7 @@ idx <- which(is.na(dat$Last_Reported_Date))
 if (length(idx)>0) dat <- dat[-idx,]
 outCSV <- "CanadaMap_QuebecMerge-current.clean.csv"
 outJSON <- sub(".csv",".geojson",outCSV)
-write.table(dat,file=outCSV,sep=",",col=T,row=F,quote=F)
+write.table(dat,file=outCSV,sep=",",col=T,row=F,quote=T)
 
 message("* Converting to geojson")
 system2("csv2geojson", args=c(outCSV,">",outJSON))
@@ -101,3 +111,4 @@ system2("git","push")
     setwd(cwd)
 })
 
+}

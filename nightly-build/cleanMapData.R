@@ -417,6 +417,9 @@ isCluster <- findClusters(dat[idx,])
 dat$Outbreak.Status[intersect(idx,
 		which(dat$institute.name %in% isCluster))] <- "Cluster (BC)"
 dat$Outbreak.Status[which(dat$Total.outbreaks.to.date>0)] <- "Declared outbreak"
+dat$Outbreak.Status[
+	intersect(which(dat$Province=="BC"),
+		grep("Outbreak status unknown",dat$Outbreak.Status))] <- "Single/unlinked cases"
 
 
 # ----------------------------------------

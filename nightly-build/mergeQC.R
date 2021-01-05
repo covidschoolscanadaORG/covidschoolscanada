@@ -3,7 +3,7 @@ source("utils.R")
 #options(warn=2)
 
 args <- commandArgs(TRUE)
-dt <- "210103" # args[1]
+dt <- args[1]
 rootDir <- args[2]
 #rootDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export"
 #rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
