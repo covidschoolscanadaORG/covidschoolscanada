@@ -5,16 +5,18 @@ require(rdrop2)
 dbox <- "dbox.rds"
 
 args <- commandArgs(TRUE)
-outDir <- args[1]
+outDir <- args[1] #"/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210110" #args[1]
 dtRun <- args[2]
 
-ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2020-12-30.csv"
+abDate <- format(Sys.Date()-1,"%Y-%m-%d")
+ABfile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_%s.csv",abDate)
 sheetURLs <- list(
 	MB="https://docs.google.com/spreadsheets/d/1a1Rzn7tDVrTc976UAyHFk-WcSz9RPumRQELVd6lnac8/edit#gid=20331003",
 	SK="https://docs.google.com/spreadsheets/d/10Y2N2wq0vzW6BAB3d0BQgAdpZZrpZlU7xKQhKfNeuBE/edit#gid=53224925",
 	NS_PEI="https://docs.google.com/spreadsheets/d/1f7EJGFzr8OiRB_GtlbhDs0ZWbA8BDbEM_bSps6StONA/edit#gid=0",
 	NB="https://docs.google.com/spreadsheets/d/1kKEQu7O-lDYq9D9o1P19yEPttBcj8_xxGS1Y2IAILj4/edit#gid=0",
-	ON="https://docs.google.com/spreadsheets/d/1U-HFYvLch6PkOsITpI2wA7_MIsT1ocR6tv9XVr5jfPw/edit#gid=0"
+	ON="https://docs.google.com/spreadsheets/d/1U-HFYvLch6PkOsITpI2wA7_MIsT1ocR6tv9XVr5jfPw/edit#gid=0",
+	ON_AUTO="https://docs.google.com/spreadsheets/d/14-CM4FX666eRcMCTpKJoNViUpW50P4OAH433dQxn9Yg/edit#gid=0"
 )
 
 out <- list()

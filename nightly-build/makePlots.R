@@ -402,6 +402,7 @@ cur <- aggregate(cur$cs,
 
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
+cur2 <- cur2[-which(cur2$Province=="QC"),]
 p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
 p3 <- p3 + geom_line(lwd=1.9)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
@@ -410,7 +411,7 @@ p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 #p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
-p3 <- p3 + ylim(-500,max(cur2$x)*1.02)
+p3 <- p3 + ylim(-500,max(cur2$x)*1.04)
 p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000,7000))
 
 caseText <- c()
@@ -424,6 +425,7 @@ for (k in 1:length(lv)) {
 
 yvals <- totcase$x
 yvals[which(totcase$Province=="PEI")] <- -250
+yvals[which(totcase$Province=="QC")] <- yvals[which(totcase$Province=="QC")] + 200
 xvals <- rep(Sys.Date()+1, nrow(totcase))
 yvals[which(totcase$Province=="NS")] <- -500#Sys.Date()+16
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
@@ -436,9 +438,14 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-	y=7600,
+	y=7850,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=12,
+	fontface=4)
+p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
+	y=7500,
+	hjust=0,vjust=0,
+	label="QC under revision",colour="#68382C",size=12,
 	fontface=4)
 ###p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
 ###	y=7000,

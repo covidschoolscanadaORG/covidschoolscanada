@@ -36,9 +36,10 @@ echo "Fetching Quebec map layer 2"
 echo "******************************************************"
 ./setup_datatable_quebec2.sh $outDir $QCMidFile2 COVIDEcolesQuebec_layer2 
 
+
 echo "******************************************************" >> $logfile
 echo " Merging" >> $logfile
-echo "******************************************************" >> $logfile
+###echo "******************************************************" >> $logfile
 Rscript mergeQC.R $dt ${outRoot}/export >> $logfile
 
 echo "******************************************************" >> $logfile
@@ -46,6 +47,7 @@ echo " Fetching CEQ annotation sheet" >> $logfile
 echo "******************************************************" >> $logfile
 Rscript fetchQCstats.R ${outRoot}/export
 echo "Cleaning" >> $logfile
+echo $outRoot
 Rscript qcStats.R ${outRoot}/export
 
 echo "******************************************************" >> $logfile

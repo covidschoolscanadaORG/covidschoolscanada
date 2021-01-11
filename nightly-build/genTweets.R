@@ -62,8 +62,8 @@ tot$TOTAL <- tot$PUBLIC + tot$PRIVATE
 # combine with daily school count
 df$Province <- as.character(df$Province)
 x <- merge(x=df,y=tot,by="Province")
-x$PUBLIC_PCT <- (x$Count/x$PUBLIC)*100
-x$TOTAL_PCT <- (x$Count/x$TOTAL)*100
+x$PUBLIC_PCT <- round((x$Count/x$PUBLIC)*100)
+x$TOTAL_PCT <- round((x$Count/x$TOTAL)*100)
 x <- x[order(x$Count,decreasing=TRUE),]
 
 x
