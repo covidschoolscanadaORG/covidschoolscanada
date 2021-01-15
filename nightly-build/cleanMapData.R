@@ -14,7 +14,6 @@ dt <- format(date2use,"%y%m%d")
 #baseDir <- "/home/shraddhapai/Canada_COVID_tracker/"
 baseDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker"
 
-ABfile <- "/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_2021-01-06.csv"
 
 inDir <- sprintf("%s/export-%s",baseDir,dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.csv",
@@ -33,15 +32,6 @@ dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 	print(ex)
 },finally={
 })
-# -----------------------------------------
-# ADD ALBERTA AUTOGEN
-AB <- read.delim(ABfile,sep=",",h=T,as.is=T)
-AB <- AB[,colnames(dat)]
-message("* Adding AB autogen")
-dat <- dat[-which(dat$Province=="AB"),]
-old <- nrow(dat)
-dat <- rbind(dat,AB)
-message(sprintf("Added AB autogen: %i to %i rows", old, nrow(dat)))
 
 # -----------------------------------------
 # WHITESPACE REMOVE

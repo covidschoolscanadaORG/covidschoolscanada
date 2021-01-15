@@ -16,7 +16,10 @@
    height="512"
    viewBox="0 0 882 512"
    sodipodi:docname="map2.svg"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   inkscape:export-filename="/Users/shraddhapai/software/covidschoolscanada/images/map2.png"
+   inkscape:export-xdpi="250"
+   inkscape:export-ydpi="250">
   <metadata
      id="metadata118">
     <rdf:RDF>
@@ -36,7 +39,7 @@
        xlink:href="#linearGradient5492"
        id="radialGradient8557-3-3-3"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(10.865125,-0.08800733,0.01307767,6.5832423,-1147.3986,-1238.3853)"
+       gradientTransform="matrix(10.867814,-0.08372171,0.01308091,6.2626635,-1147.8397,-1226.2996)"
        cx="163.93661"
        cy="65.038216"
        fx="163.93661"
@@ -116,8 +119,8 @@
      inkscape:zoom="0.59263393"
      inkscape:cx="426.65725"
      inkscape:cy="256"
-     inkscape:window-x="186"
-     inkscape:window-y="156"
+     inkscape:window-x="185"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="g3660-7" />
   <image
@@ -8558,12 +8561,12 @@ OJJz4fXmurOwYnGMBKfok1av7ZXLu15od2N3BPZxBP4XCMSmvvWRjU0AAAAASUVORK5CYII=
        transform="matrix(0.99984272,0,0,1.0203967,-144.88049,-573.52339)"
        id="g3660-7">
       <rect
-         y="-989.28131"
-         x="454.09314"
-         height="329.26117"
-         width="361.10092"
+         y="-989.32599"
+         x="454.04843"
+         height="313.22742"
+         width="361.19031"
          id="rect4616-2-0"
-         style="opacity:1;fill:url(#radialGradient8557-3-3-3);fill-opacity:1;fill-rule:evenodd;stroke:#ef1b29;stroke-width:3.60665107;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         style="opacity:1;fill:url(#radialGradient8557-3-3-3);fill-opacity:1;fill-rule:evenodd;stroke:#ef1b29;stroke-width:3.51817536;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          transform="scale(1,-1)" />
       <g
          transform="matrix(3.6385193,0,0,-3.6385193,143.36863,1153.0335)"

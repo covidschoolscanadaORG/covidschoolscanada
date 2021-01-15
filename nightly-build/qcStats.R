@@ -38,6 +38,7 @@ for (nm in names(map_colname)){
 }
 
 idx <- which(is.na(dat$Date))
+browser()
 if (any(idx)) dat$Date[idx] <- dat$Date.du.1er.cas.en.2020[idx]
 
 dat$Total.students.to.date <- NA
