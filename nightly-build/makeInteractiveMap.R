@@ -12,7 +12,7 @@ qc$Longitude <- -1*qc$Longitude
 idx <- union(which(is.na(qc$Latitude)), 
 	which(is.na(qc$Longitude)))
 message(sprintf("* %i entries missing lat/long", length(idx)))
-qc <- qc[-idx,]
+if (any(idx)) qc <- qc[-idx,]
 
 qc$Outbreak.Status[grep("outbreak",qc$Outbreak.Status)] <- "Declared outbreak"
 
@@ -97,18 +97,14 @@ message("* Move to live web folder")
 tgtFile <- sprintf("%s/%s",mapDir,outJSON)
 file.rename(outJSON, sprintf("%s/%s",mapDir,outJSON))
 
-message("* git commit")
 cwd <- getwd()
 setwd(mapDir)
-tryCatch({
-system2("git",args=c("commit","-m","\"map update\"", tgtFile))
-system2("git","push")
-},error=function(ex){
-    print(ex)
-    system2("git","pull")
-    system2("git","push")
-}, finally={
-    setwd(cwd)
-})
+system2("git","pull")
 
+#message("* git commit")
+#system2("git",args=c("commit","-m","\"map update\"", tgtFile))
+#system2("git","push")
+setwd(cwd)
+browser()
 }
+
