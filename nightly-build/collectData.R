@@ -5,8 +5,8 @@ require(rdrop2)
 dbox <- "dbox.rds"
 
 args <- commandArgs(TRUE)
-outDir <- args[1] #"/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210114" #args[1]
-dtRun <- args[2] #"210114" #args[2]
+outDir <- args[1] #"/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210118" #args[1]
+dtRun <- args[2] #"210118" #args[2]
 
 abDate <- format(Sys.Date()-1,"%Y-%m-%d")
 ABfile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_%s.csv",abDate)
@@ -42,7 +42,6 @@ AB <- AB[,colnames(dat)]
 message("* Adding AB autogen")
 #dat <- dat[-which(dat$Province=="AB"),]
 old <- nrow(dat)
-browser()
 dat <- rbind(dat,AB)
 message(sprintf("Added AB autogen: %i to %i rows", old, nrow(dat)))
 
@@ -67,3 +66,5 @@ dat <- rbind(dat,bc)
 message("Writing to file")
 oFile <- sprintf("%s/CanadaMap-%s.csv",outDir,dtRun)
 write.table(dat,file=oFile,sep=",",col=T,row=F,quote=T)
+
+message("done collecting")

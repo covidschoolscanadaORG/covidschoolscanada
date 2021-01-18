@@ -101,10 +101,9 @@ cwd <- getwd()
 setwd(mapDir)
 system2("git","pull")
 
-#message("* git commit")
-#system2("git",args=c("commit","-m","\"map update\"", tgtFile))
-#system2("git","push")
+message("* git commit")
+system2("git",args=c("commit","-m","\"map update\"", tgtFile))
+system2("git","push")
 setwd(cwd)
-browser()
 }
 
