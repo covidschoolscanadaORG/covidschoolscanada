@@ -363,6 +363,7 @@ if (any(idx)) {
 	print(dat2[idx,])
 	message("have some dates out of range")
 	browser()
+	dat2 <- dat2[-idx,]
 }
 
 dat2$Total.cases.to.date <- stringr::str_trim(
@@ -415,8 +416,8 @@ p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
 #p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
-p3 <- p3 + ylim(-500,max(cur2$x)*1.04)
-p3 <- p3 + scale_y_continuous(breaks=c(0,500,1000,2000,3000,4000,5000,6000,7000,8000))
+p3 <- p3 + ylim(-700,max(cur2$x)*1.04)
+#p3 <- p3 + scale_y_continuous(breaks=c(0,1000,2000,3000,4000,5000,6000,7000,8000))
 
 caseText <- c()
 for (k in 1:length(lv)) {
@@ -431,23 +432,24 @@ yvals <- totcase$x
 yvals[which(totcase$Province=="PEI")] <- -250
 yvals[which(totcase$Province=="QC")] <- yvals[which(totcase$Province=="QC")] + 200
 xvals <- rep(Sys.Date()+1, nrow(totcase))
-yvals[which(totcase$Province=="NS")] <- -500#Sys.Date()+16
+yvals[which(totcase$Province=="NS")] <- -700#Sys.Date()+16
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
 #yvals[idx] <- yvals[idx] + 350
 
 cols <- scales::hue_pal()(nrow(totcase))
-p3 <- p3 + expand_limits(x=Sys.Date()+20)
+p3 <- p3 + expand_limits(x=Sys.Date()+24)
 p3 <- p3 + annotate("text",x=xvals,
 		y=yvals,label=caseText,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
-p3 <- p3 + annotate("text",x=as.Date("2020-08-14"),
-	y=8000,
+p3 <- p3 + annotate("text",x=as.Date("2020-08-10"),
+	y=max(cur$x)*1.03
+,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=10,
 	fontface=4)
-p3 <- p3 + annotate("text",x=as.Date("2020-11-18"),
-	y=8000,
+p3 <- p3 + annotate("text",x=as.Date("2020-11-16"),
+	y=max(cur$x)*1.02,
 	hjust=0,vjust=0,
 	label="Dec 18-Jan 4",colour="#330000",size=9,
 	fontface=3)

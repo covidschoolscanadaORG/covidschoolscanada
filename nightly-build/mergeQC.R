@@ -6,6 +6,7 @@ args <- commandArgs(TRUE)
 dt <- args[1]
 rootDir <- args[2]
 #rootDir <- "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export"
+#dt <- "210127"
 #rootDir <- "/home/shraddhapai/Canada_COVID_tracker/export"
 
 inDir <- sprintf("%s-%s",rootDir,dt)

@@ -16,13 +16,15 @@ outFile <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	outDir,dt)
 
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
-dat <- dat[-which(is.na(dat$longitude)),]
+idx <- which(is.na(dat$longitude))
+if (any(idx)) dat <- dat[-idx,]
 idx <- which(dat[,"École"]=="")
 if (any(idx)) dat <- dat[-idx,]
 
 for (k in 1:ncol(dat)) {
 	dat[,k] <- stringr::str_trim(dat[,k])
 }
+
 
 map_colname <- list(
 	"École"="institute.name",
@@ -38,7 +40,6 @@ for (nm in names(map_colname)){
 }
 
 idx <- which(is.na(dat$Date))
-browser()
 if (any(idx)) dat$Date[idx] <- dat$Date.du.1er.cas.en.2020[idx]
 
 dat$Total.students.to.date <- NA

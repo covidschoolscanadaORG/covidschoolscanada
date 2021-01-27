@@ -3,8 +3,10 @@
 makeGeoJSON <- function(inDir,dt) {
 mapDir <- "/Users/shraddhapai/software/covidschoolscanada.github.io/maps/"
 
-dat <- read.delim(sprintf("%s/final_data/CanadaMap_QuebecMerge-%s.clean.csv",inDir,dt),sep=",",h=T,as.is=T)
-qc <- read.delim(sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt),sep=",",h=T,as.is=T)
+dat <- read.delim(sprintf("%s/final_data/CanadaMap_QuebecMerge-%s.clean.csv",
+	inDir,dt),sep=",",h=T,as.is=T)
+qc <- read.delim(sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt),
+	sep=",",h=T,as.is=T)
 
 qc <- qc[,colnames(dat)]
 qc$Longitude <- -1*qc$Longitude

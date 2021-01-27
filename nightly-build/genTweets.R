@@ -26,7 +26,7 @@ public_sch <- list(
 	ON=4828,
 	AB=2080,
 	BC=1578,
-	MB=690,
+	MB=938, # combines public and private, maybe separate at some point
 	SK=769,
 	NB=302, # GNB Policy & Planning, Dept Ed & ECDev April 2017
 	NS=370,
@@ -36,8 +36,7 @@ public_sch <- list(
 private_sch <- list(
 	ON=1943,
 	AB=402,
-	BC=365,
-	MB=95
+	BC=365
 )
 
 total_sch <- list(
@@ -153,9 +152,9 @@ message("started tweet")
 			file=twf)
 		cat("\n",file=twf)
 
-		cat(sprintf("%s Map: ** New map coming soon, stay tuned **\n", 
+		cat(sprintf("%s Map: https://covidschoolscanada.org/maps/",
 			emo::ji("round_pushpin")),file=twf)
-		cat(sprintf("%s Report cases/errors: https://tinyurl.com/covidschoolsCA-submit\n", 
+		cat(sprintf("%s Report cases/errors: https://covidschoolscanada.org/submit.html\n", 
 			emo::ji("incoming_envelope")),file=twf)
 		cat(sprintf("%s%s More CHARTS in thread: \n",
 			emo::ji("chart_with_upwards_trend"),
