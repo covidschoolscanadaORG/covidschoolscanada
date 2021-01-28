@@ -68,23 +68,8 @@ x <- x[order(x$Count,decreasing=TRUE),]
 x
 }
 
-getCoords <- function() {
-	coords <- list(
-		AB="&ll=55.11842014707787%2C-115.0556102952719&z=6",
-		BC="&ll=53.132679251371506%2C-128.97453106268213&z=5",
-		SK="&ll=54.68857226971919%2C-110.27476094987723&z=6",
-		MB="&ll=53.74476051758362%2C-99.17430471694146&z=6",
-		ON="&ll=47.84454183589612%2C-88.18797659194146&z=6",
-		QC="&ll=48.39486655697718%2C-74.28622180721197&z=6",
-		NB="&ll=46.52185832861437%2C-65.72942947682745&z=7",
-		NS="&ll=45.82732191451751%2C-66.61078319517088&z=7",
-		PEI="&ll=46.29119004736826%2C-63.9002120375&z=8"
-	)
-	coords
-}
-
 mapLink <- function() {
-	return("https://google.com/maps/d/edit?mid=1blA_H3Hv5S9Ii_vyudgDk-j6SfJQil9S&usp=sharing")
+	return("https://covidschoolscanada.org/maps/")
 }
 
 
@@ -151,8 +136,7 @@ message("started tweet")
 			pr(res$total_outbreak)),
 			file=twf)
 		cat("\n",file=twf)
-
-		cat(sprintf("%s Map: https://covidschoolscanada.org/maps/",
+		cat(sprintf("%s Map: https://covidschoolscanada.org/maps/\n",
 			emo::ji("round_pushpin")),file=twf)
 		cat(sprintf("%s Report cases/errors: https://covidschoolscanada.org/submit.html\n", 
 			emo::ji("incoming_envelope")),file=twf)
@@ -245,7 +229,6 @@ message(sch$Province[k])
 		colnames(totcase)[2] <- "totcase"
 		sch <- merge(x=sch,y=cur,by="Province")
 		sch <- sch[order(sch$Count,decreasing=TRUE),]
-		coords <- getCoords()
 		for (k in 1:nrow(sch)) {
 			print(k)
 			cat("Schools with 1+ confirmed COVID-19 case\n",
@@ -266,6 +249,11 @@ message(sch$Province[k])
 				emo::ji("school"),pr(sch$Count[k]),sch$TOTAL_PCT[k],
 				emo::ji("rotating_light"),pr(sch$Outbreaks[k]),str),
 				file=twf)
+		cat("\n",file=twf)
+		cat(sprintf("%s Map: https://covidschoolscanada.org/maps/\n",
+			emo::ji("round_pushpin")),file=twf)
+		cat(sprintf("%s Report cases/errors: https://covidschoolscanada.org/submit.html\n", 
+			emo::ji("incoming_envelope")),file=twf)
 			if (sch$Province[k]=="QC") {
 				cat("Source: @CovidEcoles\n",file=twf)
 			} else if (sch$Province[k]=="AB"){
