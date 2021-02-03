@@ -443,13 +443,13 @@ p3 <- p3 + annotate("text",x=xvals,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
 p3 <- p3 + annotate("text",x=as.Date("2020-08-10"),
-	y=max(cur$x)*1.03
+	y=max(cur$x)*1.035
 ,
 	hjust=0,vjust=0,
 	label="Linear scale",colour="#68382C",size=10,
 	fontface=4)
-p3 <- p3 + annotate("text",x=as.Date("2020-11-16"),
-	y=max(cur$x)*1.02,
+p3 <- p3 + annotate("text",x=as.Date("2020-11-13"),
+	y=max(cur$x)*1.035,
 	hjust=0,vjust=0,
 	label="Dec 18-Jan 4",colour="#330000",size=9,
 	fontface=3)
@@ -570,8 +570,8 @@ ttlout <-  grobTree(
 )
 anno2 <-  grobTree(
 	rectGrob(gp=gpar(fill="white",col="white",
-			width=unit(1,"npc"),height=unit(1,"npc"))),
-	textGrob("View the map. Submit a case. masks4canada.org",
+			width=unit(2,"npc"),height=unit(1,"npc"))),
+	textGrob("View the map. Submit a case. covidschoolscanada.org",
 		gp = gpar(fontsize=30,col="#68382C",
 		fontfamily="source-sans-pro",fill="white"
 	))
@@ -586,7 +586,7 @@ for (k in 1:nrow(outbreaks)) {
 tgrob <- tableGrob(outbreaks,rows=NULL,cols=NULL,theme=tt3)
 ttlGrob <- grobTree(ttlout, tgrob)
 message("* map grob")
-mapImage 	<- rasterGrob(png::readPNG("../images/map2.png"))
+mapImage 	<- rasterGrob(png::readPNG("../images/map3.png"))
 	#width=unit(1,"npc"), height=unit(1,"npc"))
 obImage	<- rasterGrob(png::readPNG("../images/outbreak.png"))
 mapPlot <- ggplot() + geom_blank() + 
@@ -597,7 +597,7 @@ mapPlot <- ggplot() + geom_blank() +
 #	annotation_custom(ttlout,
 #		xmin = 0.68, xmax=0.9, ymin=0.9,ymax=0.95) +
 	annotation_custom(anno2,
-		xmin = 0.1, xmax=0.9, ymin=0,ymax=0.1)
+		xmin = 0.05, xmax=0.95, ymin=0,ymax=0.1)
 
 		#tableGrob(table,rows=NULL, cols=NULL, theme=tt3))
 mapPlot <- mapPlot + theme(

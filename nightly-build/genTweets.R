@@ -136,7 +136,7 @@ message("started tweet")
 			pr(res$total_outbreak)),
 			file=twf)
 		cat("\n",file=twf)
-		cat(sprintf("%s Map: https://covidschoolscanada.org/maps/\n",
+		cat(sprintf("%s Interactive Map: https://covidschoolscanada.org/maps/\n",
 			emo::ji("round_pushpin")),file=twf)
 		cat(sprintf("%s Report cases/errors: https://covidschoolscanada.org/submit.html\n", 
 			emo::ji("incoming_envelope")),file=twf)
@@ -164,7 +164,7 @@ message("started tweet")
 		# TWEET: % Schools
 		# -------------------------
 		sch <- getSchoolTotals(res$num_school)
-		cat(sprintf("%s SCHOOLS, by %% %s\n",
+		cat(sprintf("%s SCHOOLS, NUM / TOTAL (%%) %s\n",
 			emo::ji("school"),emo::ji("school")),file=twf)
 		for (k in 1:nrow(sch)) {
 message(sch$Province[k])
@@ -259,7 +259,7 @@ message(sch$Province[k])
 			} else if (sch$Province[k]=="AB"){
 				cat("Source: @SOSAlberta\n",file=twf)
 			} else if (sch$Province[k]=="BC"){
-				cat("Source: BC Schools COVID Tracker\n",file=twf)
+				cat("Source: @BCschoolCovid\n",file=twf)
 			}
 
 			cat(sprintf("\n/%i", tweet_ct),file=twf)
