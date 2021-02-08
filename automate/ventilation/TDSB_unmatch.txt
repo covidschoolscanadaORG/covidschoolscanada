@@ -1,0 +1,297 @@
+Ward	School.Name	School
+Ventilation - see
+Notes below	LC	LN	HEPA Filters
+Provided
+1	30 Barrhead Cres Learning Ctr/CSS LC1	partial mechanical	5	31	Yes
+1	Albion Heights Junior MS	all mechanical	1	2	No
+1	Beaumonde  Heights Junior MS	partial mechanical	1	2	Yes
+1	Elmbank JR-MS Academy	partial mechanical	1	2	Yes
+1	Greenholme JR-MS	partial mechanical	1	2	Yes
+1	Humberwood  Downs Jr. M. Acad.	all mechanical	1	2	No
+1	Kingsview Village JS	partial mechanical	1	2	Yes
+1	Line Albion Mall	all mechanical	NA	NA	No
+1	North Albion CI	all mechanical	1	1	No
+1	North Kipling Junior MS	all mechanical	1	1	No
+1	School of Experiential Ed.	partial mechanical	5	30	Yes
+1	Thistletown CI	partial mechanical	1	2	Yes
+1	West Humber CI	all mechanical	1	2	No
+1	West Humber Junior MS	partial Mechanical	1	2	Yes
+NA	Bloordale MS	all mechanical	1	1	No
+NA	Burnhamthorpe  CI	partial mechanical	1	1	Yes
+NA	Dixon Grove Junior MS	partial mechanical	1	3	Yes
+NA	Humber Valley Village JR MS	all mechanical	1	2	No
+NA	John G. Althouse MS	partial mechanical	1	2	Yes
+NA	Martingrove CI	all mechanical	1	2	No
+NA	Princess Margaret Junior PS	partial mechanical	1	2	Yes
+NA	Silverthorn CI	all mechanical	1	1	No
+NA	Étienne Brûlé Junior School	partial mechanical	4	20	Yes
+NA	James S Bell JMS Sports & Wellness Acad.	all mechanical	4	19	No
+NA	John English JMS	partial mechanical	4	19	Yes
+NA	Lambton Kingsway JR MS	all mechanical	4	19	No
+NA	Park Lawn Junior MS	all mechanical	4	20	No
+NA	Second Street Junior MS	partial mechanical	4	19	Yes
+4	Blacksmith  PS	all mechanical	2	7	No
+4	Brookview MS	all mechanical	2	7	No
+4	C.W. Jefferys CI	all mechanical	2	7	No
+4	Chalkfarm PS	all mechanical	2	7	No
+4	Daystrom PS	partial mechanical	2	11	Yes
+4	Derrydown PS	partial mechanical	2	7	Yes
+4	Driftwood PS	all mechanical	2	7	No
+4	Firgrove PS	all mechanical	2	7	No
+4	Gosford PS	partial mechanical	2	7	Yes
+4	Gracedale PS	partial mechanical	2	11	Yes
+4	Gulfstream  PS	partial mechanical	2	11	Yes
+4	Humber  Summit MS	partial mechanical	2	11	Yes
+4	Lamberton PS	all mechanical	2	7	No
+4	Oakdale Park MS	all mechanical	2	7	No
+4	Shoreham PUblic Sports & Wellness Acad.	all mechanical	2	7	No
+4	Stanley PS	partial mechanical	2	7	Yes
+4	Topcliff PS	partial mechanical	2	7	Yes
+4	Westview Centennial SS	all mechanical	2	11	No
+4	Yorkwoods PS	all mechanical	2	7	No
+5	Blaydon PS	partial mechanical	2	12	Yes
+5	Charles H Best MS	all mechanical	2	8	No
+5	Dublin Heights E & MS	partial mechanical	2	12	Yes
+5	Faywood Arts Based Ciriculum S	partial mechanical	2	12	Yes
+5	Northview  Heights SS	all mechanical	2	8	No
+5	Sheppard PS / Africentric Alt School	partial mechanical	2	11	Yes
+5	Stilecroft PS	partial mechanical	2	11	Yes
+5	Summit Heights PS	no mechanical	2	12	Yes
+5	William Lyon Mackenzie CI	all mechanical	2	12	No
+6	C.R. Marchant Middle MS	partial mechanical	1	3	Yes
+6	Cordella Junior PS	all mechanical	1	4	No
+6	George Harvey CI	partial mechanical	1	3	Yes
+6	H.J. Alexander Comm. School	all mechanical	1	1	No
+6	Harwood Jr. PS	partial mechanical	1	4	Yes
+6	Keelesdale Jr. PS	partial mechanical	1	4	Yes
+6	Portage Trail CJS/CMS	all mechanical	1	99	No
+6	Roselands Jr. PS	all mechanical	1	4	No
+6	Silverthorn CS	all mechanical	1	4	No
+6	Weston Memorial Jr PS	partial mechanical	1	3	Yes
+6	York Memorial CI	all mechanical	1	3	No
+7	Annette Street Jr. & Sr. PS	all mechanical	4	20	No
+7	Fern Avenue Jr. & Sr. PS	all mechanical	4	19	No
+7	Garden Avenue Junior PS	all mechanical	4	19	No
+7	Howard Jr. PS	all mechanical	4	19	No
+7	Humberside CI	all mechanical	4	20	No
+7	Indian Road Crescent Jr. PS	all mechanical	4	20	No
+7	Keele Street PS	all mechanical	4	19	No
+7	King George Jr. PS	all mechanical	4	20	No
+7	Lucy Mccormick School Senior*	all mechanical	4	20	No
+7	Parkdale Jr. & Sr. PS	all mechanical	4	19	No
+7	Queen Victoria Junior PS	all mechanical	4	19	No
+7	Runnymede Jr. & Sr. PS	all mechanical	4	20	No
+7	Swansea Jr. & Sr. PS	all mechanical	4	20	No
+7	Warren Park Jr. PS	partial mechanical	4	19	Yes
+7	Western Tech. & Comm. School	all mechanical	4	19	No
+NA	Brown Jr PS & City Community Centre	all mechanical	1	5	No
+NA	Cottingham Jr. Public School	partial mechanical	1	5	Yes
+NA	Davisville  Jr PS/Spectrum Alt Sr School	partial mechanical	1	4	Yes
+NA	Deer Park Jr. & Sr. PS	partial mechanical	1	5	Yes
+NA	Eglinton Jr PS	all mechanical	1	5	No
+NA	Forest Hill CI	all mechanical	1	6	No
+NA	Forest Hill Jr. & Sr. PS	no mechanical	1	6	Yes
+NA	Glenview  Sr. PS	all mechanical	1	5	No
+NA	John Polanyi CI / Bathurst Heights LC	partial mechanical	1	4	Yes
+NA	John Ross Robertson  Jr. PS	all mechanical	1	5	No
+NA	John Wanless Junior PS	partial mechanical	1	6	Yes
+NA	Lawrence Park CI	partial mechanical	1	5	Yes
+NA	Ledbury Park E & MS	partial mechanical	1	4	Yes
+NA	North Preparatory  Junior PS	partial mechanical	1	6	Yes
+NA	North Toronto CI	all mechanical	1	6	No
+NA	Oriole Park Junior PS	partial mechanical	1	6	Yes
+NA	West Preparatory  Junior PS	all mechanical	1	6	No
+NA	Winona Drive Senior PS	all mechanical	1	5	No
+NA	Alexander  Muir/Gladstone / The Grove CS	all mechanical	4	21	No
+NA	Alpha Alternative JS/Oasis Altern. SS	no mechanical	4	22	Yes
+NA	Carleton Village J&S Sports & Wellness	all mechanical	4	20	No
+NA	Charles G Fraser Jr PS (West End Creche)	partial mechanical	4	21	Yes
+NA	Contact Alternative School	all mechanical	5	30	No
+NA	Dewson Street Junior PS	all mechanical	4	21	No
+NA	Downtown Alternative Sch. Jr.	all mechanical	4	22	No
+NA	F.H. Miller Jr. PS	partial mechanical	4	4	Yes
+NA	Fairbank Memorial Comm. School	partial mechanical	4	20	Yes
+NA	General Mercer Jr. PS	partial mechanical	4	20	Yes
+NA	Givins/Shaw Jr. & Sr. PS	all mechanical	4	21	No
+NA	Island PS/Nat. Science School	all mechanical	4	22	No
+NA	Jean Lumb PS	all mechanical	4	22	No
+NA	Niagara Street Junior PS	partial mechanical	4	21	Yes
+NA	Ossington/Old Orchard Jr. PS	all mechanical	4	21	No
+NA	Perth Avenue Junior PS	all mechanical	4	20	No
+NA	Regal Road Junior PS	partial mechanical	4	20	Yes
+NA	Ryerson Comm. Sch. Jr. & Sr.	all mechanical	4	22	No
+NA	Shirley Street Jr. PS	all mechanical	4	21	No
+10	Beverley R PS*	partial mechanical	4	21	Yes
+10	Church Street Jr PS/Native  Learning Ctr	all mechanical	4	21	No
+10	Clinton Street Junior PS	all mechanical	4	21	No
+10	Essex Jr. & Sr. PS	all mechanical	4	21	No
+10	Heydon Park SS (New)	all mechanical	4	22	No
+10	Huron Street Junior PS	partial mechanical	4	21	Yes
+10	Inglenook Community HS	partial mechanical	5	30	Yes
+10	Jesse Ketchum Jr. & Sr. PS	partial mechanical	4	21	Yes
+10	Kensington  Community Sch. Jr.	all mechanical	4	21	No
+10	King Edward Jr. & Sr. PS	all mechanical	4	22	No
+10	Lord Dufferin Jr. & Sr. PS	all mechanical	4	22	No
+10	Market Lane Jr. & Sr. PS	all mechanical	4	22	No
+10	Nelson Mandela Park P.S	all mechanical	4	22	No
+10	Palmerston Junior PS	all mechanical	4	21	No
+10	Rose Avenue Jr. Public School	all mechanical	4	22	No
+10	Rosedale Hts Sch of the Arts	all mechanical	4	22	No
+10	Rosedale Jr. Public School	all mechanical	4	22	No
+10	Sprucecourt  Public School	all mechanical	4	22	No
+10	West End Alternative/Bickford	all mechanical	5	30	No
+10	Winchester  Jr. & Sr. PS	all mechanical	4	22	No
+11	Bennington Heights ES	partial mechanical	1	5	Yes
+11	Bessborough  Drive ES	partial mechanical	1	5	Yes
+11	John Fisher Junior PS	partial mechanical	1	6	Yes
+11	Marc Garneau CI	all mechanical	1	5	No
+11	Maurice Cody Jr. Public School	partial mechanical	1	5	Yes
+11	Northlea E. & M.S.	all mechanical	1	5	No
+11	Rolph Road ES	no mechanical	1	5	Yes
+11	Sunny View Jr. & Sr. PS*	all mechanical	1	6	No
+11	Thorncliffe Park ES	partial mechanical	1	5	Yes
+11	Windfields Junior High School/MS	all mechanical	1	6	No
+11	York Mills CI	all mechanical	1	6	No
+12	Avondale PS/Avondale  Elem Alt School	all mechanical	2	12	No
+12	Drewry SS*	partial mechanical	2	12	Yes
+12	Fisherville Sr PS//NW Year Round Alt Ctr	partial mechanical	2	12	Yes
+12	Forest Valley Outdoor  Ed. Ctr	partial mechanical	NA	NA	Yes
+12	R.J. Lang Elementary E. & M.S.	all mechanical	2	12	No
+13	Bayview  MS	partial mechanical	2	8	Yes
+13	Georges Vanier SS	all mechanical	5	99	No
+i3	Lester B. Pearson PS	partial mechanical	2	8	Yes
+i3	Woodbine Middle School/NEYRAC	partial mechanical	2	11	Yes
+14	Donview Middle Health  & Wellness Acad.	all mechanical	2	9	No
+14	Overland PS	partial mechanical	NA	NA	Yes
+14	S H Armstrong Recreation  Centre	all mechanical	NA	NA	No
+IS	Blake Street Junior PS	all mechanical	4	23	No
+IS	Danforth CTI/Greenwood  SS	all mechanical	4	24	No
+IS	Duke Of Connaught Jr & Sr PS	all mechanical	4	23	No
+IS	Dundas Jr PS	all mechanical	4	22	No
+IS	Eastern Ave Centre	all mechanical	4	99	No
+IS	Frankland Community Junior PS	all mechanical	4	23	No
+IS	Jackman Avenue Junior PS	all mechanical	4	24	No
+IS	Leslieville Junior PS	all mechanical	4	23	No
+IS	Monarch Park CI/SOLE	all mechanical	4	23	No
+IS	Queen Alexandra Senior PS	all mechanical	4	22	No
+IS	R H McGregor ES	all mechanical	4	24	No
+IS	Roden PS / Equinox Holistic Alt School	all mechanical	4	23	No
+IS	Wandering Spirit/Subway Academy 1	all mechanical	5	32	No
+IS	Wilkinson Junior PS	all mechanical	4	24	No
+IS	William Burgess ES	partial mechanical	4	24	Yes
+IS	Withrow Avenue Jr. PS	all mechanical	4	23	No
+16	Balmy Beach Community  Sch. Jr.	all mechanical	4	23	No
+16	Bowmore Road Jr & Sr PS	all mechanical	4	23	No
+16	Crescent Town ES	all mechanical	4	24	No
+16	D.A. Morrison MS	all mechanical	4	24	No
+16	Earl Beatty Jr. & Sr. PS	partial mechanical	4	24	Yes
+16	East York Alternative SS	all mechanical	5	30	No
+16	George Webster ES	all mechanical	4	24	No
+16	Gledhill Jr. Public School	all mechanical	4	24	No
+16	Glen Ames Sr PS	all mechanical	4	23	No
+16	Oak Park	all mechanical	NA	NA	No
+16	Presteign Heights ES	partial mechanical	4	24	Yes
+16	Selwyn ES	partial mechanical	4	24	Yes
+16	Victoria Park Elementary S.	partial mechanical	4	24	Yes
+16	Williamson Road Junior PS	all mechanical	4	23	No
+17	Charles Gordon Sr. PS	all mechanical	3	13	No
+17	David & Mary Tompson (new)	all mechanical	3	13	No
+17	Donwood Park Jr. Public S.	no mechanical	3	13	Yes
+17	East Education Office	all mechanical	NA	NA	No
+17	Ellesmere-Statton PS	partial mechanical	3	13	Yes
+17	Glamorgan Public School*	all mechanical	3	13	No
+17	Glen Ravine Jr. Public School	no mechanical	3	13	Yes
+17	Gooderham  Learning Centre	no mechanical	NA	NA	Yes
+17	Hunter's Glen Jr. Public S.	no mechanical	3	13	Yes
+17	Lord Roberts Junior PS	no mechanical	3	13	Yes
+17	Manhattan  Park Junior PS	no mechanical	3	18	Yes
+17	St Andrew's Jr PS/ASE	no mechanical	3	13/30	Yes
+17	Terraview  Heights/Parkview Alt/CSS LC2	all mechanical	3	18	No
+17	Terraview—Willowfield PS	no mechanical	3	18	Yes
+17	Winston Churchill CI	all mechanical	3	17	No
+18	Birch Cliff Heights PS	no mechanical	3	18	Yes
+18	Birchmount Park CI	all mechanical	3	18	No
+18	Bliss Carman Sr. Public School	all mechanical	3	16	No
+18	Cliffside JPS	no mechanical	3	18	Yes
+18	Corvette Jr PS	no mechanical	3	17	Yes
+18	H A Halbert Jr PS	no mechanical	3	17	Yes
+18	Mason Road Junior PS	partial mechanical	3	16	Yes
+18	Norman Cook Junior PS	no mechanical	3	18	Yes
+18	Regent Heights  PS	no mechanical	3	18	Yes
+18	Robert Service Senior PS	all mechanical	3	17	No
+18	Samuel Hearne Middle School	all mechanical	3	18	No
+18	SATEC  @ W.A. Porter CI	partial mechanical	3	18	Yes
+18	Scarborough Village PS*	all mechanical	3	17	No
+18	SCAS/SEYRAC/CSS LC3	all mechanical	5	17/30/31	No
+18	Taylor Creek PS	partial mechanical	3	18	Yes
+18	Walter Perry Junior PS	no mechanical	3	17	Yes
+19	Cedar Drive Jr. Public School	all mechanical	3	16	No
+19	Churchill Heights PS	no mechanical	3	13	Yes
+19	Cornell Jr. Public School	all mechanical	3	15	No
+19	Elizabeth Simcoe Jr. PS	all mechanical	3	16	No
+19	George P Mackie Jr PS	no mechanical	3	16	Yes
+19	Golf Road Jr PS	all mechanical	3	15	No
+19	Guildwood Jr PS	no mechanical	3	16	Yes
+19	Heather Heights JPS/Ben HeppnerVMAcademy	all mechanical	3	13	No
+19	Henry Hudson Sr. Public School	all mechanical	3	13	No
+19	J.S. Woodsworth  Senior PS	all mechanical	3	3	No
+19	Jack Miner Sr. Public School	all mechanical	3	16	No
+19	North Bendale Junior PS	partial mechanical	3	13	Yes
+19	Poplar Road Junior PS	partial mechanical	3	16	Yes
+19	Sir Wilfrid Laurier CI	all mechanical	3	16	No
+19	Willow  Park Junior PS	all mechanical	3	15	No
+20	Beverly Glen Jr. Public School	all mechanical	2	9	No
+20	Bridlewood Jr. Public School	all mechanical	2	10	No
+20	Brookmill Boulevard Jr PS	all mechanical	2	9	No
+20	Chester Le Jr. Public School	all mechanical	2	9	No
+20	Dr. Norman Bethune CI	all mechanical	2	2	No
+20	Fairglen Jr. Public School	all mechanical	2	10	No
+20	Highland Heights Jr. PS	all mechanical	2	7	No
+20	Inglewood Heights Jr PS	partial mechanical	2	10	Yes
+20	J.B. Tyrrell Sr. Public School	all mechanical	2	2	No
+20	John Buchan Senior PS	all mechanical	2	7	No
+20	L'Amoreaux CI	all mechanical	2	9	No
+20	Lynnwood Heights Junior PS	all mechanical	2	10	No
+20	North Bridlewood Junior PS	partial mechanical	2	10	Yes
+20	Pauline Johnson Junior PS	partial mechanical	2	7	Yes
+20	Sir Ernest Macmillan  Sr. PS	all mechanical	2	9	No
+20	Sir John A. Macdonald CI	all mechanical	2	10	No
+20	Sir Samuel B. Steele Jr. PS	all mechanical	2	10	No
+20	Stephen Leacock CI	all mechanical	2	7	No
+20	Tarn O'Shanter Junior PS	all mechanical	2	7	No
+20	Timberban k Junior PS	all mechanical	2	7	No
+20	Vradenburg Junior PS	partial mechanical	2	10	Yes
+21	Agincourt CI	partial mechanical	3	14	Yes
+21	Agnes Macphail PS	all mechanical	3	14	No
+21	Albert Campbell CI	all mechanical	3	17	No
+21	Anson S. Taylor Junior PS	all mechanical	3	17	No
+21	Berner Trail Junior PS	all mechanical	3	14	No
+21	Brimwood Boulevard Jr. PS	all mechanical	3	17	No
+21	Brookside PS	all mechanical	3	14	No
+21	Burrows Hall Jr. Public School	all mechanical	3	14	No
+21	C D Farquharson   Jr PS	no mechanical	3	14	Yes
+21	Chartland Jr PS / Delphi Secondary Alt S	all mechanical	3	17	No
+21	Dr Marion Hilliard Sr PS	all mechanical	3	14	No
+21	Henry Kelsey Sr. Public School	all mechanical	3	17	No
+21	Iroquois Jr PS	all mechanical	3	17	No
+21	Lester B. Pearson CI	all mechanical	3	14	No
+21	North Agincourt Junior PS	No Mechanical	3	14	Yes
+21	Percy Williams Junior PS	all mechanical	3	17	No
+21	Port Royal PS	all mechanical	3	14	No
+21	Sir Alexander Mackenzie Sr. PS	all mechanical	3	14	No
+21	Tom Longboat Junior PS	all mechanical	3	14	No
+21	White Haven Junior PS	all mechanical	3	14	No
+NA	Alexander  Stirling PS	all mechanical	3	15	No
+NA	Centennial Road Jr. PS	all mechanical	3	16	No
+NA	Charlottetown Jr. PS	all mechanical	3	16	No
+NA	Grey Owl Public School	all mechanical	3	15	No
+NA	Hillside Outdoor Education Ctr	all mechanical	NA	NA	No
+NA	John G. Diefe nbaker PS	all mechanical	3	15	No
+NA	Joseph Brant PS	all mechanical	3	16	No
+NA	Joseph Howe  Senior PS	all mechanical	3	16	No
+NA	Lucy Maud Montgomery PS	all mechanical	3	15	No
+NA	Sir Oliver Mowat CI	all mechanical	3	16	No
+NA	West Rouge Junior PS	no mechanical	3	16	Yes
+NA	William G Davis Jr PS	partial mechanical	3	16	Yes
+NA	William G Miller Jr PS	all mechanical	3	16	No
+NA	Highbrook Learning Centre	all mechanical	NA	NA	No
