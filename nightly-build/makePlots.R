@@ -437,7 +437,7 @@ yvals[which(totcase$Province=="NS")] <- -700#Sys.Date()+16
 #yvals[idx] <- yvals[idx] + 350
 
 cols <- scales::hue_pal()(nrow(totcase))
-p3 <- p3 + expand_limits(x=Sys.Date()+24)
+p3 <- p3 + expand_limits(x=Sys.Date()+30)
 p3 <- p3 + annotate("text",x=xvals,
 		y=yvals,label=caseText,
 		colour=cols,size=11,fontface=2,

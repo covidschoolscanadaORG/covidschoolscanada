@@ -1,6 +1,5 @@
 
 require(emo)
-require(googledrive)
 
 tweetDate <- function(){
 t1 <- toupper(format(Sys.time(), "%d %b %Y"))
