@@ -29,19 +29,22 @@ public_sch <- list(
 	SK=769,
 	NB=302, # GNB Policy & Planning, Dept Ed & ECDev April 2017
 	NS=370,
-	PEI=62
+	PEI=62,
+	NL=263 # https://www.gov.nl.ca/education/fastfacts/
 )
 # private only
 private_sch <- list(
 	ON=1943,
 	AB=402,
-	BC=365
+	BC=365,
+	NL=7
 )
 
 total_sch <- list(
 	ON=public_sch$ON + private_sch$ON,
 	AB=public_sch$AB + private_sch$AB,
-	BC=public_sch$BC + private_sch$BC
+	BC=public_sch$BC + private_sch$BC,
+	NL=public_sch$NL + private_sch$NL
 )
 
 pubdf	<- as.data.frame(do.call("rbind",public_sch))
@@ -109,7 +112,8 @@ genTweet <- function(outDir,res) {
 		QC="Québec",
 		NB="New Brunswick",
 		NS="Nova Scotia",
-		PEI="Prince Edward Island"
+		PEI="Prince Edward Island",
+		NL="Newfoundland and Labrador"
 	)
 	outFile <- sprintf("%s/tweetgen_%s.txt",outDir,dt)
 
@@ -151,7 +155,9 @@ message("started tweet")
 		# -------------------------
 		# TWEET: Data
 		# -------------------------
-		cat("Download everything on the map to date\n",file=twf)
+		cat(sprintf("%s%s DOWNLOAD CASES %s%s\n",
+				rep(emo::ji("star"),4)),file=twf)
+		cat("Get all the cases/outbreaks on our school map to date.\n",file=twf)
 		cat(sprintf("%s\n",
 			emo::ji("chart_with_upwards_trend")),file=twf)
 		cat("/2\n",file=twf)
@@ -167,7 +173,7 @@ message("started tweet")
 			emo::ji("school"),emo::ji("school")),file=twf)
 		for (k in 1:nrow(sch)) {
 message(sch$Province[k])
-			cat(sprintf("%s - %s / %s (%i%%)",
+			cat(sprintf("%s %s / %s (%i%%)",
 				sch$Province[k],pr(sch$Count[k]),
 				pr(sch$TOTAL[k]),
 				sch$TOTAL_PCT[k]),
@@ -183,41 +189,6 @@ message(sch$Province[k])
 		cat(sprintf("\n/%i",tweet_ct),file=twf)
 		cat("\n------------\n",file=twf) # separator
 		tweet_ct <- tweet_ct+1
-
-###		# -------------------------
-###		# TWEET: School type %
-###		# -------------------------
-###		dat2 <- tweetRes[["dat_qcStats"]] #subset(dat, Province != "QC")
-###		dat2[which(dat2[,"Type_of_school"]=="Middle School"),"Type_of_school"] <- "Elementary"
-###		tbl <- table(dat2[,"Type_of_school"])
-###		tbl <- data.frame(Type=names(tbl),Count=as.integer(tbl))
-###		tbl$Pct <- (tbl$Count/sum(tbl$Count))*100
-###		tbl$Type <- as.character(tbl$Type)
-###		
-###		fun <- function(emostr,x) {
-###			p <-tbl$Pct[which(tbl$Type==x)]
-###			if (p < 1) p <- "< 1%" else p  <- sprintf("%1.0f %%",p)
-###			cat(sprintf("%s %s %s (%s)\n",
-###				emo::ji(emostr),
-###				pr(tbl$Count[which(tbl$Type==x)]),x,p),
-###				file=twf)
-###		}
-###		cat(sprintf("%s AFFECTED SCHOOL TYPE %s\n",
-###			emo::ji("green_apple"),
-###			emo::ji("green_apple")),file=twf)
-###		cat("Num (% of all affected)\n",file=twf)
-###		fun("apple","Elementary")
-###		fun("books","Secondary")
-###		fun("children_crossing","Mixed")
-###		fun("office","Field Office")
-###		fun("mortar_board","Post-secondary")
-###		fun("question","TBA")
-###		cat(sprintf("\n%s By Province (QC updates on Mondays)\n",
-###				emo::ji("down_arrow")),file=twf)
-###		cat(sprintf("/%i",tweet_ct),file=twf)
-###			cat("\n------------\n",file=twf) # separator
-###		
-###		tweet_ct <- tweet_ct+1
 
 		# -------------------------
 		# TWEET: PROVINCE-LEVEL

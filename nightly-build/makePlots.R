@@ -27,7 +27,11 @@ provFull <- list(
 	AB="Alberta",
 	MB="Manitoba",
 	SK="Saskatchewan",
-	QC="Quebec"
+	QC="Quebec",
+	NS="Nova Scotia",
+	NL="Newfoundland and Labrador",
+	PEI="PEI",
+	NB="New Brunswick"
 )
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -405,18 +409,19 @@ cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
 #cur2 <- cur2[-which(cur2$Province=="QC"),]
 p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
+p3 <- p3 + scale_colour_brewer(palette="Spectral")
 p3 <- p3 + geom_line(lwd=1.9)#geom_p#oint() + geom_line()
 p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
 		linetype="dashed",lwd=2)
 p3 <- p3 + annotate("rect",
 			xmin=as.Date("2020-12-18"),xmax=as.Date("2021-01-04"),
 			ymin=-Inf,ymax=Inf,
-			fill="red",alpha=0.1)
+			fill="#ffefef",alpha=0.1)
 p3 <- p3 + xlab("")
 p3 <- p3 + ylab("")
 p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
-#p3 <- p3 + scale_x_date(date_breaks = "weeks" , date_labels = "%y-%m-%d")
-p3 <- p3 + ylim(-700,max(cur2$x)*1.04)
+p3 <- p3 + scale_x_date(breaks=as.Date(c("2020-09-01","2020-10-01","2020-11-01","2020-12-01","2021-01-01","2021-02-01"),format="%b"))
+p3 <- p3 + ylim(-1200,max(cur2$x)*1.04)
 #p3 <- p3 + scale_y_continuous(breaks=c(0,1000,2000,3000,4000,5000,6000,7000,8000))
 
 caseText <- c()
@@ -429,56 +434,39 @@ for (k in 1:length(lv)) {
 }
 
 yvals <- totcase$x
+yvals[which(totcase$Province=="NB")] <- 55
 yvals[which(totcase$Province=="PEI")] <- -250
 yvals[which(totcase$Province=="QC")] <- yvals[which(totcase$Province=="QC")] + 200
 xvals <- rep(Sys.Date()+1, nrow(totcase))
 yvals[which(totcase$Province=="NS")] <- -700#Sys.Date()+16
+yvals[which(totcase$Province=="NL")] <- -1200#Sys.Date()+16
 #idx <- which(totcase$Province %in% c("BC","MB","SK"))
 #yvals[idx] <- yvals[idx] + 350
 
-cols <- scales::hue_pal()(nrow(totcase))
+#cols <- scales::hue_pal()(nrow(totcase))
+cols <- RColorBrewer::brewer.pal(n=10,"Spectral")
 p3 <- p3 + expand_limits(x=Sys.Date()+30)
 p3 <- p3 + annotate("text",x=xvals,
 		y=yvals,label=caseText,
 		colour=cols,size=11,fontface=2,
 		vjust=0,hjust=0,fill="white")
-p3 <- p3 + annotate("text",x=as.Date("2020-08-10"),
-	y=max(cur$x)*1.035
-,
+p3 <- p3 + annotate("text",
+	x=as.Date("2020-08-25"),
+	y=max(cur$x)*1.035,
 	hjust=0,vjust=0,
-	label="Linear scale",colour="#68382C",size=10,
+	label="Linear scale",colour="#ffffff",size=10,
 	fontface=4)
 p3 <- p3 + annotate("text",x=as.Date("2020-11-13"),
 	y=max(cur$x)*1.035,
 	hjust=0,vjust=0,
-	label="Dec 18-Jan 4",colour="#330000",size=9,
+	label="Dec 18-Jan 4",colour="#ffffff",size=9,
 	fontface=3)
-###p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-###	y=7500,
-###	hjust=0,vjust=0,
-###	label="QC under revision",colour="#68382C",size=12,
-###	fontface=4)
-###p3 <- p3 + annotate("text",x=as.Date("2020-08-17"),
-###	y=7000,
-###	hjust=0,vjust=0,
-###	label="* Pending update",colour="#ff0000",size=12,
-###	fontface=4)
 
 # annotate
 p3 <- p3 + school_th
 p3 <- p3 + theme(
-	axis.text.x = element_text(angle = 20,
-		size=20,vjust=0.5),
-	axis.text.y = element_text(size=48),
-	legend.text=element_text(size=30,colour="#550000"),
-	legend.title=element_blank(),
-	legend.key.size=unit(1.5,"cm"),
-	legend.background=element_rect(fill="white"),
-	legend.position = c(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
-)
-# annotate
-p3 <- p3 + school_th
-p3 <- p3 + theme(
+	panel.background = element_rect(fill="#111111"),
+	panel.grid.major=element_blank(),
 	axis.text.x = element_text(angle = 20,
 		size=30,vjust=0.5),
 	axis.text.y = element_text(size=48),
@@ -486,7 +474,7 @@ p3 <- p3 + theme(
 	legend.title=element_blank(),
 	legend.key.size=unit(1.5,"cm"),
 	legend.background=element_rect(fill="white"),
-	legend.position = c(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
+	legend.position = "none" #(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
 )
 
 #### ------------------------------------------------------
