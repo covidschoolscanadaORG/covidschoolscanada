@@ -397,144 +397,62 @@ cur <- dat2 %>%
 	group_by(Province) %>%
 	arrange(tstamp) %>% 
 	mutate(cs = cumsum(Total.cases.to.date))
-
 cur <- as.data.frame(cur)
-
 cur$Province <- factor(cur$Province,levels=lv)
 cur <- aggregate(cur$cs,
 	by=list(tstamp=cur$tstamp,Province=cur$Province),
 	FUN=max)
 
+
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
-#cur2 <- cur2[-which(cur2$Province=="QC"),]
-p3 <- ggplot(cur2,aes(x=tstamp,y=x,colour=Province))
-p3 <- p3 + scale_colour_brewer(palette="Spectral")
-p3 <- p3 + geom_line(lwd=1.9)#geom_p#oint() + geom_line()
-p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
-		linetype="dashed",lwd=2)
-p3 <- p3 + annotate("rect",
-			xmin=as.Date("2020-12-18"),xmax=as.Date("2021-01-04"),
-			ymin=-Inf,ymax=Inf,
-			fill="#ffefef",alpha=0.1)
-p3 <- p3 + xlab("")
-p3 <- p3 + ylab("")
-p3 <- p3 + ggtitle("Number of cases, cumulative (conservative estimate)")
-p3 <- p3 + scale_x_date(breaks=as.Date(c("2020-09-01","2020-10-01","2020-11-01","2020-12-01","2021-01-01","2021-02-01"),format="%b"))
-p3 <- p3 + ylim(-1200,max(cur2$x)*1.04)
-#p3 <- p3 + scale_y_continuous(breaks=c(0,1000,2000,3000,4000,5000,6000,7000,8000))
-
-caseText <- c()
-for (k in 1:length(lv)) {
-	i <- which(totcase$Province==lv[k])
-	#if (lv[k] == "AB") str <- "*" else str <- ""
-	caseText <- c(caseText,sprintf("%s:%s", 
-		totcase$Province[i],
-		prettyNum(totcase$x[i],big.mark=",")))
-}
-
-yvals <- totcase$x
-yvals[which(totcase$Province=="NB")] <- 55
-yvals[which(totcase$Province=="PEI")] <- -250
-yvals[which(totcase$Province=="QC")] <- yvals[which(totcase$Province=="QC")] + 200
-xvals <- rep(Sys.Date()+1, nrow(totcase))
-yvals[which(totcase$Province=="NS")] <- -700#Sys.Date()+16
-yvals[which(totcase$Province=="NL")] <- -1200#Sys.Date()+16
-#idx <- which(totcase$Province %in% c("BC","MB","SK"))
-#yvals[idx] <- yvals[idx] + 350
-
-#cols <- scales::hue_pal()(nrow(totcase))
-cols <- RColorBrewer::brewer.pal(n=10,"Spectral")
-p3 <- p3 + expand_limits(x=Sys.Date()+30)
-p3 <- p3 + annotate("text",x=xvals,
-		y=yvals,label=caseText,
-		colour=cols,size=11,fontface=2,
-		vjust=0,hjust=0,fill="white")
-p3 <- p3 + annotate("text",
-	x=as.Date("2020-08-25"),
-	y=max(cur$x)*1.035,
-	hjust=0,vjust=0,
-	label="Linear scale",colour="#ffffff",size=10,
-	fontface=4)
-p3 <- p3 + annotate("text",x=as.Date("2020-11-13"),
-	y=max(cur$x)*1.035,
-	hjust=0,vjust=0,
-	label="Dec 18-Jan 4",colour="#ffffff",size=9,
-	fontface=3)
-
-# annotate
-p3 <- p3 + school_th
-p3 <- p3 + theme(
-	panel.background = element_rect(fill="#111111"),
-	panel.grid.major=element_blank(),
-	axis.text.x = element_text(angle = 20,
-		size=30,vjust=0.5),
-	axis.text.y = element_text(size=48),
-	legend.text=element_text(size=30,colour="#550000"),
-	legend.title=element_blank(),
-	legend.key.size=unit(1.5,"cm"),
-	legend.background=element_rect(fill="white"),
-	legend.position = "none" #(0.07,0.58)  # 0,0 -> bottom-left; 1,1 -> top,right
+source("cumPlot_totals.R")
+ypos <- list(
+	NB= 55,
+	PEI= -250,
+	NS= -700,
+	NL= -1200
 )
+p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
+		ymin=-1200,xmaxAdj=30,
+		title="Number of cases, cumulative (conservative estimate)",
+		font_scale=1)
 
-#### ------------------------------------------------------
-#### cumulative outbreaks
-###message("* OUTBREAKS")
-###dat3 <- dat2Full[,c("Province","Total.outbreaks.to.date",
-###	"Outbreak.dates")]
-###dat3 <- dat3[which(dat3$Outbreak.dates!=""),]
-###dat3 <- flattenCases(dat3,"outbreaks")
-###message("... done flattening")
-###dat3$Province <- factor(dat3$Province, levels=lv)
-###dat3$Outbreak.dates <- stringr::str_trim(dat3$Outbreak.dates)
-###tryCatch({
-###	dat3$tstamp <- as.POSIXct(dat3$Outbreak.dates)
-###},error=function(ex){
-###	message("OUTBREAKS: posix conversion of date failed")
-###	print(ex)
-###	browser()
-###},finally={
-###})
-###dat3$Total.outbreaks.to.date <- stringr::str_trim(
-###		dat3$Total.outbreaks.to.date)
-###dat3 <- na.omit(dat3)
-###dat3$Total.outbreaks.to.date <- as.integer(
-###		dat3$Total.outbreaks.to.date)
-###cur <- dat3 %>%
-###	group_by(Province) %>%
-###	arrange(tstamp) %>% 
-###	mutate(cs = cumsum(Total.outbreaks.to.date))
-###
-###cur <- as.data.frame(cur)
-###cur$Province <- factor(cur$Province)
-###cur <- aggregate(cur$cs,
-###	by=list(tstamp=cur$tstamp,Province=cur$Province),
-###	FUN=max)
-###
-###cur3 <- cur
-###cur3$tstamp <- as.Date(cur3$tstamp)
-###p4 <- ggplot(cur3,aes(x=tstamp,y=x,colour=Province))
-###p4 <- p4 + geom_line(lwd=1.7)#geom_p#oint() + geom_line()
-###p4 <- p4 + geom_vline(xintercept=mondays,col="#ff6666",
-###		linetype="dashed",lwd=2)
-###p4 <- p4 + xlab("date")
-###p4 <- p4 + ylab("cumulative outbreaks")
-###p4 <- p4 + ggtitle("Cumulative outbreaks by Province")
-###
-###dat3$week <- cut.Date(as.Date(dat3$tstamp),breaks="1 week",
-###	labels=FALSE)
-###cur4 <- aggregate(dat3$Total.outbreaks.to.date, 
-###	by=list(Province=dat3$Province,
-###		week=dat3$week),FUN=sum)
-###pobwk <- ggplot(cur4,aes(x=week,y=x,colour=Province))
-###pobwk <- pobwk + geom_line(lwd=2)
-###pobwk <- pobwk + xlab("weeks")+ ylab("# outbreaks declare")
-###pobwk <- pobwk + ggtitle("Outbreaks declared per week")
-###
-###pdf(sprintf("%s/outbreaks.pdf",inDir))
-###print(p4); 
-###print(pobwk)
-###dev.off()
+# per 100K
+message("* Per 100K plot")
+ypos <- list(
+	NB= 30,
+	PEI= 20,
+	NS= 10,
+	NL= 0,
+	BC=65
+)
+cur3 <- cur2
+provPop <- getProvPop()
+totcase_norm <- totcase
+for (curProv in lv) {
+	idx <- which(cur3$Province == curProv)
+	curPop <- provPop[[curProv]]
+	sc <- (10^5)/curPop
+	if (any(idx)) cur3$x[idx] <- cur3$x[idx] * sc
+			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
+}
+p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
+			ymin=-5,xmaxAdj=40,font_scale=0.7,suppText=TRUE)
+p10 <- p10 + annotate("text",x=as.Date("2020-08-20"),
+		y=max(cur3$x)*0.9,
+		hjust=0,vjust=0,
+		label="Cases per 100K, cum.",colour="#ffffff",size=9,
+		fontface=3)
+p10 <- p10 + theme(
+#	base_size=9,
+	plot.background=element_blank(),
+	panel.border=element_rect(color="white",size=0.5,fill=NA),
+	axis.text = element_text(colour="#ffffff")
+)
+p3 <- p3 + annotation_custom(ggplotGrob(p10),
+		xmin=as.Date("2020-08-05"),xmax=as.Date("2020-12-01"),
+		ymin=5000,ymax=12000)
 
 message("* putting together grobs")
 # image of map + outbreak table
@@ -582,12 +500,9 @@ mapPlot <- ggplot() + geom_blank() +
 		xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) + 
 	annotation_custom(tgrob,
 		xmin = 0.58, xmax=0.8, ymin=0.3,ymax=0.7) + 
-#	annotation_custom(ttlout,
-#		xmin = 0.68, xmax=0.9, ymin=0.9,ymax=0.95) +
 	annotation_custom(anno2,
 		xmin = 0.05, xmax=0.95, ymin=0,ymax=0.1)
 
-		#tableGrob(table,rows=NULL, cols=NULL, theme=tt3))
 mapPlot <- mapPlot + theme(
 	plot.margin = unit(c(0,0,0,0),"pt"),
 	panel.background=element_rect(fill="white")
@@ -672,6 +587,7 @@ tryCatch({
 		gp = gpar(lwd = 11, col = "red", fill = NA))
 },error=function(ex){
 	print(ex)
+browser()
 },finally={
 	dev.off()
 })

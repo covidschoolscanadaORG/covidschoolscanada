@@ -1,6 +1,26 @@
 # misc functions
 Sys.setenv(TZ="America/Toronto")
 
+getProvPop <- function(){
+# https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901
+# from Q4 2020
+	provPop <- list(
+		AB=4428112,
+		QC=8575779,
+		ON=14733119,	
+		MB=1379584,
+		SK=1177884,
+		NL=520998,
+		PEI=159713,
+		NS=979115,
+		NB=781315,
+		NWT=45074,
+		YK=42176,
+		NU=39285,
+		BC=5145851
+)
+}
+
 #' convert Prov to abbrev
 prov2abbrev <- function(x) {
 	if(any(x %in% "Newfoundland and Labrador")) {

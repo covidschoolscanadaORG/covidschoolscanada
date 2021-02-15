@@ -156,7 +156,7 @@ message("started tweet")
 		# TWEET: Data
 		# -------------------------
 		cat(sprintf("%s%s DOWNLOAD CASES %s%s\n",
-				rep(emo::ji("star"),4)),file=twf)
+				emo::ji("star"),emo::ji("star"),emo::ji("star"),emo::ji("star")),file=twf)
 		cat("Get all the cases/outbreaks on our school map to date.\n",file=twf)
 		cat(sprintf("%s\n",
 			emo::ji("chart_with_upwards_trend")),file=twf)
