@@ -236,29 +236,7 @@ dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
 dat2$Type_of_school[which(dat2$Type_of_school=="Post-secondary")] <- "PostSec"
 print(table(dat2$Type_of_school,useNA="always"))
 
-###dat2$Type_of_school <- factor(dat2$Type_of_school,
-###	levels=schoolLevels())
-###dat2$Schoolstr <- as.character(dat2$Type_of_school)
-###if (any(is.na(dat2$Type_of_school))) {
-###	message("converting school to factor gave NA")
-###	idx <- which(is.na(dat2$Type_of_school))
-###	print(dat2[idx,])
-###	message(sprintf("\tFAIL: School factor conversion: excluded %i",
-###		length(idx)))
-###	write.table(dat2[idx,],file=failFile,
-###		sep="\t",col=T,row=F,quote=F)
-###	dat2 <- dat2[-idx,]
-###}
 dat2Full <- dat2
-
-###p2 <- getSchoolPlot(dat2,school_th,FALSE)
-###pschlb <- getSchoolPlot(dat2,school_th,TRUE)
-###pschlb <- pschlb + labs(caption =sprintf("@covidschoolsCA | Updated %s ",
-###	footerDate()))
-###pschlb <- pschlb + theme(
-###		plot.caption = element_text(family="source-sans-pro",size=30,
-###		face="bold",hjust=0,colour="red")
-###	)
 
 message("* PLOT: Cumulative cases")
 mondays <- getAllMondays(2020)
@@ -276,7 +254,6 @@ browser()
 	dat2 <- dat2[-bad,]
 }
 
-#dat2$Date[bad] <- sub("; 2020-09-21","",dat2$Date[bad])
 dat2 <- dat2[,c("Date","Province","Total.cases.to.date",
 	"institute.name")]
 
@@ -290,61 +267,17 @@ dat2gp <- aggregate(as.integer(dat2$Total.cases.to.date),
 	by=list(institute=dat2$institute.name,
 			Province=dat2$Province), FUN=sum,na.rm=TRUE)
 
-top <- dat2gp %>% group_by(Province) %>% filter(x==max(x)) %>% arrange(institute, Province,x)
-top <- as.data.frame(top)
-top <- top[order(top$x,decreasing=TRUE),]
-colnames(top) <- c("School","Province","Cases")
-topTbl <- grobTree(tableGrob(top,rows=NULL,
-	theme=ttheme_default(base_size=8)))
-
-p <- ggplot(dat2gp,aes(x=Province,y=x)) 
-p <- p + geom_violin(aes(fill=Province),colour=NA)
-p <- p + geom_dotplot(fill="red",colour=NA,
-	binaxis='y',stackdir='center',dotsize=0.24,
-	stackratio=0.01,alpha=0.8,
-	position = position_jitter(0.2))	
-p <- p +scale_y_continuous(trans='log2',breaks=c(1,2,4,8,16,32,64))
-#p <- p + xlim(-3,length(unique(dat2gp$Province))+2)
-p <- p + school_th
-p <- p + ggtitle("Number +ve cases per school")
-p <- p + ylab("")
-p <- p + theme(axis.text.y=element_text(size=30),
-	legend.position='none')
-p <- p + annotation_custom(topTbl,
-	xmin=1,xmax=2.5,ymin=log2(32),ymax=log2(64))
-
-pdf(sprintf("%s/dots.pdf",inDir),width=13,height=5); print(p); dev.off()
-
-###pgp <- ggplot(dat2gp,aes(x,colour=Province)) + stat_ecdf()
-###pgp <- pgp + ylim(0.5,1)
-###tryCatch({
-###pdf(sprintf("%s/ecdf.pdf",inDir));print(pgp); dev.off()
-###}, error=function(ex) {
-###	print(ex)
-###},finally={
-###	# ignore errors in this plot
-###})
-
-#dat2 <- na.omit(dat2)
 idx <- which(is.na(dat2$institute.name))
 if (any(idx)) dat2 <- dat2[-idx,]
 
 dat2$Province <- factor(dat2$Province, levels=lv)
 dat2$Date <- stringr::str_trim(dat2$Date)
-#dat2$Date <- gsub("2020-10-13\\.","2020-10-13",dat2$Date)
-#dat2$Date <- gsub("2020-1028","2020-10-28",dat2$Date)
 if (length(idx)>0) {
 	message("* found NA dates after flattening")
 	print(dat2[idx,])
 	dat2 <- na.omit(dat2)
 }
 tryCatch({
-	# you were going to put a check here for dates earlier than
-	# 2020 or even august 2020
-###IsDate <- function(mydate, date.format = "%Y-%m-%d") {
-###  tryCatch(!is.na(as.Date(mydate, date.format)),  
-###           error = function(err) {FALSE})  
-###}
 	isd <- IsDate(dat2$Date)
 	if (any(isd==FALSE)) {
 		message("found malformed date")
@@ -403,18 +336,39 @@ cur <- aggregate(cur$cs,
 	by=list(tstamp=cur$tstamp,Province=cur$Province),
 	FUN=max)
 
-
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
+
+
+dat2sub <- subset(dat2, tstamp > Sys.Date()-14)
+totrecent <- totcase
+for (prov in unique(dat2$Province)){
+		message(prov)
+		idx <- which(dat2sub$Province == prov)
+		curp <- dat2sub[which(dat2sub$Province==prov),]
+		if (any(idx)) {
+			totrecent$x[which(totrecent$Province==prov)] <- sum(curp$Total.cases.to.date)
+		} else {
+			totrecent$x[which(totrecent$Province==prov)] <- 0
+		}
+}
+dt <- format(Sys.Date()-14,"%y%m%d")
+qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s/CEQ_annotated_clean_%s.csv",dt,dt)
+tmp <- read.delim(qcFile,sep=",",h=T,as.is=T)
+cumqc <- sum(tmp$Total.cases.to.date)
+totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Province=="QC")] - cumqc
+
 source("cumPlot_totals.R")
 ypos <- list(
-	NB= 55,
+	NB= 200,
 	PEI= -250,
 	NS= -700,
-	NL= -1200
+	NL= -1200,
+	MB=1500
 )
+
 p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
-		ymin=-1200,xmaxAdj=30,
+		ymin=-1200,xmaxAdj=80,recentC=totrecent,
 		title="Number of cases, cumulative (conservative estimate)",
 		font_scale=1)
 
@@ -428,7 +382,7 @@ ypos <- list(
 	BC=65
 )
 cur3 <- cur2
-provPop <- getProvPop()
+provPop <- getSchoolPop()
 totcase_norm <- totcase
 for (curProv in lv) {
 	idx <- which(cur3$Province == curProv)
@@ -437,22 +391,22 @@ for (curProv in lv) {
 	if (any(idx)) cur3$x[idx] <- cur3$x[idx] * sc
 			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
 }
-p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
-			ymin=-5,xmaxAdj=40,font_scale=0.7,suppText=TRUE)
-p10 <- p10 + annotate("text",x=as.Date("2020-08-20"),
-		y=max(cur3$x)*0.9,
-		hjust=0,vjust=0,
-		label="Cases per 100K, cum.",colour="#ffffff",size=9,
-		fontface=3)
-p10 <- p10 + theme(
-#	base_size=9,
-	plot.background=element_blank(),
-	panel.border=element_rect(color="white",size=0.5,fill=NA),
-	axis.text = element_text(colour="#ffffff")
-)
-p3 <- p3 + annotation_custom(ggplotGrob(p10),
-		xmin=as.Date("2020-08-05"),xmax=as.Date("2020-12-01"),
-		ymin=5000,ymax=12000)
+###p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
+###			ymin=-5,xmaxAdj=70,font_scale=0.7,suppText=TRUE)
+###p10 <- p10 + annotate("text",x=as.Date("2020-08-20"),
+###		y=max(cur3$x),
+###		hjust=0,vjust=0,
+###		label="Cases per 100K, cum.",colour="#ffffff",size=9,
+###		fontface=3)
+###p10 <- p10 + theme(
+####	base_size=9,
+###	plot.background=element_blank(),
+###	panel.border=element_rect(color="white",size=0.5,fill=NA),
+###	axis.text = element_text(colour="#ffffff")
+###)
+###p3 <- p3 + annotation_custom(ggplotGrob(p10),
+###		xmin=as.Date("2020-08-05"),xmax=as.Date("2020-12-01"),
+###		ymin=5000,ymax=12000)
 
 message("* putting together grobs")
 # image of map + outbreak table

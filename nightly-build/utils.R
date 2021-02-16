@@ -21,6 +21,26 @@ getProvPop <- function(){
 )
 }
 
+#https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3710000701#tables
+#2018-19
+getSchoolPop <- function() {
+	provPop <- list(
+		AB=673788,
+		QC=944922,
+		ON=2040480,	
+		MB=186519,
+		SK=182577,
+		NL=64188,
+		PEI=20361,
+		NS=120603,
+		NB=97896,
+		NWT=8496,
+		YK=5448,
+		NU=10653,
+		BC=561501
+)
+}
+
 #' convert Prov to abbrev
 prov2abbrev <- function(x) {
 	if(any(x %in% "Newfoundland and Labrador")) {
