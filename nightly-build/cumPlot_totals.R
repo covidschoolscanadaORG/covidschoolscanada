@@ -11,8 +11,8 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 	xmaxAdj=30,font_scale=1,recentC=NULL,
 	title="",suppText=FALSE) {
 
-	tmp <- subset(indat, Province!="QC")
-	p3 <- ggplot(tmp,aes(x=tstamp,y=x,colour=Province))
+	#tmp <- subset(indat, Province!="QC")
+	p3 <- ggplot(indat,aes(x=tstamp,y=x,colour=Province))
 	p3 <- p3 + scale_colour_brewer(palette="Spectral")
 	p3 <- p3 + geom_line(lwd=1.9)
 	p3 <- p3 + geom_vline(xintercept=mondays,col="#ff6666",
@@ -24,12 +24,12 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 				fill="#ffefef",alpha=0.1)
 	tmp <- subset(indat,Province=="QC")
 	blah <- RColorBrewer::brewer.pal(n=10,"Spectral")
-	p3 <- p3 + annotate("text",
-				label="*",size=13,fontface=2,
-				x=tmp$tstamp[nrow(tmp)],
-				y=tmp$x[nrow(tmp)],
-				col=blah[which(levels(indat$Province)=="QC")]
-)
+###	p3 <- p3 + annotate("text",
+###				label="*",size=13,fontface=2,
+###				x=tmp$tstamp[nrow(tmp)],
+###				y=tmp$x[nrow(tmp)],
+###				col=blah[which(levels(indat$Province)=="QC")]
+###)
 	p3 <- p3 + xlab("")
 	p3 <- p3 + ylab("")
 	p3 <- p3 + ggtitle(title)

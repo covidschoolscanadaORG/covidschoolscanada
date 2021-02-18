@@ -6,6 +6,7 @@
 
 #outRoot=/home/shraddhapai/Canada_COVID_tracker
 outRoot=/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker
+qcDir=/Users/shraddhapai/Google_covidschools/daily_data/QC
 
 # Quebec tracker
 QCMidFile=1S-b-tmhKP1RQeMaIZslrR_hqApM-KERq
@@ -49,6 +50,7 @@ Rscript fetchQCstats.R ${outRoot}/export
 echo "Cleaning" >> $logfile
 echo $outRoot
 Rscript qcStats.R ${outRoot}/export
+cp ${outRoot}/export-${dt}/CEQ_annotated_clean*csv ${qcDir}/.
 
 echo "******************************************************" >> $logfile
 echo " Final cleanup " >> $logfile

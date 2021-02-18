@@ -54,7 +54,8 @@ con <- file(logfile)
 #sink(con,append=TRUE)
 #sink(con,append=TRUE,type="message")
 tryCatch({
-prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
+prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI",
+	"QC","SK","NWT","NU","YT")
 
 # ----------------------------
 # Get school plot
@@ -120,7 +121,7 @@ school_th <-  theme(
 # ----------------------------
 # Start processing
 
-inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
+inFile <- sprintf("%s/final_data/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 failFile <- sprintf("%s/fail_makePlots.txt",inDir)
 if (file.exists(failFile)) unlink(failFile)
@@ -130,7 +131,6 @@ tryCatch({
 	print(ex)
 },finally={
 })
-
 
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
@@ -149,6 +149,10 @@ ob <- sum(tmp$Total.outbreaks.to.date,na.rm=TRUE) + qcOB
 dat$Province <- factor(dat$Province, 
 	level=prov) 
 message(sprintf("Total outbreaks = %i", ob))
+
+idx <- intersect(which(is.na(dat$institute.name)),
+		which(is.na(dat$Longitude)))
+if (any(idx)) dat <- dat[-idx,]
 
 if (any(is.na(dat$Province))) {
 	message("found NA province - check")
@@ -354,6 +358,10 @@ for (prov in unique(dat2$Province)){
 }
 dt <- format(Sys.Date()-14,"%y%m%d")
 qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s/CEQ_annotated_clean_%s.csv",dt,dt)
+if (!file.exists(qcFile)){
+	dt <- format(Sys.Date()-15,"%y%m%d")
+	qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s/CEQ_annotated_clean_%s.csv",dt,dt)
+}
 tmp <- read.delim(qcFile,sep=",",h=T,as.is=T)
 cumqc <- sum(tmp$Total.cases.to.date)
 totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Province=="QC")] - cumqc
@@ -367,6 +375,13 @@ ypos <- list(
 	MB=1500
 )
 
+source("QC_makeCumGraph.R")
+qc <- getQC_cumGraph()
+colnames(qc) <- c("tstamp","x")
+qc <- cbind(qc, Province="QC")
+qc <- qc[,c(1,3,2)]
+cur2 <- cur2[-which(cur2$Province=="QC"),]
+cur2 <- rbind(cur2,qc)
 p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
 		ymin=-1200,xmaxAdj=80,recentC=totrecent,
 		title="Number of cases, cumulative (conservative estimate)",
@@ -376,10 +391,12 @@ p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
 message("* Per 100K plot")
 ypos <- list(
 	NB= 30,
-	PEI= 20,
-	NS= 10,
+	PEI= 10,
+	NS= 20,
 	NL= 0,
-	BC=65
+	BC=65,
+	AB=90,
+	MB=80
 )
 cur3 <- cur2
 provPop <- getSchoolPop()
@@ -387,26 +404,44 @@ totcase_norm <- totcase
 for (curProv in lv) {
 	idx <- which(cur3$Province == curProv)
 	curPop <- provPop[[curProv]]
-	sc <- (10^5)/curPop
+	sc <- (10^4)/curPop
 	if (any(idx)) cur3$x[idx] <- cur3$x[idx] * sc
 			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
 }
-###p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
-###			ymin=-5,xmaxAdj=70,font_scale=0.7,suppText=TRUE)
+p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
+			ymin=-1,xmaxAdj=70,font_scale=0.7,suppText=TRUE)
 ###p10 <- p10 + annotate("text",x=as.Date("2020-08-20"),
 ###		y=max(cur3$x),
 ###		hjust=0,vjust=0,
-###		label="Cases per 100K, cum.",colour="#ffffff",size=9,
+###		label="Cases/10K, cum.",colour="#ffffff",size=8,
 ###		fontface=3)
-###p10 <- p10 + theme(
-####	base_size=9,
-###	plot.background=element_blank(),
-###	panel.border=element_rect(color="white",size=0.5,fill=NA),
-###	axis.text = element_text(colour="#ffffff")
-###)
-###p3 <- p3 + annotation_custom(ggplotGrob(p10),
-###		xmin=as.Date("2020-08-05"),xmax=as.Date("2020-12-01"),
-###		ymin=5000,ymax=12000)
+p10 <- p10 + ylab("Cases/10K,cum.")
+p10 <- p10 + theme(
+#	base_size=9,
+	plot.background=element_blank(),
+	panel.border=element_rect(color="white",size=0.5,fill=NA),
+	axis.text = element_text(colour="#ffffff"),
+	axis.title.y = element_text(colour="#ffffff",size=18)
+)
+p3 <- p3 + annotation_custom(ggplotGrob(p10),
+		xmin=as.Date("2020-07-31"),xmax=as.Date("2020-11-20"),
+		ymin=5000,ymax=12000)
+p3 <- p3 + annotate("text",
+	x=as.Date("2020-08-05"),y=-500,
+		label="1. Scaled to K-12+youth enrollment.StatsCan, 2018-19",
+		hjust=0,vjust=0,
+		size=7,colour="white",fontface=3)
+p3 <- p3 + annotate("text",
+		x=as.Date("2020-08-05"),y=-1000,
+		label="2. QC cumulative data unavail prior to Oct 12 2020.",
+		hjust=0,vjust=0,
+		size=7,colour="white",fontface=3)
+p3 <- p3 + annotate("text",
+		x=Sys.Date()+20,y=max(cur2$x[which(cur2$Province=="QC")]),
+		label="2",
+		hjust=0,vjust=0,
+		size=7,colour="white",fontface=3)
+
 
 message("* putting together grobs")
 # image of map + outbreak table

@@ -50,6 +50,7 @@ message(sprintf("Added AB autogen: %i to %i rows", old, nrow(dat)))
 token <- readRDS(dbox)
 message("Authorizing dropbox")
 suppressMessages(drop_acc(dtoken=token))
+
 dt <- format(Sys.Date()-1,"%Y%m%d")
 odir <- sprintf("BC_automation/daily_update/export-%s",dt)
 ofile <- sprintf("%s/CanadaMap_BC-%s.clean.csv",odir,dt)
