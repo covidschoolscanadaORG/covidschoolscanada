@@ -24,12 +24,6 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 				fill="#ffefef",alpha=0.1)
 	tmp <- subset(indat,Province=="QC")
 	blah <- RColorBrewer::brewer.pal(n=10,"Spectral")
-###	p3 <- p3 + annotate("text",
-###				label="*",size=13,fontface=2,
-###				x=tmp$tstamp[nrow(tmp)],
-###				y=tmp$x[nrow(tmp)],
-###				col=blah[which(levels(indat$Province)=="QC")]
-###)
 	p3 <- p3 + xlab("")
 	p3 <- p3 + ylab("")
 	p3 <- p3 + ggtitle(title)
@@ -75,15 +69,15 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 			fontface=2,
 			vjust=0,hjust=0,fill="white")
 if (!suppText) {
-	p3 <- p3 + annotate("text",x=as.Date("2020-11-01"),
+	p3 <- p3 + annotate("text",x=as.Date("2020-10-29"),
 		y=max(indat$x)*1.044,
 		hjust=0,vjust=0,
-		label="Dec 18-Jan 4",colour="#ffffff",size=9,
+		label="Dec 18-Jan 4",colour="#ffffff",size=8,
 		fontface=3)
 	p3 <- p3 + annotate("text",x=Sys.Date()+1,
 		y=max(indat$x)*1.044,
 		hjust=0,vjust=0,
-		label="Cases (last 14d)",colour="#ffffff",size=10,
+		label="Cases (last 14d)",colour="#ffffff",size=9,
 		fontface=3)
 }
 	
@@ -97,6 +91,11 @@ if (!suppText) {
 		axis.text.y = element_text(size=48*font_scale),
 		legend.position = "none" 
 	)
+###	if (!suppText){
+###p3 <- p3 + theme(
+###		panel.grid.major.x=element_line(colour="#222222",size=0.5,linetype="dashed")
+###)
+###}
 
 	if (suppText) {
 		p3 <- p3 + theme(

@@ -121,7 +121,7 @@ school_th <-  theme(
 # ----------------------------
 # Start processing
 
-inFile <- sprintf("%s/final_data/CanadaMap_QuebecMerge-%s.clean.csv",
+inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 failFile <- sprintf("%s/fail_makePlots.txt",inDir)
 if (file.exists(failFile)) unlink(failFile)
@@ -409,35 +409,31 @@ for (curProv in lv) {
 			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
 }
 p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
-			ymin=-1,xmaxAdj=70,font_scale=0.7,suppText=TRUE)
-###p10 <- p10 + annotate("text",x=as.Date("2020-08-20"),
-###		y=max(cur3$x),
-###		hjust=0,vjust=0,
-###		label="Cases/10K, cum.",colour="#ffffff",size=8,
-###		fontface=3)
-p10 <- p10 + ylab("Cases/10K,cum.")
+			ymin=-1,xmaxAdj=90,font_scale=0.7,suppText=TRUE)
+p10 <- p10 + ylab(expression(paste("Cases/10K",~cum.^1)))
 p10 <- p10 + theme(
 #	base_size=9,
 	plot.background=element_blank(),
+	panel.background=element_rect(fill="black",colour=NA),
 	panel.border=element_rect(color="white",size=0.5,fill=NA),
 	axis.text = element_text(colour="#ffffff"),
-	axis.title.y = element_text(colour="#ffffff",size=18)
+	axis.title.y = element_text(colour="#ffffff",size=28)
 )
 p3 <- p3 + annotation_custom(ggplotGrob(p10),
 		xmin=as.Date("2020-07-31"),xmax=as.Date("2020-11-20"),
 		ymin=5000,ymax=12000)
 p3 <- p3 + annotate("text",
-	x=as.Date("2020-08-05"),y=-500,
-		label="1. Scaled to K-12+youth enrollment.StatsCan, 2018-19",
+	x=as.Date("2020-08-05"),y=-700,
+		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=as.Date("2020-08-05"),y=-1000,
-		label="2. QC cumulative data unavail prior to Oct 12 2020.",
+		x=as.Date("2020-08-05"),y=-1200,
+		label="2. QC cumulative data unavail prior to Oct 12 2020",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=Sys.Date()+20,y=max(cur2$x[which(cur2$Province=="QC")]),
+		x=Sys.Date()+100,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
 		label="2",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
@@ -557,12 +553,6 @@ tryCatch({
 							c(NA, 1, 1, 1, 2, 2, 2, 2, NA),
 							c(NA, 3, 3, 3, 2, 2, 2, 2, NA),
 							rep(NA,9)),
-###	  layout_matrix = rbind(rep(NA,9),
-###							c(NA, 5, 5, 5, 5, 5, 6, 7,NA),
-###							c(NA, 5, 5, 5, 5, 5, 8, 9,NA),
-###							c(NA, 4, 4, 4, 1, 1, 1, 1,NA),
-###							c(NA, 4, 4, 4, 2, 2, 2, 2,NA),
-###	                        c(NA, 3, 3, 3, NA, NA, NA, NA,NA)),
 	  	bottom = textGrob(
 	    	sprintf("@covidschoolsCA | Updated %s",
 				footerDate()),
