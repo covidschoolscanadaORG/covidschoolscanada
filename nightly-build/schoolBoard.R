@@ -1,5 +1,6 @@
 # generates graphs showing case breakdown by school board
 
+rm(list=ls())
 suppressMessages(require(dplyr))
 suppressMessages(require(ggplot2))
 suppressMessages(require(gtable))  # annotate page
@@ -52,8 +53,7 @@ school_th <-  theme(
 Sys.setenv(TZ="America/Toronto")
 
 dt <- format(Sys.Date(),"%y%m%d")
-#inDir <- sprintf("/home/shraddhapai/Canada_COVID_tracker/export-%s",dt)
-inDir <- sprintf("//Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
+inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
 inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
 	inDir,dt)
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
@@ -65,16 +65,24 @@ dat$School.board <- sub("Arch. of Winnipeg","Arch. Of Winnipeg",dat$School.board
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)
 qcStats <- read.delim(qcStats,sep=",",h=T,as.is=T)
+#qcStats <- qcStats[,c("Date","Province","Total.cases.to.date","institute.name","School.board")]
 
 dat <- rbind(dat,qcStats)
+#dat$tstamp <- as.Date(dat$Date)
+#dat <- subset(dat, tstamp > Sys.Date()-14)
+#dat <- dat[,c("Total.cases.to.date","School.board","Province")]
+#colnames(dat)[2] <- "Board"
+#bloo <- aggregate(dat$Total.cases.to.date, 
+#	by=list(Board=dat$Board, Province=dat$Province),
+#		FUN=sum)
 
 dat$ct <- 1
 df2 <- aggregate(dat$ct, 
 	by=list(Province=dat$Province,Board=dat$School.board),
-	FUN=sum)
-
+FUN=sum)
 df2$Province <- factor(df2$Province)
 df2$Board <- factor(df2$Board)
+
 colnames(df2)[3] <- "ct"
 pList <- list()
 for (prov in unique(df2$Province)) {

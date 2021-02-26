@@ -7,6 +7,7 @@ qc <- read.delim(qcFile,sep=",",h=T,as.is=T)
 qc <- qc[,colnames(dat)]
 qc$Longitude <- -1*qc$Longitude
 
+
 idx <- union(which(is.na(qc$Latitude)), 
 	which(is.na(qc$Longitude)))
 message(sprintf("* %i entries missing lat/long", length(idx)))
@@ -16,6 +17,10 @@ qc$Outbreak.Status[grep("outbreak",qc$Outbreak.Status)] <- "Declared outbreak"
 
 dat <- dat[-which(dat$Province=="QC"),]
 dat <- rbind(dat,qc)
+
+idx <- which(is.na(dat$institute.name))
+if (any(idx)) dat <- dat[-idx,]
+
 
 # prettify link text
 links <- strsplit(dat$Article,";")

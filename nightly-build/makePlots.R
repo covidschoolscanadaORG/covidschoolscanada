@@ -235,11 +235,6 @@ if (!is.null(qcStats)) {
 dat_qcStats <- dat2
 tweetRes[["dat_qcStats"]] <- dat_qcStats
 
-dat2$Type_of_school[which(dat2$Type_of_school=="Field Office")] <- "Office"
-dat2$Type_of_school[which(dat2$Type_of_school=="Middle School")] <- "Elementary"
-dat2$Type_of_school[which(dat2$Type_of_school=="Post-secondary")] <- "PostSec"
-print(table(dat2$Type_of_school,useNA="always"))
-
 dat2Full <- dat2
 
 message("* PLOT: Cumulative cases")
@@ -259,12 +254,15 @@ browser()
 }
 
 dat2 <- dat2[,c("Date","Province","Total.cases.to.date",
-	"institute.name")]
+"institute.name")]#,"School.board")]
 
 lv <- levels(dat2$Province)
 dat2$Province <- as.character(dat2$Province)
 dat2 <- flattenCases(dat2)
 message("...done flattening")
+
+write.table(dat2,file=sprintf("%s_flat.csv",inFile),
+	sep=",",col=T,row=F,quote=T)
 
 # distribution of num cases per school
 dat2gp <- aggregate(as.integer(dat2$Total.cases.to.date),
@@ -321,10 +319,7 @@ idx2 <- which(dat$Province!="QC")
 idx <- intersect(idx,idx2)
 print(dat2[idx,])
 	message("totcase NA")
-browser()
-	#dat2$Total.cases.to.date[idx] <- 1
-#totcase <- aggregate(dat2$Total.cases.to.date,
- # by=list(Province=dat2$Province),FUN=sum)	
+	browser()
 }
 totcase$Province <- factor(totcase$Province,levels=lv)
 tweetRes$totcase <- totcase
@@ -342,7 +337,6 @@ cur <- aggregate(cur$cs,
 
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
-
 
 dat2sub <- subset(dat2, tstamp > Sys.Date()-14)
 totrecent <- totcase
@@ -368,10 +362,10 @@ totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Provin
 
 source("cumPlot_totals.R")
 ypos <- list(
-	NB= 200,
-	PEI= -250,
+	NB= -200,
+	PEI= -1200, # -250,
 	NS= -700,
-	NL= -1200,
+	NL= 200,
 	MB=1500
 )
 
@@ -390,10 +384,10 @@ p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
 # per 100K
 message("* Per 100K plot")
 ypos <- list(
-	NB= 30,
-	PEI= 10,
-	NS= 20,
-	NL= 0,
+	NB= 20, #30,
+	PEI= 0, #10,
+	NS= 10, #20,
+	NL= 30, #0,
 	BC=65,
 	AB=90,
 	MB=80
@@ -409,7 +403,7 @@ for (curProv in lv) {
 			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
 }
 p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
-			ymin=-1,xmaxAdj=90,font_scale=0.7,suppText=TRUE)
+			ymin=-1,xmaxAdj=110,font_scale=0.7,suppText=TRUE)
 p10 <- p10 + ylab(expression(paste("Cases/10K",~cum.^1)))
 p10 <- p10 + theme(
 #	base_size=9,
