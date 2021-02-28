@@ -232,6 +232,8 @@ message(sch$Province[k])
 				cat("Source: @BCschoolCovid\n",file=twf)
 			}
 
+			cat("Plot shows cases for last 14 days\n",file=twf)
+
 			cat(sprintf("\n/%i", tweet_ct),file=twf)
 			tweet_ct <- tweet_ct+1
 			cat("\n------------\n",file=twf) # separator

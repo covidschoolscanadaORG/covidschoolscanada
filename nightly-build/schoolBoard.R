@@ -54,7 +54,7 @@ Sys.setenv(TZ="America/Toronto")
 
 dt <- format(Sys.Date(),"%y%m%d")
 inDir <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s",dt)
-inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv",
+inFile <- sprintf("%s/CanadaMap_QuebecMerge-%s.clean.csv_dat2.csv",
 	inDir,dt)
 dat <- read.delim(inFile,sep=",",h=T,as.is=T)
 dat <- subset(dat, Province!="QC")

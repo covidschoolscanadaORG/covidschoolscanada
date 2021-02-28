@@ -163,7 +163,7 @@ curd$Province <- as.character(curd$Province)
 	} else {
 		type <- "Total.outbreaks.to.date"
 		dtype <- "Outbreak.dates"
-		curd <- curd[,c(dtype,"Province",type)]
+		curd <- curd[,c(dtype,"Province",type,"School.board")]
 	}
 
 	message("Flattening cases...")
@@ -198,7 +198,8 @@ tryCatch({
 		for (j in 1:length(x)) {
 			simple <- rbind(simple, 
 				c(y[j],multi$Province[i],x[j],
-					multi$institute.name[i]))
+					multi$institute.name[i],
+					multi$School.board[i]))
 		}
 	     cat(sprintf("%s: {%s}",multi[i,type],
 			paste(x,collapse=",")),file="test.txt",append=TRUE)

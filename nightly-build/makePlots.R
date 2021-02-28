@@ -236,6 +236,7 @@ dat_qcStats <- dat2
 tweetRes[["dat_qcStats"]] <- dat_qcStats
 
 dat2Full <- dat2
+write.table(dat2,file=sprintf("%s_dat2.csv",inFile),sep=",",col=T,row=F,quote=T)
 
 message("* PLOT: Cumulative cases")
 mondays <- getAllMondays(2020)
@@ -254,7 +255,7 @@ browser()
 }
 
 dat2 <- dat2[,c("Date","Province","Total.cases.to.date",
-"institute.name")]#,"School.board")]
+"institute.name","School.board")]
 
 lv <- levels(dat2$Province)
 dat2$Province <- as.character(dat2$Province)
