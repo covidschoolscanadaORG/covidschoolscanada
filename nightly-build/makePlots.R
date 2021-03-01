@@ -428,7 +428,7 @@ p3 <- p3 + annotate("text",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=Sys.Date()+100,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
+		x=Sys.Date()+90,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
 		label="2",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
