@@ -8,7 +8,7 @@ dat <- dat[-which(dat$Province %in% c("QC","BC","AB")),]
 print(table(dat$Province))
 
 bad <- list()
-for (k in 1:nrow(dat)) {
+for (k in setdiff(1287:nrow(dat),1302)) {
 	message(sprintf("%s",k))
 	art <- dat$Article[k]
 	cur <- unlist(strsplit(art,";"))
@@ -17,11 +17,24 @@ for (k in 1:nrow(dat)) {
 			message(sprintf("\t%s",cur[n]))	
 			message("BAD!")
 			tmp <- dat[k,]
-			tmp$BAD_ARTICLE <- cur[n]
-			
-			bad[[k]] <- tmp
+				tryCatch({
+					if (identical(cur[n],character(0))) {
+						tmp$BAD_ARTICLE <- "EMPTY"
+				} else if (is.na(cur[n])) {
+					message("empty")
+					tmp$BAD_ARTICLE <- "EMPTY"
+				} else {
+					tmp$BAD_ARTICLE <- cur[n]
+				}}, error=function(ex){
+					print(ex)
+					browser()
+				},finally={
+						
+				})
+				bad[[k]] <- tmp
 		} 
 	}
 }
 
 final <- do.call("rbind",bad)
+write.table(final,file="Missing_part2.txt",sep=",",col=T,row=F,quote=F)
