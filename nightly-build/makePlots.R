@@ -306,6 +306,7 @@ if (any(idx)) {
 	dat2 <- dat2[-idx,]
 }
 
+
 dat2$Total.cases.to.date <- stringr::str_trim(
 		dat2$Total.cases.to.date)
 dat2 <- na.omit(dat2)
