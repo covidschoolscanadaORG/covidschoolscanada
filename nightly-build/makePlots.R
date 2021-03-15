@@ -306,7 +306,6 @@ if (any(idx)) {
 	dat2 <- dat2[-idx,]
 }
 
-
 dat2$Total.cases.to.date <- stringr::str_trim(
 		dat2$Total.cases.to.date)
 dat2 <- na.omit(dat2)
@@ -353,10 +352,10 @@ for (prov in unique(dat2$Province)){
 		}
 }
 dt <- format(Sys.Date()-14,"%y%m%d")
-qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s/CEQ_annotated_clean_%s.csv",dt,dt)
+qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/QC/CEQ_annotated_clean_%s.csv",dt,dt)
 if (!file.exists(qcFile)){
 	dt <- format(Sys.Date()-15,"%y%m%d")
-	qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-%s/CEQ_annotated_clean_%s.csv",dt,dt)
+	qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/QC/CEQ_annotated_clean_%s.csv",dt,dt)
 }
 tmp <- read.delim(qcFile,sep=",",h=T,as.is=T)
 cumqc <- sum(tmp$Total.cases.to.date)
@@ -417,7 +416,7 @@ p10 <- p10 + theme(
 )
 p3 <- p3 + annotation_custom(ggplotGrob(p10),
 		xmin=as.Date("2020-07-31"),xmax=as.Date("2020-11-20"),
-		ymin=5000,ymax=12000)
+		ymin=5000,ymax=12500)
 p3 <- p3 + annotate("text",
 	x=as.Date("2020-08-05"),y=-700,
 		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",
@@ -429,7 +428,7 @@ p3 <- p3 + annotate("text",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=Sys.Date()+90,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
+		x=Sys.Date()+93,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
 		label="2",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)

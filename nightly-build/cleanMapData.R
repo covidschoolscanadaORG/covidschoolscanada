@@ -66,18 +66,21 @@ idx <- intersect(union(
 			which(is.na(dat$City)),which(dat$City=="")),
 	which(dat$Province!="QC"))
 if (any(idx)) {
+browser()
 		message(sprintf("* Found blank city! Running reverse geolocate (%i)", 
 			length(idx)))
-		y <- revGeo(dat[idx,])
-		dat$City[idx] <- y[,3]
-		dat$Province[idx] <- y[,4]	
-
-	tmp <- union(which(y[,3]=="NA"), which(is.na(y[,3])))
-	if (length(tmp)>0){
-		blah <- dat[idx[tmp],c("institute.name","School.board","Date")]	
-		print(blah)
-		#browser()
-	}
+browser()
+		dat <- dat[-idx,]
+###		y <- revGeo(dat[idx,])
+###		dat$City[idx] <- y[,3]
+###		dat$Province[idx] <- y[,4]	
+###
+###	tmp <- union(which(y[,3]=="NA"), which(is.na(y[,3])))
+###	if (length(tmp)>0){
+###		blah <- dat[idx[tmp],c("institute.name","School.board","Date")]	
+###		print(blah)
+###		#browser()
+###	}
 		message("done")
 }
 message("after geocoding")
