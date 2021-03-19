@@ -366,8 +366,8 @@ ypos <- list(
 	NB= -200,
 	PEI= -1200, # -250,
 	NS= -700,
-	NL= 200,
-	MB=1500
+	NL= 400,
+	MB=1800
 )
 
 source("QC_makeCumGraph.R")
@@ -377,6 +377,7 @@ qc <- cbind(qc, Province="QC")
 qc <- qc[,c(1,3,2)]
 cur2 <- cur2[-which(cur2$Province=="QC"),]
 cur2 <- rbind(cur2,qc)
+
 p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
 		ymin=-1200,xmaxAdj=80,recentC=totrecent,
 		title="Number of cases, cumulative (conservative estimate)",
@@ -391,7 +392,10 @@ ypos <- list(
 	NL= 30, #0,
 	BC=65,
 	AB=90,
-	MB=80
+	MB=80,
+	ON=40,
+	SK=50,
+	QC=130
 )
 cur3 <- cur2
 provPop <- getSchoolPop()
@@ -415,8 +419,8 @@ p10 <- p10 + theme(
 	axis.title.y = element_text(colour="#ffffff",size=28)
 )
 p3 <- p3 + annotation_custom(ggplotGrob(p10),
-		xmin=as.Date("2020-07-31"),xmax=as.Date("2020-11-20"),
-		ymin=5000,ymax=12500)
+		xmin=as.Date("2020-07-20"),xmax=as.Date("2020-12-05"),
+		ymin=7000,ymax=13500)
 p3 <- p3 + annotate("text",
 	x=as.Date("2020-08-05"),y=-700,
 		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",

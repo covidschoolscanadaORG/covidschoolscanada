@@ -34,7 +34,7 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 			"2021-01-01","2021-02-01")))
 	} 
 	if (missing(ymin)) ymin <- 0
-	p3 <- p3 + ylim(ymin,max(indat$x)*1.1)
+	p3 <- p3 + ylim(ymin,max(indat$x)*1.3)
 	
 	caseText <- c()
 	for (k in 1:length(provLvl)) {
@@ -70,12 +70,12 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 			vjust=0,hjust=0,fill="white")
 if (!suppText) {
 	p3 <- p3 + annotate("text",x=as.Date("2020-10-29"),
-		y=max(indat$x)*1.044,
+		y=max(indat$x)*1.08,
 		hjust=0,vjust=0,
 		label="Dec 18-Jan 4",colour="#ffffff",size=8,
 		fontface=3)
 	p3 <- p3 + annotate("text",x=Sys.Date()+1,
-		y=max(indat$x)*1.044,
+		y=max(indat$x)*1.08,
 		hjust=0,vjust=0,
 		label="Cases (last 14d)",colour="#ffffff",size=9,
 		fontface=3)

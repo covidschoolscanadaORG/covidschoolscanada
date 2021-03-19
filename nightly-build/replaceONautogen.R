@@ -4,8 +4,8 @@ rm(list=ls())
 Sys.setenv("R_BROWSER"="/usr/bin/open -a '/Applications/Firefox.app'")
 options(browser = as.vector(Sys.getenv("R_BROWSER")))
 
-#dt <- format(Sys.Date(),"%Y-%m-%d")
-dt <- "2021-03-12"
+dt <- format(Sys.Date(),"%Y-%m-%d")
+#dt <- "2021-03-12"
 fName <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/ON/Automated_boards_%s.csv",dt)
 
 message("Reading latest ON file")

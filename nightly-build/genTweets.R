@@ -232,7 +232,14 @@ message(sch$Province[k])
 				cat("Source: @BCschoolCovid\n",file=twf)
 			}
 
-			cat("Plot shows cases for last 14 days\n",file=twf)
+		if (sch$Province[k] %in% c("NB","NS","PEI","NL")) {
+			cat("Plot shows last 14 days if cases exist; else, cumulative\n",
+			file=twf)
+} else if (sch$Province[k] =="QC") {
+			cat("Plot shows cumulative cases\n",file=twf)
+	} else {
+			cat("Plot shows cases over last 14 days\n",file=twf)
+	}
 
 			cat(sprintf("\n/%i", tweet_ct),file=twf)
 			tweet_ct <- tweet_ct+1
