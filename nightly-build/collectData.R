@@ -8,7 +8,7 @@ args <- commandArgs(TRUE)
 outDir <- args[1] #"/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210118" #args[1]
 dtRun <- args[2] #"210118" #args[2]
 
-abDate <- format(Sys.Date()-1,"%Y-%m-%d")
+abDate <- format(Sys.Date()-2,"%Y-%m-%d")
 ABfile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_%s.csv",abDate)
 #MB="https://docs.google.com/spreadsheets/d/1a1Rzn7tDVrTc976UAyHFk-WcSz9RPumRQELVd6lnac8/edit#gid=20331003",
 #SK="https://docs.google.com/spreadsheets/d/10Y2N2wq0vzW6BAB3d0BQgAdpZZrpZlU7xKQhKfNeuBE/edit#gid=53224925",
@@ -55,7 +55,7 @@ token <- readRDS(dbox)
 message("Authorizing dropbox")
 suppressMessages(drop_acc(dtoken=token))
 
-dt <- format(Sys.Date()-2,"%Y%m%d")
+dt <- format(Sys.Date()-1,"%Y%m%d")
 odir <- sprintf("BC_automation/daily_update/export-%s",dt)
 ofile <- sprintf("%s/CanadaMap_BC-%s.clean.csv",odir,dt)
 message("Downloading BC")
