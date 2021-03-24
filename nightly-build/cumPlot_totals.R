@@ -34,7 +34,7 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 			"2021-01-01","2021-02-01")))
 	} 
 	if (missing(ymin)) ymin <- 0
-	p3 <- p3 + ylim(ymin,max(indat$x)*1.3)
+	p3 <- p3 + ylim(ymin,max(indat$x)*1.1)
 	
 	caseText <- c()
 	for (k in 1:length(provLvl)) {

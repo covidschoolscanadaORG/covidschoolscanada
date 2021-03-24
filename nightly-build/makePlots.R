@@ -391,7 +391,6 @@ ypos <- list(
 	NS= 10, #20,
 	NL= 30, #0,
 	BC=65,
-	AB=90,
 	MB=80,
 	ON=40,
 	SK=50,
@@ -432,7 +431,7 @@ p3 <- p3 + annotate("text",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=Sys.Date()+93,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
+		x=Sys.Date()+96,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
 		label="2",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)

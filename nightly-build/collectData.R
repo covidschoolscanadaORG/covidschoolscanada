@@ -33,6 +33,8 @@ for (k in 1:length(sheetURLs)){
 	out[[nm]] <- as.data.frame(x)
 }
 
+out[["NB"]] <- out[["NB"]][,1:15]
+
 message("merging")
 dat<- do.call("rbind",out)
 

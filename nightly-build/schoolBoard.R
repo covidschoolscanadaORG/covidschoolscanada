@@ -61,6 +61,7 @@ dat <- subset(dat, Province!="QC")
 
 dat$School.board <- sub("Hamilton-Wentowrth","Hamilton-Wentworth",dat$School.board)
 dat$School.board <- sub("Arch. of Winnipeg","Arch. Of Winnipeg",dat$School.board)
+dat$School.board[grep("Calvin Christian School Society",dat$School.board)] <- "Calvin Christian Schools"
 
 qcStats <- sprintf("%s/CEQ_annotated_clean_%s.csv",
 	inDir,dt)

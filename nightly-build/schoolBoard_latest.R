@@ -69,6 +69,8 @@ dat$School.board <- sub("Gobind Marg Charitable Trust Foundation","Gobind Marg F
 dat$School.board <- sub("Foundations for the Future (Charter)",
 	"Foundations for Future - Charter",
 	dat$School.board)
+dat$School.board[grep("Calvin Christian School Society",dat$School.board)] <- "Calvin Christian Schools"
+dat$School.board[grep("Conseil des",dat$School.board)] <- "CEPEO"
 
 dat <- dat[,c("Date","Province","Total.cases.to.date",
 "institute.name","School.board")]
