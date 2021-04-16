@@ -332,6 +332,7 @@ cur <- dat2 %>%
 	mutate(cs = cumsum(Total.cases.to.date))
 cur <- as.data.frame(cur)
 cur$Province <- factor(cur$Province,levels=lv)
+
 cur <- aggregate(cur$cs,
 	by=list(tstamp=cur$tstamp,Province=cur$Province),
 	FUN=max)
@@ -363,11 +364,13 @@ totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Provin
 
 source("cumPlot_totals.R")
 ypos <- list(
+	ON=14500,
+	QC=13700,
 	NB= -200,
 	PEI= -1200, # -250,
 	NS= -700,
 	NL= 400,
-	MB=1800
+	MB=1900
 )
 
 source("QC_makeCumGraph.R")
@@ -379,7 +382,7 @@ cur2 <- cur2[-which(cur2$Province=="QC"),]
 cur2 <- rbind(cur2,qc)
 
 p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
-		ymin=-1200,xmaxAdj=80,recentC=totrecent,
+		ymin=-1800,xmaxAdj=80,recentC=totrecent,
 		title="Number of cases, cumulative (conservative estimate)",
 		font_scale=1)
 
@@ -389,12 +392,11 @@ ypos <- list(
 	NB= 20, #30,
 	PEI= 0, #10,
 	NS= 10, #20,
-	NL= 30, #0,
-	BC=65,
-	MB=80,
-	ON=40,
-	SK=50,
-	QC=130
+	NL= 33, #0,
+	BC=80,
+	MB=95,
+	ON=50,
+	SK=65
 )
 cur3 <- cur2
 provPop <- getSchoolPop()
@@ -419,7 +421,7 @@ p10 <- p10 + theme(
 )
 p3 <- p3 + annotation_custom(ggplotGrob(p10),
 		xmin=as.Date("2020-07-20"),xmax=as.Date("2020-12-05"),
-		ymin=7000,ymax=13500)
+		ymin=7000,ymax=15500)
 p3 <- p3 + annotate("text",
 	x=as.Date("2020-08-05"),y=-700,
 		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",
@@ -431,8 +433,20 @@ p3 <- p3 + annotate("text",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=Sys.Date()+96,y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
+		x=as.Date("2020-08-05"),y=-1700,
+		label="3. MB: Provincial est. are higher; see @mb_covid for latest",
+		hjust=0,vjust=0,
+		size=7,colour="white",fontface=3)
+p3 <- p3 + annotate("text",
+		x=Sys.Date()+103,
+		y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
 		label="2",
+		hjust=0,vjust=0,
+		size=7,colour="white",fontface=3)
+p3 <- p3 + annotate("text",
+		x=Sys.Date()+90,
+		y=1900*1.05,
+		label="3",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 

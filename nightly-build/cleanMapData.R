@@ -62,10 +62,12 @@ idx <- grep("Manitoba",dat$Province)
 dat$Province[idx] <- "MB"
 
 ## Reverse geo-locate city/prov where blank
+message("checking for blank cities")
 idx <- intersect(union(
 			which(is.na(dat$City)),which(dat$City=="")),
 	which(dat$Province!="QC"))
 if (any(idx)) {
+message("found some")
 browser()
 		message(sprintf("* Found blank city! Running reverse geolocate (%i)", 
 			length(idx)))
@@ -162,6 +164,7 @@ print(table(dat$Type_of_school,useNA="always"))
 dat$Date <- gsub(":",";",dat$Date)
 dat$Date <- gsub("^20-","2020-",dat$Date)
 dat$Date <- gsub("^2002","2020",dat$Date)
+dat$Date <- sub(";$","",dat$Date)
 
 ###if (any(ln!=10)) {
 ###	cat("date with extra/missing chars")
@@ -483,6 +486,17 @@ if (any(idx)) {
 }
 
 dat <- dat[!duplicated(dat),]
+
+dat$Longitude <- as.numeric(dat$Longitude)
+idx <- which(dat$Longitude > 0)
+if (any(idx)) {
+	message("found > 0 longitude; fixing")
+	browser()
+	dat$Longitude[idx] <- -1*dat$Longitude[idx]
+}
+
+dat$Date <- sub(";$","",dat$Date)
+dat$Total.cases.to.date <- sub(";$","",dat$Total.cases.to.date)
 
 #### remove YCDSB duplicates
 ###message("* Removing York CDSB duplicates")

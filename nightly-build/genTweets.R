@@ -36,14 +36,14 @@ public_sch <- list(
 private_sch <- list(
 	ON=1943,
 	AB=402,
-	BC=365,
+#	BC=365,
 	NL=7
 )
 
 total_sch <- list(
 	ON=public_sch$ON + private_sch$ON,
 	AB=public_sch$AB + private_sch$AB,
-	BC=public_sch$BC + private_sch$BC,
+#	BC=public_sch$BC + private_sch$BC,
 	NL=public_sch$NL + private_sch$NL
 )
 
@@ -201,7 +201,7 @@ message(sch$Province[k])
 		sch <- sch[order(sch$Count,decreasing=TRUE),]
 		for (k in 1:nrow(sch)) {
 			print(k)
-			cat("Schools with 1+ confirmed COVID-19 case\n",
+			cat("Schools with 1+ confirmed COVID-19 case (cumulative)\n",
 				file=twf)
 			cat(sprintf("%s %s %s\n", emo::ji("star"), 
 				toupper(provFull[[sch$Province[k]]]),emo::ji("star")),

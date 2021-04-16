@@ -31,7 +31,7 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 	p3 <- p3 + scale_x_date(breaks=as.Date(
 		c("2020-09-01","2020-10-01",
 			"2020-11-01","2020-12-01",
-			"2021-01-01","2021-02-01")))
+			"2021-01-01","2021-02-01","2021-03-01","2021-04-01")))
 	} 
 	if (missing(ymin)) ymin <- 0
 	p3 <- p3 + ylim(ymin,max(indat$x)*1.1)
