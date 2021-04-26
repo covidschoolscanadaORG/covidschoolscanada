@@ -44,7 +44,7 @@ bc$Province <- "BC"
 ###colnames(nb)[1] <- "School"
 
 message("Merging all Prov")
-voc <- rbind(qc,bc)
+voc <- qc #rbind(qc,bc)
 
 # have "last reported date" column
 ###message("* Adding last reported date column")

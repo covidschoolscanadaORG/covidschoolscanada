@@ -2,8 +2,8 @@
 
 # download AB autogen. move to appropriate folder
 #dt=`gdate +%Y-%m-%d -d "yesterday"` 
-dt=`gdate +%Y-%m-%d -d "yesterday"` 
-#dt=`gdate +%Y-%m-%d`
+#dt=`gdate +%Y-%m-%d -d "yesterday"` 
+dt=`gdate +%Y-%m-%d`
 #dt=2021-04-09
 baseURL=https://covidschoolboards.s3.ca-central-1.amazonaws.com/AB_Automated_boards_${dt}.csv
 abDir=/Users/shraddhapai/Google_covidschools/daily_data/AB

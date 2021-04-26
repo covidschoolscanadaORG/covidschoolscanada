@@ -6,9 +6,10 @@
 #' @param totCase (list) total case count in provs
 #' @param yposAdjust (list) yposition for Provs to avoid text collision. Keys are Provs, values are ypos.
 #' @param ymin (integer) min of y-axis
+#' @param extra (list) govt case count
 #' @param xmaxAdj (integer) 
 makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
-	xmaxAdj=30,font_scale=1,recentC=NULL,
+	xmaxAdj=30,font_scale=1,recentC=NULL,extra=NULL,
 	title="",suppText=FALSE) {
 
 	#tmp <- subset(indat, Province!="QC")
@@ -40,19 +41,30 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 	for (k in 1:length(provLvl)) {
 		i <- which(totC$Province==provLvl[k])
 		val <- round(totC$x[i])
+
+		extraText <- ""
+		if (!is.null(extra)) {
+			if (!is.null(extra[[provLvl[k]]])) 
+				extraText <- sprintf(";Gov: %s",
+					prettyNum(extra[[provLvl[k]]],big.mark=",")
+				)
+		}
+		
 		if (!is.null(recentC)) {
-		val2 <- round(recentC$x[i])
-		caseText <- c(caseText,sprintf("%s:%s (+%s)", 
-			totC$Province[i],
-			prettyNum(val,big.mark=","),
-			prettyNum(val2,big.mark=",")))
+			val2 <- round(recentC$x[i])
+			caseText <- c(caseText,sprintf("%s:%s (+%s)%s", 
+				totC$Province[i],
+				prettyNum(val,big.mark=","),
+				prettyNum(val2,big.mark=","),
+				extraText))
 		} else {
-		caseText <- c(caseText,sprintf("%s:%s", 
-			totC$Province[i],
-			prettyNum(val,big.mark=",")))
+			caseText <- c(caseText,sprintf("%s:%s%s", 
+				totC$Province[i],
+				prettyNum(val,big.mark=","),
+				extraText))
 		}
 	}
-	
+
 	yvals <- totC$x
 	if (!is.null(ypos)) {
 		for (nm in names(ypos)){

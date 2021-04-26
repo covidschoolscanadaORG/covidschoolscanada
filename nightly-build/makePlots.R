@@ -48,6 +48,9 @@ if (file.exists(pdfFile)) unlink(pdfFile)
 pdfinsta <- sprintf("%s/arranged_insta.pdf",inDir)
 if (file.exists(pdfinsta)) unlink(pdfinsta)
 
+source("getGovCount.R"); 
+govcount <- getGovCounts(inDir,dt)
+
 logfile <- sprintf("%s/makePlotslog.txt",inDir)
 if (file.exists(logfile)) unlink(logfile)
 con <- file(logfile)
@@ -364,13 +367,12 @@ totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Provin
 
 source("cumPlot_totals.R")
 ypos <- list(
-	ON=14500,
-	QC=13700,
-	NB= -200,
-	PEI= -1200, # -250,
+	NB= -150,
+	PEI= -1250, # -250,
 	NS= -700,
-	NL= 400,
-	MB=1900
+	NL= 450,
+	MB=2000,
+	QC=14500
 )
 
 source("QC_makeCumGraph.R")
@@ -381,8 +383,10 @@ qc <- qc[,c(1,3,2)]
 cur2 <- cur2[-which(cur2$Province=="QC"),]
 cur2 <- rbind(cur2,qc)
 
+
 p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
-		ymin=-1800,xmaxAdj=80,recentC=totrecent,
+		ymin=-2200,xmaxAdj=250,recentC=totrecent,
+		extra=govcount,
 		title="Number of cases, cumulative (conservative estimate)",
 		font_scale=1)
 
@@ -395,8 +399,8 @@ ypos <- list(
 	NL= 33, #0,
 	BC=80,
 	MB=95,
-	ON=50,
-	SK=65
+	ON=65,
+	SK=50
 )
 cur3 <- cur2
 provPop <- getSchoolPop()
@@ -409,7 +413,7 @@ for (curProv in lv) {
 			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
 }
 p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
-			ymin=-1,xmaxAdj=110,font_scale=0.7,suppText=TRUE)
+			ymin=-1,xmaxAdj=150,font_scale=0.7,suppText=TRUE)
 p10 <- p10 + ylab(expression(paste("Cases/10K",~cum.^1)))
 p10 <- p10 + theme(
 #	base_size=9,
@@ -420,35 +424,36 @@ p10 <- p10 + theme(
 	axis.title.y = element_text(colour="#ffffff",size=28)
 )
 p3 <- p3 + annotation_custom(ggplotGrob(p10),
-		xmin=as.Date("2020-07-20"),xmax=as.Date("2020-12-05"),
-		ymin=7000,ymax=15500)
+		xmin=as.Date("2020-07-20"),
+		xmax=as.Date("2021-02-01"),
+		ymin=10000,ymax=17000)
 p3 <- p3 + annotate("text",
-	x=as.Date("2020-08-05"),y=-700,
+	x=as.Date("2020-08-05"),y=-1600,
 		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=as.Date("2020-08-05"),y=-1200,
+		x=as.Date("2020-08-05"),y=-2000,
 		label="2. QC cumulative data unavail prior to Oct 12 2020",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
+###p3 <- p3 + annotate("text",
+###		x=as.Date("2020-08-05"),y=-1700,
+###		label="3. MB: Provincial est. are higher; see @mb_covid for latest",
+###		hjust=0,vjust=0,
+###		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=as.Date("2020-08-05"),y=-1700,
-		label="3. MB: Provincial est. are higher; see @mb_covid for latest",
-		hjust=0,vjust=0,
-		size=7,colour="white",fontface=3)
-p3 <- p3 + annotate("text",
-		x=Sys.Date()+103,
-		y=max(cur2$x[which(cur2$Province=="QC")])*1.01,
+		x=Sys.Date()+265,
+		y=14500*1.03,#max(cur2$x[which(cur2$Province=="QC")])*1.03,
 		label="2",
 		hjust=0,vjust=0,
 		size=7,colour="white",fontface=3)
-p3 <- p3 + annotate("text",
-		x=Sys.Date()+90,
-		y=1900*1.05,
-		label="3",
-		hjust=0,vjust=0,
-		size=7,colour="white",fontface=3)
+###p3 <- p3 + annotate("text",
+###		x=Sys.Date()+100,
+###		y=1910*1.05,
+###		label="3",
+###		hjust=0,vjust=0,
+###		size=7,colour="white",fontface=3)
 
 
 message("* putting together grobs")
