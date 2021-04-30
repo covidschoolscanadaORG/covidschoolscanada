@@ -9,7 +9,7 @@ googlesheets4::gs4_deauth()
 x <- as.data.frame(googlesheets4::read_sheet(mb_url))
 idx <- which(x[,1] == "GRAND TOTAL OF ALL KNOWN K-12 CASES") #TOTAL MB K-12 CASES")
 mb <- x[idx,3]
-govt_count[["MB"]] <- 2865#as.integer(mb)
+govt_count[["MB"]] <- 2997#as.integer(mb)
 
 message("Reading QC")
 QCfile <- sprintf("%s/CEQ_annotated_%s.csv",inDir,dt)

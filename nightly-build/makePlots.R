@@ -329,6 +329,55 @@ totcase$Province <- factor(totcase$Province,levels=lv)
 tweetRes$totcase <- totcase
 mega_totcase <- sum(totcase$x)
 
+message("Generate rolling average plots")
+sorted <- dat2 %>% arrange(tstamp)
+sorted <- as.data.frame(sorted)
+
+write.table(sorted,file="sorted.txt",sep=",",col=T,row=F,quote=T)
+
+source("makeTotCasePlot.R")
+yvals <- list(
+	QC=180,
+	PEI=-70,
+	NB=-30,
+	NL=-50,
+	NS=-10
+)
+
+prollavg <- getRollAvg(sorted,ylim=c(-70,200),
+	plotTitle="COVID-19 School Cases (14d roll.avg.)",
+	yvals=yvals)
+outF <- sprintf("%s/rollingAvg.pdf",inDir)
+pdf(outF,width=11,height=6)
+tryCatch({
+	print(prollavg)
+},error=function(ex){
+	print(ex)
+},finally={
+	dev.off()
+})
+
+yvals <- list(
+	SK=0.2,
+	NS=0.3,
+  ON=0.4,
+	PEI=-0.3,
+	NL=0.1,
+	NB=-0.1,
+	QC=2.5
+)
+prollavg_norm <- getRollAvg_Norm(sorted,ylim=c(-0.3,2.5), yvals=yvals)
+outF <- sprintf("%s/rollingAvg_norm.pdf",inDir)
+pdf(outF,width=11,height=6)
+tryCatch({
+	print(prollavg_norm)
+},error=function(ex){
+	print(ex)
+},finally={
+	dev.off()
+})
+
+
 cur <- dat2 %>%
 	group_by(Province) %>%
 	arrange(tstamp) %>% 
@@ -600,6 +649,12 @@ browser()
 	system2("convert",args=c("-density","400","-quality","100",
 		sprintf("%s/arranged.pdf",inDir),
 		sprintf("%s/social_media/arranged.png",inDir)))
+	system2("convert",args=c("-density","400","-quality","100",
+		sprintf("%s/rollingAvg.pdf",inDir),
+		sprintf("%s/social_media/rollingAvg.png",inDir)))
+	system2("convert",args=c("-density","400","-quality","100",
+		sprintf("%s/rollingAvg_norm.pdf",inDir),
+		sprintf("%s/social_media/rollingAvg_norm.png",inDir)))
 
 },error=function(ex){
 },finally={
