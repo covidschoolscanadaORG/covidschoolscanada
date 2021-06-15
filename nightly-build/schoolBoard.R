@@ -21,7 +21,8 @@ provFull <- list(
 	SK="Saskatchewan",
   NB="New Brunswick",
 	NS="Nova Scotia",
-	PEI="Prince Edward Island"
+	PEI="Prince Edward Island",
+	NU="Nunavut"
 )
 
 school_th <-  theme(

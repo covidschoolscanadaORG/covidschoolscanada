@@ -31,7 +31,8 @@ provFull <- list(
 	NS="Nova Scotia",
 	NL="Newfoundland and Labrador",
 	PEI="PEI",
-	NB="New Brunswick"
+	NB="New Brunswick",
+	NU="Nunavut"
 )
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -58,7 +59,7 @@ con <- file(logfile)
 #sink(con,append=TRUE,type="message")
 tryCatch({
 prov <- c("AB","BC","MB","NB","NL","NS","ON","PEI",
-	"QC","SK","NWT","NU","YT")
+	"QC","SK","NU","NWT", "YT")
 
 # ----------------------------
 # Get school plot
@@ -344,30 +345,75 @@ yvals <- list(
 	NS=-10
 )
 
-prollavg <- getRollAvg(sorted,ylim=c(-70,200),
-	plotTitle="COVID-19 School Cases (14d roll.avg.)",
-	yvals=yvals)
-outF <- sprintf("%s/rollingAvg.pdf",inDir)
-pdf(outF,width=11,height=6)
-tryCatch({
-	print(prollavg)
-},error=function(ex){
-	print(ex)
-},finally={
-	dev.off()
-})
+###prollavg <- getRollAvg(sorted,ylim=c(-70,200),
+###	plotTitle="COVID-19 School Cases (14d roll.avg.)",
+###	yvals=yvals)
+###outF <- sprintf("%s/rollingAvg.pdf",inDir)
+###pdf(outF,width=11,height=6)
+###tryCatch({
+###	print(prollavg)
+###},error=function(ex){
+###	print(ex)
+###},finally={
+###	dev.off()
+###})
+
+dat2sub <- subset(dat2, tstamp > Sys.Date()-14)
+totrecent <- totcase
+for (prov in unique(dat2$Province)){
+		message(prov)
+		idx <- which(dat2sub$Province == prov)
+		curp <- dat2sub[which(dat2sub$Province==prov),]
+		if (any(idx)) {
+			totrecent$x[which(totrecent$Province==prov)] <- sum(curp$Total.cases.to.date)
+		} else {
+			totrecent$x[which(totrecent$Province==prov)] <- 0
+		}
+}
+
+dt <- format(Sys.Date()-14,"%y%m%d")
+qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/QC/CEQ_annotated_clean_%s.csv",dt,dt)
+if (!file.exists(qcFile)){
+	dt <- format(Sys.Date()-13,"%y%m%d")
+	qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/QC/CEQ_annotated_clean_%s.csv",dt,dt)
+}
+tmp <- read.delim(qcFile,sep=",",h=T,as.is=T)
+cumqc <- sum(tmp$Total.cases.to.date)
+totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Province=="QC")] - cumqc
 
 yvals <- list(
-	SK=0.2,
-	NS=0.3,
+	BC=1,
+	SK=0.6,
+	AB=0.8,
+	NS=0.25,
   ON=0.4,
 	PEI=-0.3,
-	NL=0.1,
-	NB=-0.1,
-	QC=2.5
+	NL=-0.4,
+	NB=-0.2,
+	MB=1.2
 )
-prollavg_norm <- getRollAvg_Norm(sorted,ylim=c(-0.3,2.5), yvals=yvals)
+message("norm plot")
+prollavg_norm <- getRollAvg_Norm(sorted,
+	ylim=c(-0.5,3.6), yvals=yvals,
+	totcases=list(totcase=totcase, totrecent=totrecent))
+prollavg_norm <- prollavg_norm + annotate("text",
+	x=as.Date("2020-09-05"),y=-0.3,
+		label="1. Based on 2018-19 Provincial K-12+youth enrollment.\nStatsCan",
+		hjust=0,vjust=0,
+		size=9,colour="white",fontface=3)
+prollavg_norm <- prollavg_norm + annotate("text",
+		x=as.Date("2020-09-05"),y=-0.5,
+		label="2. Burst of cases in St. John's",
+		hjust=0,vjust=0,
+		size=9,colour="white",fontface=3)
+prollavg_norm <- prollavg_norm + annotate("text",
+		x=as.Date("2021-03-15"),y=1.8,
+		label="2",
+		hjust=0,vjust=0,
+		size=9,colour="white",fontface=3)
 outF <- sprintf("%s/rollingAvg_norm.pdf",inDir)
+outF <- sprintf("%s/rollingAvg_norm.pdf",inDir)
+message("about to plot it")
 pdf(outF,width=11,height=6)
 tryCatch({
 	print(prollavg_norm)
@@ -392,27 +438,6 @@ cur <- aggregate(cur$cs,
 cur2 <- cur
 cur2$tstamp <- as.Date(cur2$tstamp)
 
-dat2sub <- subset(dat2, tstamp > Sys.Date()-14)
-totrecent <- totcase
-for (prov in unique(dat2$Province)){
-		message(prov)
-		idx <- which(dat2sub$Province == prov)
-		curp <- dat2sub[which(dat2sub$Province==prov),]
-		if (any(idx)) {
-			totrecent$x[which(totrecent$Province==prov)] <- sum(curp$Total.cases.to.date)
-		} else {
-			totrecent$x[which(totrecent$Province==prov)] <- 0
-		}
-}
-dt <- format(Sys.Date()-14,"%y%m%d")
-qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/QC/CEQ_annotated_clean_%s.csv",dt,dt)
-if (!file.exists(qcFile)){
-	dt <- format(Sys.Date()-15,"%y%m%d")
-	qcFile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/QC/CEQ_annotated_clean_%s.csv",dt,dt)
-}
-tmp <- read.delim(qcFile,sep=",",h=T,as.is=T)
-cumqc <- sum(tmp$Total.cases.to.date)
-totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Province=="QC")] - cumqc
 
 source("cumPlot_totals.R")
 ypos <- list(
@@ -445,11 +470,12 @@ ypos <- list(
 	NB= 20, #30,
 	PEI= 0, #10,
 	NS= 10, #20,
-	NL= 33, #0,
-	BC=80,
-	MB=95,
-	ON=65,
-	SK=50
+	NL= 40, #0,
+	MB=120,
+	BC=100,
+	ON=60,
+	SK=80,
+	AB=140
 )
 cur3 <- cur2
 provPop <- getSchoolPop()
@@ -492,7 +518,7 @@ p3 <- p3 + annotate("text",
 ###		hjust=0,vjust=0,
 ###		size=7,colour="white",fontface=3)
 p3 <- p3 + annotate("text",
-		x=Sys.Date()+265,
+		x=Sys.Date()+270,
 		y=14500*1.03,#max(cur2$x[which(cur2$Province=="QC")])*1.03,
 		label="2",
 		hjust=0,vjust=0,
@@ -609,7 +635,7 @@ curset <- pdfSet[[pdfI]]
 pdf(curset[[1]],width=curset[[2]],height=curset[[3]])
 tryCatch({
 	suppressWarnings(grid.arrange(
-	  p1,p3,mapPlot,top,rt,rt2,rt3,rt4,
+	  p1,prollavg_norm,mapPlot,top,rt,rt2,rt3,rt4,
 	  widths = c(0.03,1, 1, 1, 1, 1, 1, 1,0.13),
 	  heights = c(0.07,0.5,0.3,2,2,3,0.07),
 	  layout_matrix = rbind(rep(NA,9),

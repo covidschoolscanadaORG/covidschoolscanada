@@ -24,7 +24,7 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 				ymin=-Inf,ymax=Inf,
 				fill="#ffefef",alpha=0.1)
 	tmp <- subset(indat,Province=="QC")
-	blah <- RColorBrewer::brewer.pal(n=10,"Spectral")
+	blah <- RColorBrewer::brewer.pal(n=11,"Spectral")
 	p3 <- p3 + xlab("")
 	p3 <- p3 + ylab("")
 	p3 <- p3 + ggtitle(title)
@@ -73,7 +73,7 @@ makeCumPlot <- function(indat,provLvl,totC,yposAdjust,ymin,
 	}
 		xvals <- rep(Sys.Date()+1, nrow(totC))
 	
-	cols <- RColorBrewer::brewer.pal(n=10,"Spectral")
+	cols <- RColorBrewer::brewer.pal(n=11,"Spectral")
 	p3 <- p3 + expand_limits(x=Sys.Date()+xmaxAdj)
 	p3 <- p3 + annotate("text",x=xvals,
 			y=yvals,label=caseText,

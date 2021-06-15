@@ -5,8 +5,8 @@ require(rdrop2)
 dbox <- "dbox.rds"
 
 args <- commandArgs(TRUE)
-outDir <- args[1]#"/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210406" #args[1]
-dtRun <- args[2] #"210406" #args[2]
+outDir <- args[1] # "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210609" #args[1]
+dtRun <- args[2] # "210609" #args[2]
 
 abDate <- format(Sys.Date()-1,"%Y-%m-%d")
 ABfile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_%s.csv",abDate)

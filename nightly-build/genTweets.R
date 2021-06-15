@@ -30,7 +30,8 @@ public_sch <- list(
 	NB=302, # GNB Policy & Planning, Dept Ed & ECDev April 2017
 	NS=370,
 	PEI=62,
-	NL=263 # https://www.gov.nl.ca/education/fastfacts/
+	NL=263, # https://www.gov.nl.ca/education/fastfacts/
+	NU=43 # outdated - https://www.oag-bvg.gc.ca/internet/English/nun_201311_e_38772.html
 )
 # private only
 private_sch <- list(

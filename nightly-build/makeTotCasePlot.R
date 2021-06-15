@@ -19,8 +19,9 @@ source("utils.R")
 
 require(padr)
 
-getRollAvg <- function(indat,ylim,plotTitle,yvals=NULL) {
-lv <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
+getRollAvg <- function(indat,ylim,plotTitle,yvals=NULL,
+	totcases=NULL) {
+#lv <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NU","NWT","YT")
 
 blah <- indat[,c("tstamp","Province","Total.cases.to.date")]
 agg <- aggregate(blah$Total.cases.to.date, 
@@ -51,11 +52,13 @@ tmp2 <- agg %>%
 	gather(metric, value, totcase:roll_mean)  %>%
 	filter(metric == "roll_mean")
 
+tmp2$Province <- as.factor(tmp2$Province)
+
 p <- tmp2 %>%
 	ggplot(aes(tstamp,value,color=Province)) + geom_line()
 	p <- p + scale_colour_brewer(palette="Spectral")
 	p <- p + coord_cartesian(
-			xlim=c(as.Date("2020-09-10"),Sys.Date()+35),
+			xlim=c(as.Date("2020-09-10"),Sys.Date()+115),
 			ylim=ylim)
 	p <- p + geom_line(lwd=1.9)
 	p <- p + geom_vline(xintercept=as.Date(
@@ -67,22 +70,41 @@ p <- tmp2 %>%
 	p <- p + xlab("")
 	p <- p + ylab("")
 	p <- p + ggtitle(plotTitle)
-	p <- p + annotate("text",x=as.Date("2020-09-15"),
-		y=ylim[2]*0.95,
+###	p <- p + annotate("text",x=as.Date("2020-09-15"),
+###		y=ylim[2]*0.98,
+###		hjust=0,vjust=0,
+###		label="y-axis truncated for clarity",
+###		colour="#ffffff",size=8,
+###		fontface=3)
+	p <- p + annotate("text",x=Sys.Date()+3,
+		y=ylim[2]*0.98,
 		hjust=0,vjust=0,
-		label="y-axis truncated for clarity",colour="#ffffff",size=6,
+		label="Rolling avg, scaled;\nCumul. cases (Last 14d)",
+		colour="#ffffff",size=8,
 		fontface=3)
 
 # annotate with case count
 cur <- as.data.frame(tmp2)
 cur <- subset(cur,tstamp==Sys.Date()-1)
-cols <- RColorBrewer::brewer.pal(n=10,"Spectral")
+cols <- RColorBrewer::brewer.pal(n=11,"Spectral")
 caseText <- c()
-cur <- cur[order(cur$Province),]
-for (k in lv) {
+# hack
+#cur <- cur[-which(cur$Province=="NU"),]
+#cur$Province[which(cur$Province=="NU")] <- "ZNU"
+#idx <- order(cur$Province)
+#cur <- cur[idx,]
+#cur$Province[which(cur$Province=="ZNU")] <- "NU"
+
+browser()
+
+for (k in levels(tmp2$Province)) {
 	if (k %in% cur[,1]){
-		curtxt <- sprintf("%s: %s",k,
-			prettyNum(round(cur$value[which(cur$Province==k)],1),big.mark=","))
+		tot <- totcases$totcase[which(totcases$totcase[,1]%in%k),2]
+		rec <- totcases$totrecent[which(totcases$totrecent[,1]%in%k),2]
+		ravg <- round(cur$value[which(cur$Province==k)],1)
+		curtxt <- sprintf("%s: %s; %s (+ %s)",k,
+			prettyNum(ravg,big.mark=","),
+			prettyNum(tot,big.mark=","),prettyNum(rec,big.mark=","))
 		caseText <- c(caseText, curtxt)
 	}
 }
@@ -96,7 +118,7 @@ if (!is.null(yvals)) {
 
 	p <- p + annotate("text",x=Sys.Date()+3,
 			y=yv,label=caseText,
-			colour=cols,size=6,
+			colour=cols,size=9,
 			fontface=2,
 			vjust=0,hjust=0,fill="white")
 	
@@ -113,10 +135,10 @@ school_th <-  theme(
 	legend.position = "none",
 	axis.ticks = element_line(colour = 'gray50'),
 	axis.text = element_text(family="source-sans-pro",
-		colour="#68382C",size=30),
+		colour="#68382C",size=40),
 	axis.title=element_text(size=20),
 	plot.title = element_text(family="source-sans-pro",
-		hjust = 0.5,size=30,colour="#68382C",face="bold"),
+		hjust = 0.5,size=40,colour="#68382C",face="bold"),
 	panel.border = element_blank(),
 	plot.margin = unit(c(10,0,0,5),"pt")
 )
@@ -133,7 +155,7 @@ return(p)
 
 getRollAvg_Norm <- function(x,...) {
 # normalized by pop
-lv <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NWT","NU","YT")
+lv <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NU","NWT","YT")
 provPop <- getSchoolPop()
 norm_sorted <- x
 for (curProv in lv) {
