@@ -110,10 +110,10 @@ for (prov in unique(df2$Province)) {
 	)
 	p <- p + school_th
 	if (prov %in% c("QC","ON","BC")) {
-		p <- p + theme(axis.text.x=element_text(size=10))
+		p <- p + theme(axis.text.x=element_text(size=9))
 	}
 	if (prov %in% c("AB")) {
-		p <- p + theme(axis.text.x=element_text(size=8))
+		p <- p + theme(axis.text.x=element_text(size=6))
 	}
 	p <- p + ylim(0,max(df3$ct)+ceiling(0.15*max(df3$ct))) 
 	p <- p + ylab("Number of affected schools") + xlab("")

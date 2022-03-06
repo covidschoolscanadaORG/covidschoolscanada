@@ -79,7 +79,7 @@ p <- tmp2 %>%
 	p <- p + annotate("text",x=Sys.Date()+3,
 		y=ylim[2]*0.98,
 		hjust=0,vjust=0,
-		label="Rolling avg, scaled;\nCumul. cases (Last 14d)",
+		label="Cumulative cases",
 		colour="#ffffff",size=8,
 		fontface=3)
 
@@ -87,6 +87,7 @@ p <- tmp2 %>%
 cur <- as.data.frame(tmp2)
 cur <- subset(cur,tstamp==Sys.Date()-1)
 cols <- RColorBrewer::brewer.pal(n=11,"Spectral")
+cols <- c(cols,cols[1])
 caseText <- c()
 # hack
 #cur <- cur[-which(cur$Province=="NU"),]
@@ -95,16 +96,14 @@ caseText <- c()
 #cur <- cur[idx,]
 #cur$Province[which(cur$Province=="ZNU")] <- "NU"
 
-browser()
-
 for (k in levels(tmp2$Province)) {
 	if (k %in% cur[,1]){
 		tot <- totcases$totcase[which(totcases$totcase[,1]%in%k),2]
 		rec <- totcases$totrecent[which(totcases$totrecent[,1]%in%k),2]
 		ravg <- round(cur$value[which(cur$Province==k)],1)
-		curtxt <- sprintf("%s: %s; %s (+ %s)",k,
-			prettyNum(ravg,big.mark=","),
-			prettyNum(tot,big.mark=","),prettyNum(rec,big.mark=","))
+		curtxt <- sprintf("%s: %s",k,
+			#prettyNum(ravg,big.mark=","),
+			prettyNum(tot,big.mark=",")) #,prettyNum(rec,big.mark=","))
 		caseText <- c(caseText, curtxt)
 	}
 }
@@ -116,9 +115,14 @@ if (!is.null(yvals)) {
 	}
 }
 
+prov <- as.character(levels(tmp2$Province))
+yv <- unlist(yvals)
+names(yv) <- names(yvals)
+yv <- yv[prov]
+
 	p <- p + annotate("text",x=Sys.Date()+3,
 			y=yv,label=caseText,
-			colour=cols,size=9,
+			colour=cols,size=11,
 			fontface=2,
 			vjust=0,hjust=0,fill="white")
 	
@@ -155,7 +159,7 @@ return(p)
 
 getRollAvg_Norm <- function(x,...) {
 # normalized by pop
-lv <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NU","NWT","YT")
+lv <- c("AB","BC","MB","NB","NL","NS","ON","PEI","QC","SK","NU","YT","NWT")
 provPop <- getSchoolPop()
 norm_sorted <- x
 for (curProv in lv) {

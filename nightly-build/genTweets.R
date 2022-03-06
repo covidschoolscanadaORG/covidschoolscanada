@@ -31,7 +31,8 @@ public_sch <- list(
 	NS=370,
 	PEI=62,
 	NL=263, # https://www.gov.nl.ca/education/fastfacts/
-	NU=43 # outdated - https://www.oag-bvg.gc.ca/internet/English/nun_201311_e_38772.html
+	NU=43, # outdated - https://www.oag-bvg.gc.ca/internet/English/nun_201311_e_38772.html
+	YT=34 #https://yukon.ca/en/education-and-schools/kindergarten-grade-12/directory
 )
 # private only
 private_sch <- list(

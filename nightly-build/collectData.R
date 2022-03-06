@@ -5,10 +5,11 @@ require(rdrop2)
 dbox <- "dbox.rds"
 
 args <- commandArgs(TRUE)
-outDir <- args[1] # "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210609" #args[1]
-dtRun <- args[2] # "210609" #args[2]
+outDir <- args[1] # "/Users/shraddhapai/Google_covidschools/daily_data/Canada_COVID_tracker/export-210625" #args[1]
+dtRun <- args[2]#"210625" #args[2] # "210609" #args[2]
 
-abDate <- format(Sys.Date()-1,"%Y-%m-%d")
+#abDate <- format(Sys.Date()-1,"%Y-%m-%d")
+abDate <- "2021-06-24"
 ABfile <- sprintf("/Users/shraddhapai/Google_covidschools/daily_data/AB/AB_Automated_boards_%s.csv",abDate)
 #MB="https://docs.google.com/spreadsheets/d/1a1Rzn7tDVrTc976UAyHFk-WcSz9RPumRQELVd6lnac8/edit#gid=20331003",
 #SK="https://docs.google.com/spreadsheets/d/10Y2N2wq0vzW6BAB3d0BQgAdpZZrpZlU7xKQhKfNeuBE/edit#gid=53224925",
@@ -37,6 +38,7 @@ out[["NB"]] <- out[["NB"]][,1:15]
 out[["MB"]] <- out[["MB"]][,1:15]
 
 message("merging")
+browser()
 dat<- do.call("rbind",out)
 
 message("fetching AB")
@@ -49,6 +51,7 @@ AB$Article <- "https://www.supportourstudents.ca/alphabeticaltrackerlist.html"
 message("* Adding AB autogen")
 #dat <- dat[-which(dat$Province=="AB"),]
 old <- nrow(dat)
+browser()
 dat <- rbind(dat,AB)
 message(sprintf("Added AB autogen: %i to %i rows", 
 	old, nrow(dat)))

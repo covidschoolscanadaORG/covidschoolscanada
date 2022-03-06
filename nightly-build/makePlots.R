@@ -32,7 +32,8 @@ provFull <- list(
 	NL="Newfoundland and Labrador",
 	PEI="PEI",
 	NB="New Brunswick",
-	NU="Nunavut"
+	NU="Nunavut",
+	YT="Yukon Territory"
 )
 
 dt <- format(Sys.Date(),"%y%m%d")
@@ -382,27 +383,29 @@ cumqc <- sum(tmp$Total.cases.to.date)
 totrecent$x[which(totrecent$Province=="QC")] <- totcase$x[which(totrecent$Province=="QC")] - cumqc
 
 yvals <- list(
-	BC=1,
-	SK=0.6,
-	AB=0.8,
-	NS=0.25,
-  ON=0.4,
-	PEI=-0.3,
-	NL=-0.4,
-	NB=-0.2,
-	MB=1.2
+	QC=3,
+  ON=2.8,
+	AB=2.5,
+	BC=2.3,
+	MB=2.1,
+	SK=1.9,
+	NL=1.7,
+	NB=1.5,
+	NS=1.3,
+	NU=1.1,
+	PEI=0.9
 )
 message("norm plot")
 prollavg_norm <- getRollAvg_Norm(sorted,
 	ylim=c(-0.5,3.6), yvals=yvals,
 	totcases=list(totcase=totcase, totrecent=totrecent))
 prollavg_norm <- prollavg_norm + annotate("text",
-	x=as.Date("2020-09-05"),y=-0.3,
+	x=as.Date("2020-09-05"),y=-0.35,
 		label="1. Based on 2018-19 Provincial K-12+youth enrollment.\nStatsCan",
 		hjust=0,vjust=0,
 		size=9,colour="white",fontface=3)
 prollavg_norm <- prollavg_norm + annotate("text",
-		x=as.Date("2020-09-05"),y=-0.5,
+		x=as.Date("2020-09-05"),y=-0.55,
 		label="2. Burst of cases in St. John's",
 		hjust=0,vjust=0,
 		size=9,colour="white",fontface=3)
@@ -458,11 +461,11 @@ cur2 <- cur2[-which(cur2$Province=="QC"),]
 cur2 <- rbind(cur2,qc)
 
 
-p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
-		ymin=-2200,xmaxAdj=250,recentC=totrecent,
-		extra=govcount,
-		title="Number of cases, cumulative (conservative estimate)",
-		font_scale=1)
+#p3 <- makeCumPlot(cur2,lv,totC=totcase,ypos,
+#		ymin=-2200,xmaxAdj=250,recentC=totrecent,
+#		extra=govcount,
+#		title="Number of cases, cumulative (conservative estimate)",
+#		font_scale=1)
 
 # per 100K
 message("* Per 100K plot")
@@ -487,42 +490,42 @@ for (curProv in lv) {
 	if (any(idx)) cur3$x[idx] <- cur3$x[idx] * sc
 			totcase_norm$x[which(totcase$Province==curProv)] <- totcase$x[which(totcase$Province == curProv)] * sc
 }
-p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
-			ymin=-1,xmaxAdj=150,font_scale=0.7,suppText=TRUE)
-p10 <- p10 + ylab(expression(paste("Cases/10K",~cum.^1)))
-p10 <- p10 + theme(
-#	base_size=9,
-	plot.background=element_blank(),
-	panel.background=element_rect(fill="black",colour=NA),
-	panel.border=element_rect(color="white",size=0.5,fill=NA),
-	axis.text = element_text(colour="#ffffff"),
-	axis.title.y = element_text(colour="#ffffff",size=28)
-)
-p3 <- p3 + annotation_custom(ggplotGrob(p10),
-		xmin=as.Date("2020-07-20"),
-		xmax=as.Date("2021-02-01"),
-		ymin=10000,ymax=17000)
-p3 <- p3 + annotate("text",
-	x=as.Date("2020-08-05"),y=-1600,
-		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",
-		hjust=0,vjust=0,
-		size=7,colour="white",fontface=3)
-p3 <- p3 + annotate("text",
-		x=as.Date("2020-08-05"),y=-2000,
-		label="2. QC cumulative data unavail prior to Oct 12 2020",
-		hjust=0,vjust=0,
-		size=7,colour="white",fontface=3)
+###p10 <- makeCumPlot(cur3,lv,totC=totcase_norm,
+###			ymin=-1,xmaxAdj=150,font_scale=0.7,suppText=TRUE)
+###p10 <- p10 + ylab(expression(paste("Cases/10K",~cum.^1)))
+###p10 <- p10 + theme(
+####	base_size=9,
+###	plot.background=element_blank(),
+###	panel.background=element_rect(fill="black",colour=NA),
+###	panel.border=element_rect(color="white",size=0.5,fill=NA),
+###	axis.text = element_text(colour="#ffffff"),
+###	axis.title.y = element_text(colour="#ffffff",size=28)
+###)
+###p3 <- p3 + annotation_custom(ggplotGrob(p10),
+###		xmin=as.Date("2020-07-20"),
+###		xmax=as.Date("2021-02-01"),
+###		ymin=10000,ymax=17000)
+###p3 <- p3 + annotate("text",
+###	x=as.Date("2020-08-05"),y=-1600,
+###		label="1. Based on 2018-19 Provincial K-12+youth enrollment. StatsCan",
+###		hjust=0,vjust=0,
+###		size=7,colour="white",fontface=3)
+###p3 <- p3 + annotate("text",
+###		x=as.Date("2020-08-05"),y=-2000,
+###		label="2. QC cumulative data unavail prior to Oct 12 2020",
+###		hjust=0,vjust=0,
+###		size=7,colour="white",fontface=3)
 ###p3 <- p3 + annotate("text",
 ###		x=as.Date("2020-08-05"),y=-1700,
 ###		label="3. MB: Provincial est. are higher; see @mb_covid for latest",
 ###		hjust=0,vjust=0,
 ###		size=7,colour="white",fontface=3)
-p3 <- p3 + annotate("text",
-		x=Sys.Date()+270,
-		y=14500*1.03,#max(cur2$x[which(cur2$Province=="QC")])*1.03,
-		label="2",
-		hjust=0,vjust=0,
-		size=7,colour="white",fontface=3)
+###p3 <- p3 + annotate("text",
+###		x=Sys.Date()+270,
+###		y=14500*1.03,#max(cur2$x[which(cur2$Province=="QC")])*1.03,
+###		label="2",
+###		hjust=0,vjust=0,
+###		size=7,colour="white",fontface=3)
 ###p3 <- p3 + annotate("text",
 ###		x=Sys.Date()+100,
 ###		y=1910*1.05,
