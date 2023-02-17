@@ -25,6 +25,8 @@ Atienza J., Benedict A. et al. (2023). 14 Quick Tips for Crowdsourcing Geographi
 
 For questions about the code or project, please contact [Shraddha Pai](mailto:shraddha.pai@utoronto.ca). 
 
+# Code and data freeze
+The final data freeze for COVID Schools Canada and the accompany code freeze can be found at Zenodo under DOI 10.5281/zenodo.7651460. 
 
 # Disclaimer
 This code is provided on an "AS IS" basis.
