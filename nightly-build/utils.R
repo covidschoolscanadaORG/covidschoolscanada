@@ -15,7 +15,7 @@ getProvPop <- function(){
 		NS=979115,
 		NB=781315,
 		NWT=45074,
-		YK=42176,
+		YT=42176,
 		NU=39285,
 		BC=5145851
 )
@@ -35,7 +35,7 @@ getSchoolPop <- function() {
 		NS=120603,
 		NB=97896,
 		NWT=8496,
-		YK=5448,
+		YT=5448,
 		NU=10653,
 		BC=561501
 )
