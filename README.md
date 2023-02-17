@@ -2,7 +2,7 @@
 
 This repo contains code used to compile nightly data builds for the COVID-19 Schools Canada project (CSC), which crowdsourced COVID-19 cases and outbreaks from schools across Canada in the 2020-2021 school year. 
 
-* [Website](covidschoolscanada.org)
+* [Website](https://covidschoolscanada.org/)
 * See the [final interactive map](https://covidschoolscanada.org/map.html) for the 2020-21 school year. 
 
 ## Workflow
