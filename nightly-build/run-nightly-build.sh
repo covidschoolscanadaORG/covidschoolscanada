@@ -55,6 +55,10 @@ cp ${outRoot}/export-${dt}/CEQ_annotated_clean*csv ${qcDir}/.
 echo "******************************************************" >> $logfile
 echo " Final cleanup " >> $logfile
 echo "******************************************************" >> $logfile
-#Rscript cleanMapData.R >> $logfile
+
+# This script does the heavy lifting of cleaning the entered data, and frequently paused when assertions failed. It is best run manually.
+Rscript cleanMapData.R >> $logfile
+
+# These scripts are best run manually too.
 #### Call makePlots.R and schoolBoard.R after this.
 ###
